@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Taiwan Cultural Trails</title>
+    <style>
+        /* ── Color Tokens ── */
+        :root {
+            --brick-red:    #8e0302;
+            --brick-light:  #b03b2a;
+            --paper-white:  #f5f0e8;
+            --beige:        #d6b19b;
+            --whale-blue:   #024b57;
+            --deep-orange:  #c05a04;
+            --seafoam:      #477273;
+            --amber:        #a56249;
+            --ink:          #1e1a16;
+            --stamp-gold:   #c9943a;
+            --stamp-shadow: rgba(0,0,0,0.18);
+
+            /* night mode overrides (toggled via .night class on body) */
+            --bg:           var(--paper-white);
+            --sidebar-bg:   var(--whale-blue);
+            --panel-bg:     #fff8f0;
+            --text:         var(--ink);
+            --header-bg:    var(--brick-red);
+        }
+
+        body.night {
+            --bg:           #12171a;
+            --sidebar-bg:   #0a1f25;
+            --panel-bg:     #1a2830;
+            --text:         #d9cfc0;
+            --header-bg:    #1c0a09;
+        }
+
+        /* ── Reset / Base ── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Noto Serif TC', 'Times New Roman', serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        /* ── Header ── */
+        header {
+            background-color: var(--header-bg);
+            color: var(--paper-white);
+            padding: 0.6rem 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid var(--stamp-gold);
+            flex-shrink: 0;
+            transition: background-color 0.5s;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--paper-white);
+        }
+
+        header p {
+            font-size: 0.78rem;
+            opacity: 0.72;
+            letter-spacing: 0.04em;
+            font-style: italic;
+        }
+
+        /* decorative stamp border on header */
+        header::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: -6px;
+            height: 4px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--stamp-gold) 0px, var(--stamp-gold) 8px,
+                transparent 8px, transparent 14px
+            );
+        }
+        header { position: relative; }
+
+        /* ── Theme Toggle ── */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.78rem;
+            color: var(--beige);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-track {
+            width: 42px;
+            height: 22px;
+            background: var(--seafoam);
+            border-radius: 11px;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 16px; height: 16px;
+            background: var(--paper-white);
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        body.night .toggle-track { background: var(--whale-blue); }
+        body.night .toggle-thumb { transform: translateX(20px); }
+
+        /* ── Tab Bar ── */
+        .tabs {
+            display: flex;
+            gap: 0;
+            background: var(--whale-blue);
+            flex-shrink: 0;
+            border-bottom: 2px solid var(--stamp-gold);
+        }
+
+        .tab-btn {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            padding: 0.6rem 1.4rem;
+            background: transparent;
+            color: rgba(245,240,232,0.6);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .tab-btn:hover { color: var(--paper-white); background: rgba(255,255,255,0.07); }
+
+        .tab-btn.active {
+            color: var(--paper-white);
+            background: var(--brick-red);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0; right: 0;
+            height: 2px;
+            background: var(--stamp-gold);
+        }
+
+        /* ── Main Layout ── */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── Sidebar ── */
+        #sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--paper-white);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow-y: auto;
+            border-right: 2px solid var(--stamp-gold);
+            transition: background 0.5s;
+        }
+
+        .sidebar-section {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--stamp-gold);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Search box */
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.5rem 0.75rem 0.5rem 2rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            color: var(--paper-white);
+            font-family: inherit;
+            font-size: 0.82rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input::placeholder { color: rgba(255,255,255,0.4); }
+        .search-box input:focus { border-color: var(--stamp-gold); }
+
+        .search-icon {
+            position: absolute;
+            left: 0.55rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            opacity: 0.5;
+        }
+
+        /* Filter checkboxes */
+        .filter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            font-size: 0.82rem;
+            padding: 0.35rem 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .filter-item:hover { background: rgba(255,255,255,0.07); }
+
+        .filter-item input[type="checkbox"] { display: none; }
+
+        .filter-box {
+            width: 16px; height: 16px;
+            border: 2px solid var(--beige);
+            border-radius: 3px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .filter-item input:checked + .filter-box {
+            background: var(--deep-orange);
+            border-color: var(--deep-orange);
+        }
+
+        .filter-item input:checked + .filter-box::after {
+            content: '✓';
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .filter-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        /* Location cards in sidebar */
+        .location-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .location-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 1.2rem;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.2s;
+        }
+
+        .location-card:hover { background: rgba(255,255,255,0.07); }
+        .location-card.selected { background: rgba(140,3,2,0.4); border-left: 3px solid var(--brick-red); }
+
+        .loc-thumb {
+            width: 44px; height: 44px;
+            border-radius: 4px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: var(--seafoam);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            overflow: hidden;
+        }
+
+        .loc-info { flex: 1; min-width: 0; }
+
+        .loc-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--paper-white);
+        }
+
+        .loc-tag {
+            font-size: 0.68rem;
+            color: var(--beige);
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        .loc-arrow {
+            font-size: 0.7rem;
+            opacity: 0.4;
+        }
+
+        /* ── Map Area ── */
+        #map-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            min-height: 0; /* 讓 flex child 不超出父層 */
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            position: absolute; /* 讓 Leaflet 能拿到真實尺寸 */
+            top: 0; left: 0; right: 0; bottom: 0;
+        }
+
+        /* ── Info Panel (right side) ── */
+        #info-panel {
+            width: 310px;
+            background: var(--panel-bg);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            border-left: 2px solid var(--stamp-gold);
+            overflow-y: auto;
+            /* 用 absolute 讓關閉時完全不佔空間 */
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.5s;
+            z-index: 1000;
+        }
+
+        #info-panel.open { transform: translateX(0); }
+
+        .panel-header {
+            background: var(--brick-red);
+            color: var(--paper-white);
+            padding: 1rem 1.2rem;
+            position: relative;
+        }
+
+        .panel-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+
+        .panel-tag {
+            display: inline-block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: var(--deep-orange);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 2px;
+            margin-bottom: 0.4rem;
+        }
+
+        .panel-close {
+            position: absolute;
+            top: 0.8rem; right: 0.8rem;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .panel-close:hover { background: rgba(255,255,255,0.3); }
+
+        .panel-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: var(--seafoam);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem;
+        }
+
+        .panel-body { padding: 1rem 1.2rem; flex: 1; }
+
+        .panel-body p {
+            font-size: 0.82rem;
+            line-height: 1.75;
+            color: var(--text);
+            opacity: 0.85;
+        }
+
+        .explore-btn {
+            display: block;
+            margin: 1rem 1.2rem 1.2rem;
+            padding: 0.7rem;
+            background: var(--brick-red);
+            color: var(--paper-white);
+            text-align: center;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 0.82rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: background 0.2s;
+        }
+
+        .explore-btn:hover { background: var(--brick-light); }
+
+        /* ── Stamp Panel (second tab) ── */
+        #stamp-panel {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--bg);
+            padding: 1.5rem 2rem;
+            display: none;
+        }
+
+        #stamp-panel.active { display: block; }
+
+        .stamp-grid-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--brick-red);
+            margin-bottom: 0.3rem;
+            text-align: center;
+        }
+
+        .stamp-grid-sub {
+            font-size: 0.78rem;
+            text-align: center;
+            color: var(--seafoam);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .stamp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .stamp-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            text-align: center;
+        }
+
+        .stamp-circle {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            border: 4px solid var(--stamp-gold);
+            background: var(--paper-white);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            position: relative;
+            box-shadow: 0 2px 10px var(--stamp-shadow);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .stamp-circle:hover { transform: scale(1.06); }
+
+        .stamp-circle.locked {
+            filter: grayscale(1);
+            opacity: 0.45;
+        }
+
+        .stamp-circle.locked::after {
+            content: '🔒';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            border-radius: 50%;
+        }
+
+        .stamp-ribbon {
+            position: absolute;
+            bottom: 6px; left: 0; right: 0;
+            background: var(--brick-red);
+            color: white;
+            font-size: 0.48rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 2px 0;
+            text-align: center;
+        }
+
+        .stamp-name {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.04em;
+        }
+
+        .stamp-status {
+            font-size: 0.62rem;
+            color: var(--seafoam);
+        }
+
+        /* ── Memory Photos Panel (3rd tab) ── */
+        #memory-panel {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--bg);
+            padding: 1.5rem 2rem;
+            display: none;
+        }
+
+        #memory-panel.active { display: block; }
+
+        .memory-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--brick-red);
+            margin-bottom: 0.3rem;
+            text-align: center;
+        }
+
+        .memory-sub {
+            font-size: 0.78rem;
+            text-align: center;
+            color: var(--seafoam);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--beige);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            margin-bottom: 1.5rem;
+            background: transparent;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--stamp-gold);
+            background: rgba(201,148,58,0.05);
+        }
+
+        .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .upload-zone p { font-size: 0.82rem; color: var(--text); opacity: 0.7; line-height: 1.6; }
+
+        .geo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--seafoam);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-top: 0.5rem;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .memory-card {
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--beige);
+            box-shadow: 0 2px 8px var(--stamp-shadow);
+            transition: transform 0.2s;
+        }
+
+        .memory-card:hover { transform: translateY(-3px); }
+
+        .memory-card-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            background: var(--seafoam);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+        }
+
+        .memory-card-info {
+            padding: 0.5rem 0.7rem;
+            background: var(--panel-bg);
+        }
+
+        .memory-card-loc { font-size: 0.72rem; font-weight: 600; color: var(--text); }
+        .memory-card-date { font-size: 0.62rem; color: var(--seafoam); margin-top: 2px; }
+
+        /* ── Leaflet popup override ── */
+        .leaflet-popup-content-wrapper {
+            background: var(--paper-white);
+            border-top: 3px solid var(--brick-red);
+            border-radius: 4px;
+            font-family: 'Noto Serif TC', serif;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .leaflet-popup-content { margin: 10px 14px; }
+
+        .popup-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9rem;
+            color: var(--brick-red);
+            font-weight: 700;
+        }
+
+        .popup-sub { font-size: 0.72rem; color: var(--seafoam); margin-top: 3px; }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--beige); border-radius: 3px; }
+
+        /* ── Content areas visibility ── */
+        #map-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
+        #map-layout.hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HEADER ═══ -->
+    <header>
+        <div class="header-left">
+            <h1>Taiwan Cultural Trails</h1>
+            <p>Explore historical sites &amp; local artisans across Taiwan</p>
+        </div>
+        <label class="theme-toggle" id="themeToggle" title="Day / Night mode">
+            ☀️
+            <div class="toggle-track">
+                <div class="toggle-thumb"></div>
+            </div>
+            🌙
+        </label>
+    </header>
+
+    <!-- ═══ TABS ═══ -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('map', this)">🗺 Explore Map</button>
+        <button class="tab-btn"        onclick="switchTab('stamps', this)">📮 Stamp Album</button>
+        <button class="tab-btn"        onclick="switchTab('memory', this)">📷 Memory Photos</button>
+    </div>
+
+    <!-- ═══ MAP TAB ═══ -->
+    <div id="map-layout" class="main-layout">
+
+        <!-- Sidebar -->
+        <div id="sidebar">
+
+            <!-- Search -->
+            <div class="sidebar-section">
+                <h3>🔍 Search</h3>
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+                    <input type="text" id="searchInput" placeholder="Search places, crafts, artists…">
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="sidebar-section">
+                <h3>Filter by Category</h3>
+                <div class="filter-list">
+                    <label class="filter-item">
+                        <input type="checkbox" checked>
+                        <div class="filter-box"></div>
+                        Historical Building
+                        <span class="filter-dot" style="background:#c05a04"></span>
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox" checked>
+                        <div class="filter-box"></div>
+                        Creative Market
+                        <span class="filter-dot" style="background:#477273"></span>
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox">
+                        <div class="filter-box"></div>
+                        Local Craft Shop
+                        <span class="filter-dot" style="background:#a56249"></span>
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox">
+                        <div class="filter-box"></div>
+                        Cultural Center
+                        <span class="filter-dot" style="background:#024b57"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Location List -->
+            <div class="sidebar-section" style="padding-left:0; padding-right:0;">
+                <h3 style="padding:0 1.2rem 0.75rem;">Locations</h3>
+            </div>
+            <div class="location-list" id="locationList">
+                <div class="location-card selected" onclick="selectLocation(0)">
+                    <div class="loc-thumb">🏭</div>
+                    <div class="loc-info">
+                        <div class="loc-name">Huashan 1914 Creative Park</div>
+                        <div class="loc-tag">Historical Building</div>
+                    </div>
+                    <span class="loc-arrow">›</span>
+                </div>
+                <div class="location-card" onclick="selectLocation(1)">
+                    <div class="loc-thumb">🎨</div>
+                    <div class="loc-info">
+                        <div class="loc-name">Creative Market Shop</div>
+                        <div class="loc-tag">Creative Market</div>
+                    </div>
+                    <span class="loc-arrow">›</span>
+                </div>
+                <div class="location-card" onclick="selectLocation(2)">
+                    <div class="loc-thumb">🧵</div>
+                    <div class="loc-info">
+                        <div class="loc-name">Local Craft Shop</div>
+                        <div class="loc-tag">Local Craft Shop</div>
+                    </div>
+                    <span class="loc-arrow">›</span>
+                </div>
+                <div class="location-card" onclick="selectLocation(3)">
+                    <div class="loc-thumb">🏛️</div>
+                    <div class="loc-info">
+                        <div class="loc-name">Cultural Center</div>
+                        <div class="loc-tag">Cultural Center</div>
+                    </div>
+                    <span class="loc-arrow">›</span>
+                </div>
+                <div class="location-card" onclick="selectLocation(4)">
+                    <div class="loc-thumb">🏘️</div>
+                    <div class="loc-info">
+                        <div class="loc-name">Jiufen Old Street</div>
+                        <div class="loc-tag">Historical Building</div>
+                    </div>
+                    <span class="loc-arrow">›</span>
+                </div>
+                <div class="location-card" onclick="selectLocation(5)">
+                    <div class="loc-thumb">🌿</div>
+                    <div class="loc-info">
+                        <div class="loc-name">Taroko Gorge</div>
+                        <div class="loc-tag">Cultural Center</div>
+                    </div>
+                    <span class="loc-arrow">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+
+        <!-- Info Panel -->
+        <div id="info-panel">
+            <div class="panel-header">
+                <div class="panel-tag" id="panelTag">Historical Building</div>
+                <h2 id="panelTitle">Huashan 1914 Creative Park</h2>
+                <button class="panel-close" onclick="closePanel()">✕</button>
+            </div>
+            <div class="panel-img" id="panelImg">🏭</div>
+            <div class="panel-body">
+                <p id="panelDesc">
+                    Huashan 1914 Creative Park was launched in Taiwan since 1914. Originally a winery, it was transformed into one of Taiwan's most celebrated cultural and creative spaces. The park houses galleries, performance venues, design studios, and local artisan shops, celebrating the intersection of history and modern creativity.
+                </p>
+            </div>
+            <button class="explore-btn">Explore Stories ›</button>
+        </div>
+
+    </div><!-- end #map-layout -->
+
+
+    <!-- ═══ STAMP ALBUM TAB ═══ -->
+    <div id="stamp-panel">
+        <div class="stamp-grid-title">📮 Digital Stamp Album</div>
+        <p class="stamp-grid-sub">Visit each location in person to unlock your stamp. Within 500 m activates geofencing.</p>
+        <div class="stamp-grid">
+            <div class="stamp-item">
+                <div class="stamp-circle">
+                    🏭
+                    <div class="stamp-ribbon">Unlocked</div>
+                </div>
+                <div class="stamp-name">Huashan 1914</div>
+                <div class="stamp-status" style="color:var(--deep-orange)">✓ Collected</div>
+            </div>
+            <div class="stamp-item">
+                <div class="stamp-circle">
+                    🏘️
+                    <div class="stamp-ribbon">Unlocked</div>
+                </div>
+                <div class="stamp-name">Jiufen Old Street</div>
+                <div class="stamp-status" style="color:var(--deep-orange)">✓ Collected</div>
+            </div>
+            <div class="stamp-item">
+                <div class="stamp-circle locked">🌿</div>
+                <div class="stamp-name">Taroko Gorge</div>
+                <div class="stamp-status">🔒 Locked</div>
+            </div>
+            <div class="stamp-item">
+                <div class="stamp-circle locked">⛩️</div>
+                <div class="stamp-name">Taroko Kari</div>
+                <div class="stamp-status">🔒 Locked</div>
+            </div>
+            <div class="stamp-item">
+                <div class="stamp-circle locked">🎨</div>
+                <div class="stamp-name">Salktan</div>
+                <div class="stamp-status">🔒 Locked</div>
+            </div>
+            <div class="stamp-item">
+                <div class="stamp-circle locked">🌺</div>
+                <div class="stamp-name">Poridastavar</div>
+                <div class="stamp-status">🔒 Locked</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══ MEMORY PHOTOS TAB ═══ -->
+    <div id="memory-panel">
+        <div class="memory-title">📷 Memory Photos</div>
+        <p class="memory-sub">Upload photos from your cultural journey. GPS coordinates are verified automatically.</p>
+
+        <div class="upload-zone" onclick="triggerUpload()">
+            <div class="upload-icon">📤</div>
+            <p>Click to upload your memory photo<br><small>GPS location will be read from EXIF data</small></p>
+            <div class="geo-badge">📍 Geolocation Active</div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" style="display:none">
+
+        <div class="memory-grid">
+            <div class="memory-card">
+                <div class="memory-card-img">🏭</div>
+                <div class="memory-card-info">
+                    <div class="memory-card-loc">Huashan 1914</div>
+                    <div class="memory-card-date">2025 · Apr 12</div>
+                </div>
+            </div>
+            <div class="memory-card">
+                <div class="memory-card-img">🏘️</div>
+                <div class="memory-card-info">
+                    <div class="memory-card-loc">Jiufen Old Street</div>
+                    <div class="memory-card-date">2025 · Mar 28</div>
+                </div>
+            </div>
+            <div class="memory-card">
+                <div class="memory-card-img">🌊</div>
+                <div class="memory-card-info">
+                    <div class="memory-card-loc">North Coast</div>
+                    <div class="memory-card-date">2025 · Feb 14</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        /* ── Tab Switching ── */
+        function switchTab(tab, btn) {
+            // button states
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // panel visibility
+            document.getElementById('map-layout').classList.toggle('hidden', tab !== 'map');
+            document.getElementById('stamp-panel').classList.toggle('active', tab === 'stamps');
+            document.getElementById('memory-panel').classList.toggle('active', tab === 'memory');
+
+            if (tab === 'map') setTimeout(() => map.invalidateSize(), 50);
+        }
+
+        /* ── Theme Toggle ── */
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('night');
+        });
+
+        /* ── Info Panel ── */
+        const locations = [
+            { title: 'Huashan 1914 Creative Park', tag: 'Historical Building', icon: '🏭',
+              desc: 'Huashan 1914 Creative Park was launched in Taiwan since 1914. Originally a winery, it was transformed into one of Taiwan\'s most celebrated cultural and creative spaces, blending history with modern artistry.' },
+            { title: 'Creative Market Shop', tag: 'Creative Market', icon: '🎨',
+              desc: 'A vibrant hub for local designers and independent artisans, showcasing handmade products, fashion, and contemporary Taiwanese craftsmanship in a dynamic market setting.' },
+            { title: 'Local Craft Shop', tag: 'Local Craft Shop', icon: '🧵',
+              desc: 'Celebrating traditional Taiwanese handicrafts — from woven textiles to ceramic art — this shop supports regional artisans and preserves cultural techniques passed down through generations.' },
+            { title: 'Cultural Center', tag: 'Cultural Center', icon: '🏛️',
+              desc: 'A community anchor for cultural education and arts programming, hosting exhibitions, workshops, and performances that connect residents and visitors to Taiwan\'s living heritage.' },
+            { title: 'Jiufen Old Street', tag: 'Historical Building', icon: '🏘️',
+              desc: 'Perched on a mountainside above the sea, Jiufen\'s narrow lanes and red lanterns recall the gold-rush era. Its teahouses, street food, and ocean views make it one of Taiwan\'s most atmospheric destinations.' },
+            { title: 'Taroko Gorge', tag: 'Cultural Center', icon: '🌿',
+              desc: 'A spectacular marble gorge carved by the Liwu River, Taroko is home to Indigenous Truku communities whose traditional culture, weaving, and hunting practices are celebrated throughout the national park.' },
+        ];
+
+        function selectLocation(index) {
+            document.querySelectorAll('.location-card').forEach((c, i) =>
+                c.classList.toggle('selected', i === index));
+
+            const loc = locations[index];
+            document.getElementById('panelTitle').textContent = loc.title;
+            document.getElementById('panelTag').textContent   = loc.tag;
+            document.getElementById('panelImg').textContent   = loc.icon;
+            document.getElementById('panelDesc').textContent  = loc.desc;
+
+            document.getElementById('info-panel').classList.add('open');
+        }
+
+        function closePanel() {
+            document.getElementById('info-panel').classList.remove('open');
+            document.querySelectorAll('.location-card').forEach(c => c.classList.remove('selected'));
+        }
+
+        /* ── File upload placeholder ── */
+        function triggerUpload() {
+            document.getElementById('fileInput').click();
+        }
+
+        /* ── Leaflet Map ── */
+        const map = L.map('map', { zoomControl: true }).setView([23.7, 121.0], 7);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(map);
+
+        // 等頁面完全渲染後再刷新地圖尺寸，確保 Leaflet 能算到正確大小
+        setTimeout(() => map.invalidateSize(), 100);
+
+        // Custom icon helper
+        function makeIcon(emoji) {
+            return L.divIcon({
+                className: '',
+                html: `<div style="
+                    background:var(--brick-red,#8e0302);
+                    color:white;
+                    width:34px;height:34px;
+                    border-radius:50% 50% 50% 0;
+                    transform:rotate(-45deg);
+                    display:flex;align-items:center;justify-content:center;
+                    border:2px solid var(--stamp-gold,#c9943a);
+                    box-shadow:0 2px 8px rgba(0,0,0,0.3);
+                "><span style="transform:rotate(45deg);font-size:14px">${emoji}</span></div>`,
+                iconSize: [34, 34],
+                iconAnchor: [17, 34],
+                popupAnchor: [0, -36]
+            });
+        }
+
+        const markerData = [
+            { lat: 25.0441, lng: 121.5298, name: 'Huashan 1914 Creative Park', sub: 'Historical Building', icon: '🏭', idx: 0 },
+            { lat: 25.0380, lng: 121.5630, name: 'Creative Market Shop',       sub: 'Creative Market',    icon: '🎨', idx: 1 },
+            { lat: 25.0330, lng: 121.5190, name: 'Local Craft Shop',           sub: 'Local Craft Shop',   icon: '🧵', idx: 2 },
+            { lat: 25.0480, lng: 121.5100, name: 'Cultural Center',            sub: 'Cultural Center',    icon: '🏛️', idx: 3 },
+            { lat: 25.1094, lng: 121.8441, name: 'Jiufen Old Street',          sub: 'Historical Building',icon: '🏘️', idx: 4 },
+            { lat: 24.1573, lng: 121.6210, name: 'Taroko Gorge',               sub: 'Cultural Center',    icon: '🌿', idx: 5 },
+        ];
+
+        markerData.forEach(m => {
+            L.marker([m.lat, m.lng], { icon: makeIcon(m.icon) })
+                .addTo(map)
+                .bindPopup(`
+                    <div class="popup-title">${m.icon} ${m.name}</div>
+                    <div class="popup-sub">${m.sub}</div>
+                `)
+                .on('click', () => selectLocation(m.idx));
+        });
+
+        // Open first panel by default
+        selectLocation(0);
+    </script>
+
+</body>
+</html>

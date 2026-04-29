@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "UTF-8">
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
+        <link rel = "stylesheet" href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+        <script src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <title>Taiwan Cultural Trail</title>
+        <style>
+            /*define all the colors*/
+            :root{
+                --brick-red:    #8e0302;
+                --brick-light:  #b03b2a;
+                --paper-white:  #f5f0e8;
+                --beige:        #d6b19b;
+                --whale-blue:   #024b57;
+                --deep-orange:  #c05a04;
+                --seafoam:      #477273;
+                --amber:        #a56249;
+                --ink:          #1e1a16;
+                --stamp-gold:   #c9943a;
+                --stamp-shadow: rgba(0,0,0,0.18);
+
+                /*night mode overrides (toggled via .night class on body)*/
+                --bg:           var(--paper-white);
+                --sidebar-bg:   var(--white-blue);
+                --panel-bg:     #fff8f0;
+                --text:         var(--ink);
+                --header-bg:    var(--brick-red);
+            }
+            body{
+                font-family: "Times New Roman", serif;
+                background-color: var(--paper-white);
+                overflow: hidden;
+            }
+            header{
+                background-color: var(--brick-red);
+                color: var(--paper-white);
+                padding: 1rem;
+                text-align: center;
+            }
+            h1{
+                font-size: 50px;
+            }
+            p{
+                font-size: 18px;
+            }
+            .filter-btn{
+                color: var(--deep-orange);
+                background-color: var(--belge);
+            }
+            /*sidebar*/
+            #sidebar{
+                background: var(--whale-blue);
+                padding: 20px;
+                width: 250px;
+                color: var(--paper-white);
+            }
+            .tab-btn{
+                font-family: "Times New Roman", serif;
+                font-size: 20px;
+                background-color: var(--seafoam-blue);
+                color: var(--paper-white);
+                width: 200px;
+                height: 40px;
+            }
+            /*filter*/
+            /*photo storage*/
+            /*map*/
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Taiwan Cultural Trails</h1>
+            <p>Feel free to explore the historical sites and local artists in Taiwan!</p>
+        </header>
+        <div class ="tabs">
+            <button class = "tab-btn active" onclick = "switchTab('explore', this)">Explore Map</button>
+        </div>
+        <div class = "container">
+            <div id ="sidebar">
+                <h2>Tools</h2>
+            </div>
+        </div>
+    </body>
+</html>
