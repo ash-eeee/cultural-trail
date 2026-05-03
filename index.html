@@ -116,24 +116,19 @@
                 </label>
             </div>
         </header>
+        <!--Tool Bar-->
+        <div class="tool-bar">
+            <button class="tool-btn active" onclick="switchTab('map',this)">Explore Map</button>
+            <button class="tool-btn"        onclick="switchTab('stamps',this)">Stamp Collection</button>
+            <button class="tool-btn"        onclick="switchTab('memory')">Memory Photos</button>
+        </div>
             <!--Map page-->
-            <!--Tool Bar-->
                 <!--Map Page-->
                     <!--Sidebar-->
                         <!--Search-->
                         <!--Filter-->
                 <!--Stamp Page-->
                 <!--Photo Upload-->
-            <p>Feel free to explore the historical sites and local artists in Taiwan!</p>
-        </header>
-        <div class ="tabs">
-            <button class = "tab-btn active" onclick = "switchTab('explore', this)">Explore Map</button>
-        </div>
-        <div class = "container">
-            <div id ="sidebar">
-                <h2>Tools</h2>
-            </div>
-        </div>
         <script>
             //open first panel by default
             selectLocation(0);
