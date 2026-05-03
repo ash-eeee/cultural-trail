@@ -3,8 +3,12 @@
     <head>
         <meta charset = "UTF-8">
         <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
+        <!-- map API link-->
         <link rel = "stylesheet" href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
         <script src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <!--Font link from Google-->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;600&display=swap">
         <title>Taiwan Cultural Trail</title>
         <style>
             /*define all the colors*/
@@ -91,10 +95,28 @@
         </style>
     </head>
     <body>
+        
         <!--Start Page-->
             <!--Login-->
-        <!--Map page-->
-            <!--Header-->
+            
+        <!--Header-->
+        <header>
+            <div class="header-left">
+                <h1>Taiwan Cultural Trails</h1>
+                <div class="header-sub">Explore historical sites &amp; local artisans across Taiwan</div>
+            </div>
+            <div class="header-right">
+                <span class="header-user" id="header-user"></span>
+                <label class="theme-toggle" id="themeToggle" title="Day/Night">
+                    ☀︎
+                    <div class="toggle-track">
+                        <div class="toggle-thumb"></div>
+                        ☾
+                    </div>
+                </label>
+            </div>
+        </header>
+            <!--Map page-->
             <!--Tool Bar-->
                 <!--Map Page-->
                     <!--Sidebar-->
@@ -102,11 +124,6 @@
                         <!--Filter-->
                 <!--Stamp Page-->
                 <!--Photo Upload-->
-        <header>
-            <div class="header-left">
-                <h1>Taiwan Cultural Trails</h1>
-                <p>Explore historical sites &amp; local artisans across Taiwan</p>
-            </div>
             <p>Feel free to explore the historical sites and local artists in Taiwan!</p>
         </header>
         <div class ="tabs">
