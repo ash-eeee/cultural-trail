@@ -3,10 +3,10 @@
     <head>
         <meta charset = "UTF-8">
         <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
-        <!-- map API link-->
+        <!-- map API link -->
         <link rel = "stylesheet" href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
         <script src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        <!--Font link from Google-->
+        <!-- Font link from Google -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;600&display=swap">
         <title>Taiwan Cultural Trail</title>
@@ -96,10 +96,10 @@
     </head>
     <body>
         
-        <!--Start Page-->
-            <!--Login-->
+        <!-- Start Page -->
+            <!-- Login -->
             
-        <!--Header-->
+        <!-- Header -->
         <header>
             <div class="header-left">
                 <h1>Taiwan Cultural Trails</h1>
@@ -116,19 +116,25 @@
                 </label>
             </div>
         </header>
-        <!--Tool Bar-->
+        <!-- Tool Bar -->
         <div class="tool-bar">
             <button class="tool-btn active" onclick="switchTab('map',this)">Explore Map</button>
             <button class="tool-btn"        onclick="switchTab('stamps',this)">Stamp Collection</button>
             <button class="tool-btn"        onclick="switchTab('memory')">Memory Photos</button>
         </div>
-            <!--Map page-->
-                <!--Map Page-->
-                    <!--Sidebar-->
-                        <!--Search-->
-                        <!--Filter-->
-                <!--Stamp Page-->
-                <!--Photo Upload-->
+            <!-- Map page -->
+            <div class="map-layout">
+
+                <!-- Map -->
+                <!-- Sidebar -->
+                    <!-- Search -->
+                    <!-- Filter -->
+                    <!-- Info sidepage -->
+            </div>
+            <!-- Stamp Page -->
+            <div class="stamp-page"></div>
+            <!-- Photo Upload -->
+            <div class="photo-page"></div>
         <script>
             //open first panel by default
             selectLocation(0);
