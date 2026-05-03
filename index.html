@@ -28,16 +28,37 @@
                 --text:         var(--ink);
                 --header-bg:    var(--brick-red);
             }
+            body.night{
+                --bg:#12171a;
+                --sidebar-bg:#0a1f25;
+                --panel-bg:#1a2830;
+                --text:
+            }
+
+            /* ── Reset / Base ── */
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
             body{
                 font-family: "Times New Roman", serif;
-                background-color: var(--paper-white);
+                background-color: var(--bg);
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
                 overflow: hidden;
+                transition: background-color 0.5s, color 0.5s;
             }
             header{
-                background-color: var(--brick-red);
+                background-color: var(--header-bg);
                 color: var(--paper-white);
-                padding: 1rem;
-                text-align: center;
+                padding: 0.6rem 1.6rem;
+
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-shrink: 0;/*when window shrink, element doesn't shrink*/
+
+                border-bottom:3px solid var(--stamp-gold);
+                transition: background-color 0.5s;
             }
             h1{
                 font-size: 50px;
@@ -70,8 +91,22 @@
         </style>
     </head>
     <body>
+        <!--Start Page-->
+            <!--Login-->
+        <!--Map page-->
+            <!--Header-->
+            <!--Tool Bar-->
+                <!--Map Page-->
+                    <!--Sidebar-->
+                        <!--Search-->
+                        <!--Filter-->
+                <!--Stamp Page-->
+                <!--Photo Upload-->
         <header>
-            <h1>Taiwan Cultural Trails</h1>
+            <div class="header-left">
+                <h1>Taiwan Cultural Trails</h1>
+                <p>Explore historical sites &amp; local artisans across Taiwan</p>
+            </div>
             <p>Feel free to explore the historical sites and local artists in Taiwan!</p>
         </header>
         <div class ="tabs">
@@ -82,5 +117,9 @@
                 <h2>Tools</h2>
             </div>
         </div>
+        <script>
+            //open first panel by default
+            selectLocation(0);
+        </script>
     </body>
 </html>
