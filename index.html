@@ -126,11 +126,85 @@
             <div class="map-layout">
 
                 <!-- Map -->
+                 <div class="map-container">
+                    <div id="map"></div>
+                    <div id="api-status"></div>
+                 </div>
+
                 <!-- Sidebar -->
+                <div id="sidebar" class="collapsed">
+                    
                     <!-- Search -->
+                    <div class="sidebar-section">
+                        <h3>⌕ Search</h3>
+                        <!--透明框框搜尋欄（可以輸入的）-->
+                        <div class="search-wrap">
+                            <span class="search-icon">⌕</span>
+                            <input type="text" id="searchInput" placeholder="Search location, brand...">
+                        </div>
+                    </div>
+
                     <!-- Filter -->
-                    <!-- Info sidepage -->
+                    <div class="sidebar-section">
+                        <h3>Filter by Category</h3>
+                        <div class="filter" id="Filter">
+
+                            <label class="filter-item">
+                                <input type="checkbox" value="Historical Sites" checked onchange="applyFilter()">
+                                <div class="filter-box"></div>
+                                Historical Building
+                                <span class="filter-status" style="background:#c05a04"></span>
+                            </label>
+
+                            <label class="filter-item">
+                                <input type="checkbox" value="Cretive Markets" onchange="applyFilter()">
+                                <div class="filter-box"></div>
+                                Creative Market
+                                <span class="filter-status" style="background:#c05a04"></span>
+                            </label>
+
+                            <label class="filter-item">
+                                <input type="checkbox" value="Craft Shops" onchange="applyFilter()">
+                                <div class="filter-box"></div>
+                                Local Craft Shop
+                                <span class="filter-status" style="background:#c05a04"></span>
+                            </label>
+
+                            <label class="filter-item">
+                                <input type="checkbox" value="Cultural Center" onchange="applyFilter()">
+                                <div class="filter-box"></div>
+                                Cultural Center
+                                <span class="filter-status" style="background:#c05a04"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Shown -->
+                    <div class="sidebar-section" style="padding-bottom:0.4rem; border-bottom:none;">
+                        <h3>Locations</h3>
+                    </div>
+                    <!-- loading -->
+                    <div class="location-list" id="locationList">
+                        <div class="loc-loading">Loading cultural sites...</div>
+                    </div>
+                </div>
+
+                <!-- Info panel-->
+                <div class="info-panel">
+                    <div class="panel-header">
+                        <div class="panel-tag" id="panelTag">Category</div>
+                        <h2 id="panelTitle">Location Name</h2>
+                        <button class="panel-close" onclick="closePanel()">x</button>
+                    </div>
+                    <div class="panel-body">
+                        <p id="panelDesc">Description...</p>
+                        <div class="panel-addr" id="panelAddr"></div>
+                    </div>
+                    <div class="panel-links" id="panelLinks"></div>
+                </div>
+
             </div>
+            
             <!-- Stamp Page -->
             <div class="stamp-page"></div>
             <!-- Photo Upload -->
