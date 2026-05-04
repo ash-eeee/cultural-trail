@@ -204,11 +204,31 @@
                 </div>
 
             </div>
-            
+
             <!-- Stamp Page -->
-            <div class="stamp-page"></div>
+            <div class="stamp-page">
+                <div class="page-title">Stamp Album</div>
+                <p class="page-sub">Visit each location in person (within 500 m) to unlock your stamp.</p>
+                <div class="stamp-grid" id="stampGrid"></div>
+            </div>
+
             <!-- Photo Upload -->
-            <div class="photo-page"></div>
+            <div class="photo-page">
+                <div class="page-title">Memory Photo</div>
+                <p class="page-sub">Upload photos from your cultural journey. GPS is verified automatically.</p>
+                <div class="upload-zone" onclick="document.getElementById('filterInput').click()">
+                    <div class="upload-icon">📤</div>
+                    <p>Click to upload your memory photo<br><small>GPS location will be read from EXIF data</small></p>
+                    <div class="geo-badge">Geolocation Active</div>
+                </div>
+            </div>
+            <!-- Uploaded Photo -->
+            <div class="photo-card">
+                <div class="photo-info">
+                    <div class="photo-loc">Jiufen Old Street</div>
+                    <div class="photo-date">Mar 2, 2026</div>
+                </div>
+            </div>
         <script>
             //open first panel by default
             selectLocation(0);
