@@ -36,26 +36,31 @@
                 --bg:#12171a;
                 --sidebar-bg:#0a1f25;
                 --panel-bg:#1a2830;
-                --text:
+                --text:#ddd5c8;
+                --header-bg:#2a120d;
             }
 
             /* ── Reset / Base ── */
             *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
             body{
-                font-family: "Times New Roman", serif;
+                font-family: "Noto Serif TC", "Times New Roman", serif;
                 background-color: var(--bg);
+                color: var(--text);
                 height: 100vh;
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
                 transition: background-color 0.5s, color 0.5s;
             }
+            /* start page (login) */
+
+            /* header */
             header{
                 background-color: var(--header-bg);
                 color: var(--paper-white);
-                padding: 0.6rem 1.6rem;
-
+                padding: 0.6rem 1rem 0.6rem 1.2rem;
+                
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -64,34 +69,19 @@
                 border-bottom:3px solid var(--stamp-gold);
                 transition: background-color 0.5s;
             }
-            h1{
-                font-size: 50px;
-            }
-            p{
-                font-size: 18px;
-            }
-            .filter-btn{
-                color: var(--deep-orange);
-                background-color: var(--belge);
-            }
-            /*sidebar*/
-            #sidebar{
-                background: var(--whale-blue);
-                padding: 20px;
-                width: 250px;
-                color: var(--paper-white);
-            }
-            .tab-btn{
-                font-family: "Times New Roman", serif;
-                font-size: 20px;
-                background-color: var(--seafoam-blue);
-                color: var(--paper-white);
-                width: 200px;
-                height: 40px;
-            }
-            /*filter*/
+
+            
+            /* tool bar */
+            /* map page */
+            /* map */
+            /* sidebar */
+            /* 收合button */
+            /* search */
+            /* filter */
+            /* locatoin shown */
+            /* info panel */
+            /* stamp page */
             /*photo storage*/
-            /*map*/
         </style>
     </head>
     <body>
@@ -116,14 +106,16 @@
                 </label>
             </div>
         </header>
+
         <!-- Tool Bar -->
         <div class="tool-bar">
             <button class="tool-btn active" onclick="switchTab('map',this)">Explore Map</button>
             <button class="tool-btn"        onclick="switchTab('stamps',this)">Stamp Collection</button>
             <button class="tool-btn"        onclick="switchTab('memory')">Memory Photos</button>
         </div>
+
             <!-- Map page -->
-            <div class="map-layout">
+            <div class="map-layout" id="mapLayout">
 
                 <!-- Map -->
                  <div class="map-container">
@@ -133,6 +125,9 @@
 
                 <!-- Sidebar -->
                 <div id="sidebar" class="collapsed">
+
+                    <!-- 收合button -->
+                     <button id="sidebr-button" onclick="toggleSidebar()" title="Toggle sidebar">x</button>
                     
                     <!-- Search -->
                     <div class="sidebar-section">
@@ -212,22 +207,30 @@
                 <div class="stamp-grid" id="stampGrid"></div>
             </div>
 
-            <!-- Photo Upload -->
-            <div class="photo-page">
+            <!-- Photo storage -->
+            <div class="photo-page" id="photoPage">
                 <div class="page-title">Memory Photo</div>
                 <p class="page-sub">Upload photos from your cultural journey. GPS is verified automatically.</p>
+                
+                <!--
+                    upload-zone -> file input
+                    accept="image" (only image)
+                -->
                 <div class="upload-zone" onclick="document.getElementById('filterInput').click()">
                     <div class="upload-icon">📤</div>
                     <p>Click to upload your memory photo<br><small>GPS location will be read from EXIF data</small></p>
                     <div class="geo-badge">Geolocation Active</div>
                 </div>
             </div>
+            <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
             <!-- Uploaded Photo -->
-            <div class="photo-card">
-                <div class="photo-info">
-                    <div class="photo-loc">Jiufen Old Street</div>
-                    <div class="photo-date">Mar 2, 2026</div>
-                </div>
+            <div id="uploaded-toast"></div>
+            
+            <!-- Zoom in photo -->
+            <div class="lightbox" onclick="closeLightbox()">
+                <button id="lightbox-close" onclick="closeLightbox()">x</button>
+                <img id="lightbox-img" src="" alt="">
+                <div id="lightbox-info"></div>
             </div>
         <script>
             //open first panel by default
