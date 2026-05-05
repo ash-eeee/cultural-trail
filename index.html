@@ -69,14 +69,84 @@
                 border-bottom:3px solid var(--stamp-gold);
                 transition: background-color 0.5s;
             }
-
             
-            /* tool bar */
-            /* map page */
-            /* map */
-            /* sidebar */
-            /* 收合button */
+            .header-left{display: flex; align-items: center; gap: 12px; }
+            header h1{
+                font-size: 25px;
+                font-weight: bold;
+                letter-spacing: 0.1px;
+            }
+            .header-sub{font-size: 1rem; opacity: 0.60; font-style: italic;}
+
+            .header-right{display: flex; align-items: center; gap: 10px}
+            .header-user{font-size: 12px; color: var(--beige);}
+
+            /* day and night mode 
+            .theme-toggle{}
+            .toggle-track{}
+            .toggle-thumb{}*/
+
+            /* tool bar 
+            .tool-bar{}*/
+            /* tool bar button 
+            .tool-btn{}
+            .tool-btn:hover{}
+            .tool-btn.active{}*/
+
+            /* map page 
+            .map-container{}*/
+
+            /* map 
+            #map{}
+            #api-status{}*/
+
+            /* sidebar 
+            #sidebar.collapsed{}*/
+
+            /* 收合button 
+            #side-button{}*/
+
             /* search */
+            .sidebar-section{
+                padding: 13px 16px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+                flex-shrink: 0;
+            }
+            .sidebar-section h3{
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                color: var(--stamp-gold);
+                margin-bottom: 10px;
+            }
+            .search-wrap{
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+            /* half transparent */
+            .search-wrap input{
+                width :100%;
+                padding: 6px 10px 6px 27px;
+                background: rgba(255, 255, 255, 0.09);
+                color: var(--paper-white);
+                font-family: inherit;
+                font-size: 12px;
+                border: 1px solid rgba(255,255,255,0.16);
+                border-radius: 4px;
+                outline: none;
+                transition:  border-color 0.2s;
+            }
+            .search-wrap input:focus{ border-color: var(--stamp-gold);}
+            .search-icon{
+                position: absolute;
+                left: 0.45rem;
+                top: 50%;
+                font-size: 11px;
+                opacity: 0.4;
+                transform: translateY(-50%);
+            }
+            
             /* filter */
             /* locatoin shown */
             /* info panel */
@@ -92,11 +162,13 @@
         <!-- Header -->
         <header>
             <div class="header-left">
-                <h1>Taiwan Cultural Trails</h1>
-                <div class="header-sub">Explore historical sites &amp; local artisans across Taiwan</div>
+                <div>
+                    <h1>Taiwan Cultural Trails</h1>
+                    <div class="header-sub">Explore historical sites &amp; local artisans across Taiwan</div>
+                </div>
             </div>
             <div class="header-right">
-                <span class="header-user" id="header-user"></span>
+                <span class="header-user" id="headerUser"></span>
                 <label class="theme-toggle" id="themeToggle" title="Day/Night">
                     ☀︎
                     <div class="toggle-track">
@@ -127,7 +199,7 @@
                 <div id="sidebar" class="collapsed">
 
                     <!-- 收合button -->
-                     <button id="sidebr-button" onclick="toggleSidebar()" title="Toggle sidebar">x</button>
+                    <button id="sidebar-button" onclick="toggleSidebar()" title="Toggle sidebar">x</button>
                     
                     <!-- Search -->
                     <div class="sidebar-section">
