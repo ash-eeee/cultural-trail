@@ -86,32 +86,74 @@
             .toggle-track{}
             .toggle-thumb{}*/
 
-            /* tool bar 
-            .tool-bar{}*/
-            /* tool bar button 
-            .tool-btn{}
-            .tool-btn:hover{}
-            .tool-btn.active{}*/
-
+            /* tool bar */
+            .tool-bar{
+                background: var(--whale-blue);
+                display: flex;
+                flex-shrink: 0;
+                border-bottom: 2px solid var(--stamp-gold);
+            }
+            /* tool bar button */
+            .tool-btn{
+                font-family: inherit;
+                font-size: 14px;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                padding: 8px 15px;
+                background: transparent;
+                color: rgba(245, 240, 232, 0.5);
+                border: none;
+                border-right: 1px solid rgba(255,255,255, 0.09);
+                cursor: poitner;
+                position: relative;
+                transition: all 0.2s;
+            }
+            .tool-btn:hover{
+                color: var(--paper-white);
+                background: rgba(255, 255, 255, 0.06);
+            }
             /* map page 
             .map-container{}*/
 
-            /* map 
-            #map{}
-            #api-status{}*/
+            /* map */
+            #map-layout{
+                display: flex;
+                flex: 1;
+                overflow: hidden;
+                position: relative;
+            }
+            #map-layout.hidden{display: none;}
 
-            /* sidebar 
-            #sidebar.collapsed{}*/
+            /* sidebar */
+            #sidebar{
+                width: 260px;
+                background: var(--sidebar-bg);
+                color: var(--paper-white);
+                display: flex;
+                flex-direction: column;
+                flex-shrink: 0;
+                overflow-y: auto;
+                border-right: 2px solid var(--stamp-gold);
+                position: relative;
+                transition: all 0.5s;
+            }
+            /*
+            #sidebar.collapsed{
+                width: 0;
+                overflow: visible;
+                border-right: none;
+            }
+            
+            #sidebar.collapsed .sidebar-section,
+            #sidebar.collapsed .location-list { display: none; }
 
-            /* 收合button 
-            #side-button{}*/
-
-            /* search */
             .sidebar-section{
                 padding: 13px 16px;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.09);
                 flex-shrink: 0;
-            }
+            }*/
+
+            /* search */
             .sidebar-section h3{
                 font-size: 12px;
                 text-transform: uppercase;
