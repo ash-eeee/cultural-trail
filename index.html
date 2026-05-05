@@ -54,7 +54,187 @@
                 transition: background-color 0.5s, color 0.5s;
             }
             /* start page (login) */
+             #auth-overlay{
+                background: rgba(2, 30, 22, 0.82);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            }
 
+            #auth-box {
+                background: var(--paper-white);
+                border-radius: 14px;
+                overflow: hidden;
+                width: 460px;
+                max-width: 95vw;
+                box-shadow: 0 12px 48px rgba(0,0,0,0.35);
+            }
+
+            #auth-header {
+                background: var(--brick-red);
+                color: var(--paper-white);
+                padding: 1.4rem 2rem;
+                text-align: center;
+            }
+
+            #auth-header h2 {
+                font-size: 1.6rem;
+                letter-spacing: 0.04em;
+            }
+
+            #auth-header p {
+                font-size: 0.85rem;
+                opacity: 0.8;
+                margin-top: 0.3rem;
+            }
+
+            /* tabs */
+            .auth-tabs {
+                display: flex;
+                border-bottom: 2px solid var(--beige);
+            }
+
+            .auth-tab {
+                flex: 1;
+                padding: 0.7rem;
+                font-family: "Times New Roman", serif;
+                font-size: 1rem;
+                border: none;
+                background: #ede8df;
+                color: var(--amber);
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+
+            .auth-tab.active {
+                background: var(--paper-white);
+                color: var(--brick-red);
+                font-weight: bold;
+                border-bottom: 2px solid var(--brick-red);
+                margin-bottom: -2px;
+            }
+
+            /* form body */
+            .auth-form {
+                padding: 1.8rem 2rem;
+            }
+
+            .auth-form.hidden { display: none; }
+
+            .form-group { margin-bottom: 1.1rem; }
+
+            .form-row { display: flex; gap: 12px; }
+            .form-row .form-group { flex: 1; }
+
+            .auth-form label {
+                display: block;
+                font-size: 0.75rem;
+                color: var(--seafoam);
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                margin-bottom: 0.35rem;
+            }
+
+            .auth-form input[type="text"],
+            .auth-form input[type="email"],
+            .auth-form input[type="password"] {
+                width: 100%;
+                padding: 0.6rem 0.85rem;
+                border: 1px solid var(--beige);
+                border-radius: 7px;
+                font-family: "Times New Roman", serif;
+                font-size: 0.95rem;
+                background: #fffcf7;
+                color: var(--ink);
+                outline: none;
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+
+            .auth-form input:focus {
+                border-color: var(--whale-blue);
+                box-shadow: 0 0 0 3px rgba(2,75,87,0.15);
+            }
+
+            /* 密碼強度 */
+            .strength-bars { 
+                display: flex; 
+                gap: 4px; 
+                margin-top: 5px; 
+            }
+            .s-bar { 
+                height: 3px; 
+                flex: 1; 
+                border-radius: 2px; 
+                background: var(--beige); 
+                transition: background 0.3s; 
+            }
+            .pw-hint { 
+                font-size: 0.72rem; 
+                color: var(--amber); 
+                margin-top: 3px; 
+                font-family: sans-serif; 
+            }
+
+            /* 忘記密碼 */
+            .label-row { 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+            }
+            .forgot { 
+                font-size: 0.75rem; 
+                color: var(--seafoam); 
+                cursor: pointer; 
+            }
+            .forgot:hover { 
+                text-decoration: underline; 
+            }
+
+            /* 主按鈕 */
+            .btn-auth {
+                width: 100%;
+                padding: 0.75rem;
+                background: var(--brick-red);
+                color: var(--paper-white);
+                border: none;
+                border-radius: 8px;
+                font-family: "Times New Roman", serif;
+                font-size: 1rem;
+                cursor: pointer;
+                margin-top: 0.5rem;
+                letter-spacing: 0.05em;
+                transition: background 0.2s, transform 0.1s;
+            }
+
+            .btn-auth:hover { background: var(--brick-light); }
+            .btn-auth:active { transform: scale(0.99); }
+
+            /* 錯誤訊息 */
+            .auth-error {
+                font-size: 0.8rem;
+                color: var(--brick-red);
+                background: #fdecea;
+                border: 1px solid #f5b8b8;
+                border-radius: 6px;
+                padding: 0.5rem 0.75rem;
+                margin-top: 0.8rem;
+                display: none;
+                font-family: sans-serif;
+            }
+
+            /* 切換連結 */
+            .auth-switch {
+                font-size: 0.82rem;
+                color: var(--amber);
+                text-align: center;
+                margin-top: 1rem;
+                font-family: sans-serif;
+            }
+
+            .auth-switch a { color: var(--whale-blue); cursor: pointer; }
+            .auth-switch a:hover { text-decoration: underline; }
+            
             /* header */
             header{
                 background-color: var(--header-bg);
@@ -200,6 +380,66 @@
         
         <!-- Start Page -->
             <!-- Login -->
+        <div id="auth-overlay">
+            <div id="auth-box">
+                <div id="auth-header">
+                    <h2>Taiwan Cultural Trails</h2>
+                    <p>登入以開始探索台灣各地創生文化</p>
+                </div>
+
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">登入</button>
+                    <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">註冊</button>
+                </div>
+
+                <!-- 登入表單 -->
+                <div class="auth-form" id="form-login">
+                    <div class="form-group">
+                        <label>電子郵件</label>
+                        <input type="email" id="login-email" placeholder="you@example.com" />
+                    </div>
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label>密碼</label>
+                            <span class="forgot" onclick="alert('重設連結已寄出！')">忘記密碼？</span>
+                        </div>
+                        <input type="password" id="login-password" placeholder="••••••••" />
+                    </div>
+                    <button class="btn-auth" onclick="handleLogin()">登入</button>
+                    <div class="auth-error" id="login-error"></div>
+                    <p class="auth-switch">還沒有帳號？<a onclick="switchAuthTab('register')">立即註冊</a></p>
+                </div>
+
+                <!-- 註冊表單 -->
+                <div class="auth-form hidden" id="form-register">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>使用者名稱</label>
+                            <input type="text" id="reg-username" placeholder="user123" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>電子郵件</label>
+                        <input type="email" id="reg-email" placeholder="you@example.com" />
+                    </div>
+                    <div class="form-group">
+                        <label>密碼</label>
+                        <input type="password" id="reg-password" placeholder="至少 8 個字元"
+                               oninput="checkStrength(this.value)" />
+                        <div class="strength-bars">
+                            <div class="s-bar" id="s1"></div>
+                            <div class="s-bar" id="s2"></div>
+                            <div class="s-bar" id="s3"></div>
+                            <div class="s-bar" id="s4"></div>
+                        </div>
+                        <div class="pw-hint" id="pw-hint">請輸入密碼</div>
+                    </div>
+                    <button class="btn-auth" onclick="handleRegister()">建立帳號</button>
+                    <div class="auth-error" id="register-error"></div>
+                    <p class="auth-switch">已有帳號？<a onclick="switchAuthTab('login')">立即登入</a></p>
+                </div>
+            </div>
+        </div>
             
         <!-- Header -->
         <header>
