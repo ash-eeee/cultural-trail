@@ -3,26 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Leaflet 地圖 -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <!--
-        exif-js：用來讀照片 EXIF 資料（包含 GPS 座標）
-        這個函式庫會在全域建立 EXIF 物件，呼叫 EXIF.getData() 和 EXIF.getTag()
-    -->
     <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/exif.js"></script>
-
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;600&display=swap">
-
     <title>Taiwan Cultural Trails</title>
     <style>
-        /* ══════════════════════════════
-           COLOR TOKENS
-        ══════════════════════════════ */
         :root {
             --brick-red:    #9e2a1c;
             --brick-light:  #c4503a;
@@ -48,10 +35,6 @@
             --text:      #ddd5c8;
             --header-bg: #2a120d;
         }
-
-        /* ══════════════════════════════
-           RESET
-        ══════════════════════════════ */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Noto Serif TC', 'Times New Roman', serif;
@@ -64,489 +47,199 @@
             transition: background-color 0.5s, color 0.5s;
         }
 
-        /* ══════════════════════════════
-           START / LOGIN PAGE
-        ══════════════════════════════ */
+        /* START PAGE */
         #start-page {
             position: fixed; inset: 0; z-index: 9999;
             background: var(--whale-blue);
             display: flex; align-items: center; justify-content: center;
             background-image:
-                repeating-linear-gradient(0deg, transparent, transparent 40px,
-                    rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px),
-                repeating-linear-gradient(90deg, transparent, transparent 40px,
-                    rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px);
+                repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px),
+                repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px);
         }
-        #start-page::before {
-            content: ''; position: absolute;
-            top: 0; left: 0; right: 0; height: 6px;
-            background: repeating-linear-gradient(90deg,
-                var(--stamp-gold) 0px 10px, transparent 10px 18px);
-        }
-        #start-page::after {
-            content: ''; position: absolute;
-            bottom: 0; left: 0; right: 0; height: 6px;
-            background: repeating-linear-gradient(90deg,
-                var(--stamp-gold) 0px 10px, transparent 10px 18px);
-        }
-        .start-card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(201,148,58,0.4);
-            border-radius: 8px; padding: 3rem 3.5rem;
-            text-align: center; max-width: 440px; width: 90%;
-            backdrop-filter: blur(4px);
-        }
-        .start-stamp { font-size: 4rem; display: block; margin-bottom: 1rem; }
-        .start-card h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem; color: var(--paper-white);
-            letter-spacing: 0.06em; margin-bottom: 0.3rem;
-        }
-        .start-card .subtitle {
-            font-size: 0.8rem; color: var(--stamp-gold);
-            letter-spacing: 0.12em; text-transform: uppercase;
-            margin-bottom: 2rem; font-style: italic;
-        }
-        .dot-divider {
-            height: 3px; margin: 1.5rem 0; border-radius: 2px;
-            background: repeating-linear-gradient(90deg,
-                var(--stamp-gold) 0px 6px, transparent 6px 12px);
-        }
-        .start-label {
-            font-size: 0.72rem; color: rgba(245,240,232,0.5);
-            letter-spacing: 0.1em; text-transform: uppercase;
-            text-align: left; margin-bottom: 0.4rem;
-        }
-        .start-input {
-            width: 100%; padding: 0.7rem 1rem;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(201,148,58,0.5);
-            border-radius: 4px; color: var(--paper-white);
-            font-family: 'Noto Serif TC', serif; font-size: 0.9rem;
-            outline: none; margin-bottom: 1.2rem;
-            transition: border-color 0.2s, background 0.2s;
-        }
-        .start-input::placeholder { color: rgba(255,255,255,0.3); }
-        .start-input:focus { border-color: var(--stamp-gold); background: rgba(255,255,255,0.15); }
-        .start-btn {
-            width: 100%; padding: 0.8rem;
-            background: var(--brick-red); color: var(--paper-white);
-            font-family: 'Playfair Display', serif;
-            font-size: 1rem; letter-spacing: 0.1em;
-            border: none; border-radius: 4px; cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-        }
-        .start-btn:hover { background: var(--brick-light); }
-        .start-btn:active { transform: scale(0.98); }
-        .start-note {
-            font-size: 0.68rem; color: rgba(245,240,232,0.35);
-            margin-top: 1rem; line-height: 1.6;
-        }
-        #start-page.fade-out { animation: fadeOut 0.6s ease forwards; }
-        @keyframes fadeOut { to { opacity: 0; pointer-events: none; } }
+        #start-page::before { content:''; position:absolute; top:0; left:0; right:0; height:6px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 10px, transparent 10px 18px); }
+        #start-page::after  { content:''; position:absolute; bottom:0; left:0; right:0; height:6px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 10px, transparent 10px 18px); }
+        .start-card { background:rgba(255,255,255,0.06); border:1px solid rgba(201,148,58,0.4); border-radius:8px; padding:3rem 3.5rem; text-align:center; max-width:440px; width:90%; backdrop-filter:blur(4px); }
+        .start-stamp { font-size:4rem; display:block; margin-bottom:1rem; }
+        .start-card h1 { font-family:'Playfair Display',serif; font-size:2rem; color:var(--paper-white); letter-spacing:0.06em; margin-bottom:0.3rem; }
+        .start-card .subtitle { font-size:0.8rem; color:var(--stamp-gold); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:2rem; font-style:italic; }
+        .dot-divider { height:3px; margin:1.5rem 0; border-radius:2px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 6px, transparent 6px 12px); }
+        .start-label { font-size:0.72rem; color:rgba(245,240,232,0.5); letter-spacing:0.1em; text-transform:uppercase; text-align:left; margin-bottom:0.4rem; }
+        .start-input { width:100%; padding:0.7rem 1rem; background:rgba(255,255,255,0.1); border:1px solid rgba(201,148,58,0.5); border-radius:4px; color:var(--paper-white); font-family:'Noto Serif TC',serif; font-size:0.9rem; outline:none; margin-bottom:1.2rem; transition:border-color 0.2s,background 0.2s; }
+        .start-input::placeholder { color:rgba(255,255,255,0.3); }
+        .start-input:focus { border-color:var(--stamp-gold); background:rgba(255,255,255,0.15); }
+        .start-btn { width:100%; padding:0.8rem; background:var(--brick-red); color:var(--paper-white); font-family:'Playfair Display',serif; font-size:1rem; letter-spacing:0.1em; border:none; border-radius:4px; cursor:pointer; transition:background 0.2s,transform 0.1s; }
+        .start-btn:hover { background:var(--brick-light); }
+        .start-btn:active { transform:scale(0.98); }
+        .start-note { font-size:0.68rem; color:rgba(245,240,232,0.35); margin-top:1rem; line-height:1.6; }
+        #start-page.fade-out { animation:fadeOut 0.6s ease forwards; }
+        @keyframes fadeOut { to { opacity:0; pointer-events:none; } }
 
-        /* ══════════════════════════════
-           HEADER
-        ══════════════════════════════ */
-        header {
-            background-color: var(--header-bg); color: var(--paper-white);
-            padding: 0.6rem 1rem 0.6rem 1.2rem;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 3px solid var(--stamp-gold);
-            flex-shrink: 0; position: relative;
-            transition: background-color 0.5s;
-        }
-        header::after {
-            content: ''; position: absolute;
-            left: 0; right: 0; bottom: -6px; height: 4px;
-            background: repeating-linear-gradient(90deg,
-                var(--stamp-gold) 0px 8px, transparent 8px 14px);
-        }
-        .header-left { display: flex; align-items: center; gap: 0.8rem; }
-        header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem; font-weight: 700; letter-spacing: 0.06em;
-        }
-        .header-sub { font-size: 0.73rem; opacity: 0.62; font-style: italic; }
-        .header-right { display: flex; align-items: center; gap: 0.6rem; }
-        .header-user { font-size: 0.75rem; color: var(--beige); }
-        .theme-toggle {
-            display: flex; align-items: center; gap: 0.4rem;
-            cursor: pointer; user-select: none;
-            font-size: 0.75rem; color: var(--beige);
-        }
-        .toggle-track {
-            width: 38px; height: 20px; background: var(--seafoam);
-            border-radius: 10px; position: relative; transition: background 0.3s;
-        }
-        .toggle-thumb {
-            position: absolute; top: 2px; left: 2px;
-            width: 16px; height: 16px; background: var(--paper-white);
-            border-radius: 50%; transition: transform 0.3s;
-        }
-        body.night .toggle-track { background: #1a4a5c; }
-        body.night .toggle-thumb { transform: translateX(18px); }
+        /* HEADER */
+        header { background-color:var(--header-bg); color:var(--paper-white); padding:0.6rem 1rem 0.6rem 1.2rem; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--stamp-gold); flex-shrink:0; position:relative; transition:background-color 0.5s; }
+        header::after { content:''; position:absolute; left:0; right:0; bottom:-6px; height:4px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 8px, transparent 8px 14px); }
+        .header-left { display:flex; align-items:center; gap:0.8rem; }
+        header h1 { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; letter-spacing:0.06em; }
+        .header-sub { font-size:0.73rem; opacity:0.62; font-style:italic; }
+        .header-right { display:flex; align-items:center; gap:0.6rem; }
+        .header-user { font-size:0.75rem; color:var(--beige); }
+        .theme-toggle { display:flex; align-items:center; gap:0.4rem; cursor:pointer; user-select:none; font-size:0.75rem; color:var(--beige); }
+        .toggle-track { width:38px; height:20px; background:var(--seafoam); border-radius:10px; position:relative; transition:background 0.3s; }
+        .toggle-thumb { position:absolute; top:2px; left:2px; width:16px; height:16px; background:var(--paper-white); border-radius:50%; transition:transform 0.3s; }
+        body.night .toggle-track { background:#1a4a5c; }
+        body.night .toggle-thumb { transform:translateX(18px); }
 
-        /* ══════════════════════════════
-           TOOL BAR (tabs)
-        ══════════════════════════════ */
-        .tool-bar {
-            background: var(--whale-blue);
-            display: flex; flex-shrink: 0;
-            border-bottom: 2px solid var(--stamp-gold);
-        }
-        .tool-btn {
-            font-family: 'Noto Serif TC', serif;
-            font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
-            padding: 0.55rem 1.2rem;
-            background: transparent; color: rgba(245,240,232,0.55);
-            border: none; border-right: 1px solid rgba(255,255,255,0.08);
-            cursor: pointer; position: relative; transition: all 0.2s;
-        }
-        .tool-btn:hover { color: var(--paper-white); background: rgba(255,255,255,0.06); }
-        .tool-btn.active { color: var(--paper-white); background: var(--brick-red); }
-        .tool-btn.active::after {
-            content: ''; position: absolute;
-            bottom: -2px; left: 0; right: 0; height: 2px;
-            background: var(--stamp-gold);
-        }
+        /* TOOL BAR */
+        .tool-bar { background:var(--whale-blue); display:flex; flex-shrink:0; border-bottom:2px solid var(--stamp-gold); }
+        .tool-btn { font-family:'Noto Serif TC',serif; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.55rem 1.2rem; background:transparent; color:rgba(245,240,232,0.55); border:none; border-right:1px solid rgba(255,255,255,0.08); cursor:pointer; position:relative; transition:all 0.2s; }
+        .tool-btn:hover { color:var(--paper-white); background:rgba(255,255,255,0.06); }
+        .tool-btn.active { color:var(--paper-white); background:var(--brick-red); }
+        .tool-btn.active::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:2px; background:var(--stamp-gold); }
 
-        /* ══════════════════════════════
-           MAP LAYOUT
-        ══════════════════════════════ */
-        .map-layout {
-            display: flex; flex: 1; overflow: hidden; position: relative;
-        }
-        .map-layout.hidden { display: none; }
+        /* MAP LAYOUT */
+        .map-layout { display:flex; flex:1; overflow:hidden; position:relative; }
+        .map-layout.hidden { display:none; }
 
-        /* ── Sidebar ── */
-        #sidebar {
-            width: 260px; background: var(--sidebar-bg);
-            color: var(--paper-white);
-            display: flex; flex-direction: column;
-            flex-shrink: 0; overflow-y: auto;
-            border-right: 2px solid var(--stamp-gold);
-            position: relative;
-            transition: width 0.3s ease, border 0.3s ease, background 0.5s;
-        }
-        #sidebar.collapsed { width: 0; overflow: visible; border-right: none; }
-        #sidebar.collapsed .sidebar-section,
-        #sidebar.collapsed .location-list { display: none; }
+        /* SIDEBAR */
+        #sidebar { width:270px; background:var(--sidebar-bg); color:var(--paper-white); display:flex; flex-direction:column; flex-shrink:0; overflow-y:auto; border-right:2px solid var(--stamp-gold); position:relative; transition:width 0.3s ease,border 0.3s ease,background 0.5s; }
+        #sidebar.collapsed { width:0; overflow:visible; border-right:none; }
+        #sidebar.collapsed .sidebar-section, #sidebar.collapsed .location-list { display:none; }
+        #sidebar-toggle { position:absolute; top:12px; right:-14px; z-index:1100; width:28px; height:28px; background:var(--whale-blue); border:2px solid var(--stamp-gold); border-radius:50%; color:var(--paper-white); font-size:0.8rem; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.22); transition:background 0.2s,transform 0.3s; }
+        #sidebar-toggle:hover { background:var(--brick-red); }
+        #sidebar.collapsed #sidebar-toggle { transform:scaleX(-1); }
+        .sidebar-section { padding:0.85rem 1rem; border-bottom:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
+        .sidebar-section h3 { font-size:0.67rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--stamp-gold); margin-bottom:0.6rem; }
 
-        /* 收合按鈕：貼在 sidebar 右邊緣 */
-        #sidebar-toggle {
-            position: absolute;
-            top: 12px; right: -14px; z-index: 1100;
-            width: 28px; height: 28px;
-            background: var(--whale-blue);
-            border: 2px solid var(--stamp-gold);
-            border-radius: 50%;
-            color: var(--paper-white);
-            font-size: 0.8rem;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.22);
-            transition: background 0.2s, transform 0.3s;
-        }
-        #sidebar-toggle:hover { background: var(--brick-red); }
-        /* 收合後箭頭反向，並且 sidebar 寬度為 0 所以按鈕會跑到左邊緣 */
-        #sidebar.collapsed #sidebar-toggle { transform: scaleX(-1); }
-
-        .sidebar-section {
-            padding: 0.85rem 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0;
-        }
-        .sidebar-section h3 {
-            font-size: 0.67rem; text-transform: uppercase;
-            letter-spacing: 0.14em; color: var(--stamp-gold); margin-bottom: 0.6rem;
-        }
+        /* Legend */
+        .legend { display:flex; flex-direction:column; gap:0.35rem; }
+        .legend-item { display:flex; align-items:center; gap:0.55rem; font-size:0.74rem; }
+        .legend-dot { width:11px; height:11px; border-radius:50%; flex-shrink:0; border:1.5px solid rgba(255,255,255,0.3); }
 
         /* Search */
-        .search-wrap { position: relative; }
-        .search-wrap input {
-            width: 100%; padding: 0.42rem 0.65rem 0.42rem 1.7rem;
-            background: rgba(255,255,255,0.09);
-            border: 1px solid rgba(255,255,255,0.16);
-            border-radius: 4px; color: var(--paper-white);
-            font-family: inherit; font-size: 0.78rem;
-            outline: none; transition: border-color 0.2s;
-        }
-        .search-wrap input::placeholder { color: rgba(255,255,255,0.33); }
-        .search-wrap input:focus { border-color: var(--stamp-gold); }
-        .search-icon {
-            position: absolute; left: 0.45rem; top: 50%;
-            transform: translateY(-50%); font-size: 0.7rem; opacity: 0.42;
-        }
+        .search-wrap { position:relative; }
+        .search-wrap input { width:100%; padding:0.42rem 0.65rem 0.42rem 1.7rem; background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.16); border-radius:4px; color:var(--paper-white); font-family:inherit; font-size:0.78rem; outline:none; transition:border-color 0.2s; }
+        .search-wrap input::placeholder { color:rgba(255,255,255,0.33); }
+        .search-wrap input:focus { border-color:var(--stamp-gold); }
+        .search-icon { position:absolute; left:0.45rem; top:50%; transform:translateY(-50%); font-size:0.7rem; opacity:0.42; }
 
         /* Filter */
-        .filter { display: flex; flex-direction: column; gap: 0.35rem; }
-        .filter-item {
-            display: flex; align-items: center; gap: 0.5rem;
-            cursor: pointer; font-size: 0.76rem;
-            padding: 0.28rem 0.4rem; border-radius: 4px; transition: background 0.15s;
-        }
-        .filter-item:hover { background: rgba(255,255,255,0.07); }
-        .filter-item input[type="checkbox"] { display: none; }
-        .filter-box {
-            width: 14px; height: 14px;
-            border: 2px solid var(--beige); border-radius: 3px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; transition: all 0.2s;
-        }
-        .filter-item input:checked + .filter-box { background: var(--deep-orange); border-color: var(--deep-orange); }
-        .filter-item input:checked + .filter-box::after { content: '✓'; color: white; font-size: 10px; font-weight: bold; }
-        .filter-status { width: 7px; height: 7px; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
+        .filter { display:flex; flex-direction:column; gap:0.35rem; }
+        .filter-item { display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.76rem; padding:0.28rem 0.4rem; border-radius:4px; transition:background 0.15s; }
+        .filter-item:hover { background:rgba(255,255,255,0.07); }
+        .filter-item input[type="checkbox"] { display:none; }
+        .filter-box { width:14px; height:14px; border:2px solid var(--beige); border-radius:3px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; }
+        .filter-item input:checked + .filter-box { background:var(--deep-orange); border-color:var(--deep-orange); }
+        .filter-item input:checked + .filter-box::after { content:'✓'; color:white; font-size:10px; font-weight:bold; }
+        .filter-status { width:7px; height:7px; border-radius:50%; margin-left:auto; flex-shrink:0; }
 
         /* Location list */
-        .location-list { display: flex; flex-direction: column; }
-        .loc-card {
-            display: flex; align-items: center; gap: 0.6rem;
-            padding: 0.6rem 1rem; cursor: pointer;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            transition: background 0.15s;
-        }
-        .loc-card:hover { background: rgba(255,255,255,0.06); }
-        .loc-card.selected { background: rgba(158,42,28,0.3); border-left: 3px solid var(--brick-red); }
-        .loc-thumb {
-            width: 38px; height: 38px; border-radius: 4px;
-            background: var(--seafoam);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.05rem; flex-shrink: 0; overflow: hidden;
-        }
-        .loc-thumb img { width: 100%; height: 100%; object-fit: cover; }
-        .loc-info { flex: 1; min-width: 0; }
-        .loc-name {
-            font-size: 0.75rem; font-weight: 600;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            color: var(--paper-white);
-        }
-        .loc-tag { font-size: 0.6rem; color: var(--beige); opacity: 0.75; margin-top: 2px; }
-        .loc-loading {
-            padding: 1.2rem; font-size: 0.73rem;
-            color: rgba(245,240,232,0.38); text-align: center; font-style: italic;
-        }
+        .location-list { display:flex; flex-direction:column; }
+        .loc-card { display:flex; align-items:center; gap:0.6rem; padding:0.6rem 1rem; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.05); transition:background 0.15s; }
+        .loc-card:hover { background:rgba(255,255,255,0.06); }
+        .loc-card.selected { background:rgba(158,42,28,0.3); border-left:3px solid var(--brick-red); }
+        .loc-thumb { width:38px; height:38px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:1.05rem; flex-shrink:0; }
+        .loc-info { flex:1; min-width:0; }
+        .loc-name { font-size:0.75rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--paper-white); }
+        .loc-tag { font-size:0.6rem; color:var(--beige); opacity:0.75; margin-top:2px; }
 
-        /* ── Map container ── */
-        .map-container { flex: 1; position: relative; overflow: hidden; min-height: 0; }
-        #map { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+        /* Loading */
+        .loading-spinner { padding:2rem 1rem; text-align:center; color:rgba(245,240,232,0.5); font-size:0.78rem; }
+        .spinner { display:inline-block; width:24px; height:24px; border:3px solid rgba(201,148,58,0.3); border-top-color:var(--stamp-gold); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:0.6rem; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .loc-loading { padding:1rem; font-size:0.7rem; color:rgba(245,240,232,0.4); text-align:center; font-style:italic; }
 
-        /* ── Info panel ── */
-        .info-panel {
-            position: absolute; top: 0; right: 0; bottom: 0;
-            width: 300px; background: var(--panel-bg);
-            display: flex; flex-direction: column;
-            border-left: 2px solid var(--stamp-gold);
-            overflow-y: auto;
-            transform: translateX(100%);
-            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.5s;
-            z-index: 900;
-        }
-        .info-panel.open { transform: translateX(0); }
-        .panel-header {
-            background: var(--brick-red); color: var(--paper-white);
-            padding: 0.9rem 1rem; position: relative; flex-shrink: 0;
-        }
-        .panel-tag {
-            display: inline-block; font-size: 0.58rem; text-transform: uppercase;
-            letter-spacing: 0.1em; background: var(--deep-orange); color: white;
-            padding: 2px 7px; border-radius: 2px; margin-bottom: 0.3rem;
-        }
-        .panel-header h2 {
-            font-family: 'Playfair Display', serif; font-size: 1rem;
-            line-height: 1.35; padding-right: 1.4rem;
-        }
-        .panel-close {
-            position: absolute; top: 0.7rem; right: 0.7rem;
-            background: rgba(255,255,255,0.15); border: none; color: white;
-            width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
-            font-size: 0.72rem; display: flex; align-items: center; justify-content: center;
-            transition: background 0.2s;
-        }
-        .panel-close:hover { background: rgba(255,255,255,0.3); }
-        .panel-img {
-            width: 100%; height: 148px; background: var(--seafoam);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.9rem; flex-shrink: 0; overflow: hidden;
-        }
-        .panel-img img { width: 100%; height: 100%; object-fit: cover; }
-        .panel-body { padding: 0.85rem 1rem; flex: 1; }
-        .panel-body p { font-size: 0.78rem; line-height: 1.8; color: var(--text); opacity: 0.85; }
-        .panel-addr { font-size: 0.7rem; color: var(--seafoam); margin-top: 0.55rem; }
-        .panel-links { padding: 0 1rem 1rem; display: flex; flex-direction: column; gap: 0.45rem; }
-        .panel-link-btn {
-            display: block; padding: 0.58rem; text-align: center;
-            font-family: 'Noto Serif TC', serif; font-size: 0.73rem;
-            letter-spacing: 0.1em; text-transform: uppercase;
-            border-radius: 3px; cursor: pointer; text-decoration: none;
-            transition: opacity 0.2s;
-        }
-        .panel-link-btn:hover { opacity: 0.8; }
-        .btn-primary { background: var(--brick-red); color: var(--paper-white); border: none; }
-        .btn-outline { background: transparent; color: var(--seafoam); border: 1px solid var(--seafoam); }
+        /* Map container */
+        .map-container { flex:1; position:relative; overflow:hidden; min-height:0; }
+        #map { position:absolute; top:0; left:0; right:0; bottom:0; }
+        #map-counter { position:absolute; top:10px; left:50%; transform:translateX(-50%); background:rgba(43,95,110,0.9); color:white; font-size:0.68rem; padding:4px 14px; border-radius:20px; z-index:800; pointer-events:none; font-family:'Noto Serif TC',serif; border:1px solid var(--stamp-gold); letter-spacing:0.05em; opacity:0; transition:opacity 0.4s; }
+        #map-counter.show { opacity:1; }
 
-        /* API status toast */
-        #api-status {
-            position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
-            background: rgba(43,95,110,0.92); color: var(--paper-white);
-            font-size: 0.67rem; padding: 4px 14px; border-radius: 20px;
-            pointer-events: none; opacity: 0; transition: opacity 0.4s;
-            z-index: 800; white-space: nowrap;
-        }
-        #api-status.show { opacity: 1; }
+        /* Info panel */
+        .info-panel { position:absolute; top:0; right:0; bottom:0; width:300px; background:var(--panel-bg); display:flex; flex-direction:column; border-left:2px solid var(--stamp-gold); overflow-y:auto; transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1),background 0.5s; z-index:900; }
+        .info-panel.open { transform:translateX(0); }
+        .panel-header { background:var(--brick-red); color:var(--paper-white); padding:0.9rem 1rem; position:relative; flex-shrink:0; }
+        .panel-tag { display:inline-block; font-size:0.58rem; text-transform:uppercase; letter-spacing:0.1em; background:var(--deep-orange); color:white; padding:2px 7px; border-radius:2px; margin-bottom:0.3rem; }
+        .panel-header h2 { font-family:'Playfair Display',serif; font-size:1rem; line-height:1.35; padding-right:1.4rem; }
+        .panel-close { position:absolute; top:0.7rem; right:0.7rem; background:rgba(255,255,255,0.15); border:none; color:white; width:24px; height:24px; border-radius:50%; cursor:pointer; font-size:0.72rem; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+        .panel-close:hover { background:rgba(255,255,255,0.3); }
+        .panel-img { width:100%; height:148px; background:var(--seafoam); display:flex; align-items:center; justify-content:center; font-size:2.9rem; flex-shrink:0; overflow:hidden; }
+        .panel-img img { width:100%; height:100%; object-fit:cover; }
+        .panel-body { padding:0.85rem 1rem; flex:1; }
+        .panel-body p { font-size:0.78rem; line-height:1.8; color:var(--text); opacity:0.85; }
+        .panel-addr { font-size:0.7rem; color:var(--seafoam); margin-top:0.55rem; }
+        .panel-links { padding:0 1rem 1rem; display:flex; flex-direction:column; gap:0.45rem; }
+        .panel-link-btn { display:block; padding:0.58rem; text-align:center; font-family:'Noto Serif TC',serif; font-size:0.73rem; letter-spacing:0.1em; text-transform:uppercase; border-radius:3px; cursor:pointer; text-decoration:none; transition:opacity 0.2s; }
+        .panel-link-btn:hover { opacity:0.8; }
+        .btn-primary { background:var(--brick-red); color:var(--paper-white); border:none; }
+        .btn-outline { background:transparent; color:var(--seafoam); border:1px solid var(--seafoam); }
 
-        /* ══════════════════════════════
-           STAMP PAGE
-        ══════════════════════════════ */
-        .stamp-page {
-            flex: 1; overflow-y: auto; background: var(--bg);
-            padding: 1.5rem 2rem; display: none; transition: background 0.5s;
-        }
-        .stamp-page.active { display: block; }
+        /* API status */
+        #api-status { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); background:rgba(43,95,110,0.92); color:var(--paper-white); font-size:0.67rem; padding:4px 14px; border-radius:20px; pointer-events:none; opacity:0; transition:opacity 0.4s; z-index:800; white-space:nowrap; }
+        #api-status.show { opacity:1; }
 
-        /* ══════════════════════════════
-           PHOTO PAGE
-        ══════════════════════════════ */
-        .photo-page {
-            flex: 1; overflow-y: auto; background: var(--bg);
-            padding: 1.5rem 2rem; display: none; transition: background 0.5s;
-        }
-        .photo-page.active { display: block; }
-
-        /* shared page title */
-        .page-title {
-            font-family: 'Playfair Display', serif; font-size: 1.35rem;
-            color: var(--brick-red); text-align: center; margin-bottom: 0.25rem;
-        }
-        .page-sub {
-            font-size: 0.75rem; text-align: center; color: var(--seafoam);
-            font-style: italic; margin-bottom: 1.5rem;
-        }
+        /* STAMP PAGE */
+        .stamp-page { flex:1; overflow-y:auto; background:var(--bg); padding:1.5rem 2rem; display:none; transition:background 0.5s; }
+        .stamp-page.active { display:block; }
+        .photo-page { flex:1; overflow-y:auto; background:var(--bg); padding:1.5rem 2rem; display:none; transition:background 0.5s; }
+        .photo-page.active { display:block; }
+        .page-title { font-family:'Playfair Display',serif; font-size:1.35rem; color:var(--brick-red); text-align:center; margin-bottom:0.25rem; }
+        .page-sub { font-size:0.75rem; text-align:center; color:var(--seafoam); font-style:italic; margin-bottom:1.5rem; }
 
         /* Stamp grid */
-        .stamp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px,1fr)); gap: 1.1rem; }
-        .stamp-item { display: flex; flex-direction: column; align-items: center; gap: 0.42rem; text-align: center; }
-        .stamp-circle {
-            width: 94px; height: 94px; border-radius: 50%;
-            border: 4px solid var(--stamp-gold); background: var(--paper-white);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.85rem; position: relative; overflow: hidden;
-            box-shadow: 0 2px 10px var(--stamp-shadow); transition: transform 0.2s;
-            cursor: default;
-        }
-        .stamp-circle:hover { transform: scale(1.06); }
-        .stamp-circle.locked { filter: grayscale(1); opacity: 0.4; }
-        .stamp-circle.locked::after {
-            content: '🔒'; position: absolute; inset: 0;
-            background: rgba(0,0,0,0.35);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; border-radius: 50%;
-        }
-        /* 解鎖時的動畫 */
-        @keyframes stampIn {
-            0%   { transform: scale(0.3) rotate(-20deg); opacity: 0; }
-            70%  { transform: scale(1.15) rotate(3deg); }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-        .stamp-circle.just-unlocked { animation: stampIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-        .stamp-ribbon {
-            position: absolute; bottom: 5px; left: 0; right: 0;
-            background: var(--brick-red); color: white;
-            font-size: 0.4rem; letter-spacing: 0.1em; text-transform: uppercase;
-            padding: 2px 0; text-align: center;
-        }
-        .stamp-name { font-size: 0.67rem; font-weight: 600; color: var(--text); }
-        .stamp-status { font-size: 0.59rem; color: var(--seafoam); }
-        .stamp-status.unlocked { color: var(--deep-orange); }
+        .stamp-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(118px,1fr)); gap:1.1rem; }
+        .stamp-item { display:flex; flex-direction:column; align-items:center; gap:0.42rem; text-align:center; }
+        .stamp-circle { width:94px; height:94px; border-radius:50%; border:4px solid var(--stamp-gold); background:var(--paper-white); display:flex; align-items:center; justify-content:center; font-size:1.85rem; position:relative; overflow:hidden; box-shadow:0 2px 10px var(--stamp-shadow); transition:transform 0.2s; cursor:default; }
+        .stamp-circle:hover { transform:scale(1.06); }
+        .stamp-circle.locked { filter:grayscale(1); opacity:0.4; }
+        .stamp-circle.locked::after { content:'🔒'; position:absolute; inset:0; background:rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; font-size:1.4rem; border-radius:50%; }
+        @keyframes stampIn { 0% { transform:scale(0.3) rotate(-20deg); opacity:0; } 70% { transform:scale(1.15) rotate(3deg); } 100% { transform:scale(1) rotate(0deg); opacity:1; } }
+        .stamp-circle.just-unlocked { animation:stampIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .stamp-ribbon { position:absolute; bottom:5px; left:0; right:0; background:var(--brick-red); color:white; font-size:0.4rem; letter-spacing:0.1em; text-transform:uppercase; padding:2px 0; text-align:center; }
+        .stamp-name { font-size:0.67rem; font-weight:600; color:var(--text); }
+        .stamp-status { font-size:0.59rem; color:var(--seafoam); }
+        .stamp-status.unlocked { color:var(--deep-orange); }
 
-        /* Upload zone */
-        .upload-zone {
-            border: 2px dashed var(--beige); border-radius: 8px;
-            padding: 2rem; text-align: center; cursor: pointer;
-            margin-bottom: 1.5rem; transition: border-color 0.2s, background 0.2s;
-        }
-        .upload-zone:hover { border-color: var(--stamp-gold); background: rgba(201,148,58,0.04); }
-        .upload-icon { font-size: 2.2rem; margin-bottom: 0.5rem; }
-        .upload-zone p { font-size: 0.79rem; opacity: 0.7; line-height: 1.65; }
-        .geo-badge {
-            display: inline-flex; align-items: center; gap: 0.35rem;
-            background: var(--seafoam); color: white; font-size: 0.63rem;
-            padding: 2px 9px; border-radius: 20px; margin-top: 0.5rem;
-        }
+        /* Upload */
+        .upload-zone { border:2px dashed var(--beige); border-radius:8px; padding:2rem; text-align:center; cursor:pointer; margin-bottom:1.5rem; transition:border-color 0.2s,background 0.2s; }
+        .upload-zone:hover { border-color:var(--stamp-gold); background:rgba(201,148,58,0.04); }
+        .upload-icon { font-size:2.2rem; margin-bottom:0.5rem; }
+        .upload-zone p { font-size:0.79rem; opacity:0.7; line-height:1.65; }
+        .geo-badge { display:inline-flex; align-items:center; gap:0.35rem; background:var(--seafoam); color:white; font-size:0.63rem; padding:2px 9px; border-radius:20px; margin-top:0.5rem; }
+        #upload-toast { margin:0 auto 1.2rem; max-width:500px; padding:0.7rem 1rem; border-radius:6px; font-size:0.78rem; text-align:center; display:none; line-height:1.5; }
+        #upload-toast.success { background:#e8f5e4; color:#2e7d32; border:1px solid #a5d6a7; display:block; }
+        #upload-toast.error   { background:#fdecea; color:#c62828; border:1px solid #ef9a9a; display:block; }
+        #upload-toast.info    { background:#e3f2fd; color:#1565c0; border:1px solid #90caf9; display:block; }
 
-        /* Upload feedback toast */
-        #upload-toast {
-            margin: 0 auto 1.2rem;
-            max-width: 500px;
-            padding: 0.7rem 1rem;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            text-align: center;
-            display: none;
-            line-height: 1.5;
-        }
-        #upload-toast.success { background: #e8f5e4; color: #2e7d32; border: 1px solid #a5d6a7; display: block; }
-        #upload-toast.error   { background: #fdecea; color: #c62828; border: 1px solid #ef9a9a; display: block; }
-        #upload-toast.info    { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; display: block; }
-
-        /* Photo cards grid */
-        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 0.9rem; }
-        .photo-card {
-            border-radius: 6px; overflow: hidden;
-            border: 1px solid var(--beige);
-            box-shadow: 0 2px 8px var(--stamp-shadow);
-            transition: transform 0.2s; cursor: pointer;
-        }
-        .photo-card:hover { transform: translateY(-3px); }
-        .photo-card-img {
-            width: 100%; height: 120px; overflow: hidden;
-            background: var(--seafoam);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .photo-card-img img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-info {
-            padding: 0.45rem 0.65rem; background: var(--panel-bg);
-        }
-        .photo-loc { font-size: 0.7rem; font-weight: 600; color: var(--text); }
-        .photo-date { font-size: 0.6rem; color: var(--seafoam); margin-top: 1px; }
+        .photo-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:0.9rem; }
+        .photo-card { border-radius:6px; overflow:hidden; border:1px solid var(--beige); box-shadow:0 2px 8px var(--stamp-shadow); transition:transform 0.2s; cursor:pointer; }
+        .photo-card:hover { transform:translateY(-3px); }
+        .photo-card-img { width:100%; height:120px; overflow:hidden; background:var(--seafoam); display:flex; align-items:center; justify-content:center; }
+        .photo-card-img img { width:100%; height:100%; object-fit:cover; }
+        .photo-info { padding:0.45rem 0.65rem; background:var(--panel-bg); }
+        .photo-loc { font-size:0.7rem; font-weight:600; color:var(--text); }
+        .photo-date { font-size:0.6rem; color:var(--seafoam); margin-top:1px; }
 
         /* Lightbox */
-        #lightbox {
-            position: fixed; inset: 0; z-index: 9000;
-            background: rgba(0,0,0,0.88);
-            display: none; align-items: center; justify-content: center;
-            flex-direction: column; gap: 0.8rem;
-        }
-        #lightbox.open { display: flex; }
-        #lightbox img { max-width: 90vw; max-height: 80vh; border-radius: 4px; }
-        #lightbox-info { color: white; font-size: 0.8rem; text-align: center; opacity: 0.8; }
-        #lightbox-close {
-            position: absolute; top: 1rem; right: 1.2rem;
-            background: rgba(255,255,255,0.15); border: none; color: white;
-            width: 32px; height: 32px; border-radius: 50%; font-size: 1rem;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
+        #lightbox { position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.88); display:none; align-items:center; justify-content:center; flex-direction:column; gap:0.8rem; }
+        #lightbox.open { display:flex; }
+        #lightbox img { max-width:90vw; max-height:80vh; border-radius:4px; }
+        #lightbox-info { color:white; font-size:0.8rem; text-align:center; opacity:0.8; }
+        #lightbox-close { position:absolute; top:1rem; right:1.2rem; background:rgba(255,255,255,0.15); border:none; color:white; width:32px; height:32px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 
         /* Leaflet popup */
-        .leaflet-popup-content-wrapper {
-            background: var(--paper-white); border-top: 3px solid var(--brick-red);
-            border-radius: 4px; font-family: 'Noto Serif TC', serif;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-        .leaflet-popup-content { margin: 9px 12px; }
+        .leaflet-popup-content-wrapper { background:var(--paper-white); border-top:3px solid var(--brick-red); border-radius:4px; font-family:'Noto Serif TC',serif; box-shadow:0 4px 20px rgba(0,0,0,0.2); }
+        .leaflet-popup-content { margin:9px 12px; }
         .popup-title { font-family:'Playfair Display',serif; font-size:0.86rem; color:var(--brick-red); font-weight:700; }
         .popup-sub { font-size:0.66rem; color:var(--seafoam); margin-top:2px; }
+        .popup-addr { font-size:0.62rem; color:#888; margin-top:3px; }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--beige); border-radius: 2px; }
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:var(--beige); border-radius:2px; }
     </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════
-     START / LOGIN PAGE
-══════════════════════════════ -->
+<!-- START PAGE -->
 <div id="start-page">
     <div class="start-card">
         <span class="start-stamp">🗺️</span>
@@ -554,20 +247,18 @@
         <p class="subtitle">Beneficial &amp; Sustainable Tourism</p>
         <div class="dot-divider"></div>
         <p class="start-label">你的名字 / Your Name</p>
-        <input class="start-input" id="username-input" type="text"
-               placeholder="輸入你的名字開始旅程…" maxlength="20">
+        <input class="start-input" id="username-input" type="text" placeholder="輸入你的名字開始旅程…" maxlength="20">
         <button class="start-btn" onclick="enterApp()">開始探索 · Begin Journey</button>
         <p class="start-note">名字只儲存在你的瀏覽器，不會上傳任何伺服器。</p>
     </div>
 </div>
-
 
 <!-- HEADER -->
 <header>
     <div class="header-left">
         <div>
             <h1>Taiwan Cultural Trails</h1>
-            <div class="header-sub">Explore historical sites &amp; local artisans across Taiwan</div>
+            <div class="header-sub">Explore cultural sites &amp; tourism spots across Taiwan</div>
         </div>
     </div>
     <div class="header-right">
@@ -580,7 +271,6 @@
     </div>
 </header>
 
-
 <!-- TOOL BAR -->
 <div class="tool-bar">
     <button class="tool-btn active" onclick="switchTab('map',this)">🗺 Explore Map</button>
@@ -588,72 +278,46 @@
     <button class="tool-btn"        onclick="switchTab('memory',this)">📷 Memory Photos</button>
 </div>
 
-
 <!-- MAP PAGE -->
 <div class="map-layout" id="mapLayout">
 
-    <!-- Sidebar（預設 collapsed，登入後展開） -->
     <div id="sidebar" class="collapsed">
-
-        <!-- ★ 收合按鈕：在 sidebar 的右上邊緣 -->
         <button id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">‹</button>
 
-        <!-- Search -->
+        <div class="sidebar-section">
+            <h3>🎨 圖例 Legend</h3>
+            <div class="legend" id="legendList"></div>
+        </div>
+
         <div class="sidebar-section">
             <h3>⌕ Search</h3>
             <div class="search-wrap">
                 <span class="search-icon">⌕</span>
-                <input type="text" id="searchInput" placeholder="Search location, brand...">
+                <input type="text" id="searchInput" placeholder="搜尋地點名稱或地址…">
             </div>
         </div>
 
-        <!-- Filter -->
         <div class="sidebar-section">
             <h3>Filter by Category</h3>
-            <div class="filter" id="Filter">
-                <label class="filter-item">
-                    <input type="checkbox" value="歷史建築" checked onchange="applyFilter()">
-                    <div class="filter-box"></div>
-                    Historical Building
-                    <span class="filter-status" style="background:#c96b1a"></span>
-                </label>
-                <label class="filter-item">
-                    <input type="checkbox" value="文創市集" checked onchange="applyFilter()">
-                    <div class="filter-box"></div>
-                    Creative Market
-                    <span class="filter-status" style="background:#5a8f8f"></span>
-                </label>
-                <label class="filter-item">
-                    <input type="checkbox" value="工藝商店" onchange="applyFilter()">
-                    <div class="filter-box"></div>
-                    Local Craft Shop
-                    <span class="filter-status" style="background:#b87355"></span>
-                </label>
-                <label class="filter-item">
-                    <input type="checkbox" value="文化中心" onchange="applyFilter()">
-                    <div class="filter-box"></div>
-                    Cultural Center
-                    <span class="filter-status" style="background:#2b5f6e"></span>
-                </label>
-            </div>
+            <div class="filter" id="filterContainer"></div>
         </div>
 
-        <!-- Location List -->
         <div class="sidebar-section" style="padding-bottom:0.4rem;border-bottom:none;">
-            <h3>Locations</h3>
+            <h3>Locations <span id="loc-count" style="opacity:0.5;font-weight:normal"></span></h3>
         </div>
         <div class="location-list" id="locationList">
-            <div class="loc-loading">Loading cultural sites...</div>
+            <div class="loading-spinner">
+                <div class="spinner"></div><br>載入觀光資料中…
+            </div>
         </div>
     </div>
 
-    <!-- Map -->
     <div class="map-container">
         <div id="map"></div>
+        <div id="map-counter"></div>
         <div id="api-status"></div>
     </div>
 
-    <!-- Info Panel -->
     <div class="info-panel" id="infoPanel">
         <div class="panel-header">
             <div class="panel-tag" id="panelTag">Category</div>
@@ -667,9 +331,7 @@
         </div>
         <div class="panel-links" id="panelLinks"></div>
     </div>
-
 </div>
-
 
 <!-- STAMP PAGE -->
 <div class="stamp-page" id="stampPage">
@@ -678,115 +340,157 @@
     <div class="stamp-grid" id="stampGrid"></div>
 </div>
 
-
 <!-- MEMORY PHOTO PAGE -->
 <div class="photo-page" id="photoPage">
     <div class="page-title">📷 Memory Photos</div>
     <p class="page-sub">Upload a photo taken at a cultural site — GPS in the photo will be verified automatically.</p>
-
-    <!--
-        upload-zone 點擊 → 觸發隱藏的 file input
-        accept="image/*" 限制只能選圖片
-        onchange 偵測到選了檔案就呼叫 handlePhotoUpload()
-    -->
     <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
         <div class="upload-icon">📤</div>
         <p>Click to upload your memory photo<br>
            <small>GPS location will be read from photo EXIF data</small></p>
         <div class="geo-badge">📍 Geolocation Active</div>
     </div>
-    <input type="file" id="fileInput" accept="image/*" style="display:none"
-           onchange="handlePhotoUpload(this)">
-
-    <!-- 上傳結果提示 -->
+    <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
     <div id="upload-toast"></div>
-
-    <!-- 已上傳的照片 -->
     <div class="photo-grid" id="photoGrid"></div>
 </div>
 
-<!-- Lightbox（點照片放大） -->
+<!-- Lightbox -->
 <div id="lightbox" onclick="closeLightbox()">
     <button id="lightbox-close" onclick="closeLightbox()">✕</button>
     <img id="lightbox-img" src="" alt="">
     <div id="lightbox-info"></div>
 </div>
 
-
 <script>
-/* ════════════════════════════════════════════════════
-   SEED DATA
-════════════════════════════════════════════════════ */
-const SEED_LOCATIONS = [
+/* ══════════════════════════════════════════════════
+   ★★★ TDX API 金鑰 ★★★
+   審核通過後，登入 https://tdx.transportdata.tw/
+   → 會員中心 → API 金鑰 → 複製貼到這裡
+══════════════════════════════════════════════════ */
+const TDX_CLIENT_ID     = '';   // ← 貼上你的 Client ID
+const TDX_CLIENT_SECRET = '';   // ← 貼上你的 Client Secret
+
+/* ══════════════════════════════════════════════════
+   資料來源設定：4 種類別，各有不同顏色與圖示
+   $top=300 可以改大（最多 ~1000），數字越大越慢
+══════════════════════════════════════════════════ */
+const TDX_SOURCES = [
     {
-        id:'huashan', name:'華山1914文創園區', nameEn:'Huashan 1914 Creative Park',
-        category:'文創市集', icon:'🏭',
-        lat:25.0441, lng:121.5298, addr:'台北市中正區八德路一段1號',
-        desc:'前身為台灣總督府專賣局台北酒廠，1999年轉型為文化創意產業園區。現為台灣最重要的文創展演場地之一，聚集設計師品牌、藝廊、表演場館與特色餐廳。',
-        officialUrl:'https://www.huashan1914.com/',
-        mapUrl:'https://maps.app.goo.gl/5FLZM1kgFBzBomRBA'
+        id: 'scenic', name: '觀光景點', nameEn: 'Scenic Spot',
+        endpoint:  'https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot?$top=300&$format=JSON',
+        nameField: 'ScenicSpotName',
+        icon: '🏛️', color: '#c96b1a',   // 橘色
     },
     {
-        id:'jiufen', name:'九份老街', nameEn:'Jiufen Old Street',
-        category:'歷史建築', icon:'🏘️',
-        lat:25.1094, lng:121.8441, addr:'新北市瑞芳區九份',
-        desc:'昔日淘金小鎮，紅燈籠、茶樓與蜿蜒石階構成台灣最具代表性的山城意象。傍晚的燈火映照著基隆山與海灣，是許多遊客心目中台灣最美的夜景之一。',
-        officialUrl:'https://www.travel.taipei/zh-tw/attraction/details/35',
-        mapUrl:'https://goo.gl/maps/jiufen'
+        id: 'restaurant', name: '觀光餐廳', nameEn: 'Restaurant',
+        endpoint:  'https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant?$top=200&$format=JSON',
+        nameField: 'RestaurantName',
+        icon: '🍜', color: '#2b8c6e',   // 翠綠色
     },
     {
-        id:'taroko', name:'太魯閣國家公園', nameEn:'Taroko National Park',
-        category:'文化中心', icon:'🌿',
-        lat:24.1573, lng:121.6210, addr:'花蓮縣秀林鄉',
-        desc:'大理石峽谷地形與立霧溪共同塑造的壯闊景觀，也是太魯閣族（Truku）世代居住的土地。園區內設有原住民文化展示，介紹編織、狩獵與祭典傳承。',
-        officialUrl:'https://www.taroko.gov.tw/',
-        mapUrl:'https://goo.gl/maps/taroko'
+        id: 'hotel', name: '觀光旅館', nameEn: 'Hotel',
+        endpoint:  'https://tdx.transportdata.tw/api/basic/v2/Tourism/Hotel?$top=200&$format=JSON',
+        nameField: 'HotelName',
+        icon: '🏨', color: '#7c4d99',   // 紫色
     },
     {
-        id:'songshan', name:'松山文創園區', nameEn:'Songshan Cultural Park',
-        category:'文創市集', icon:'🎨',
-        lat:25.0427, lng:121.5600, addr:'台北市信義區光復南路133號',
-        desc:'前身為日治時期松山菸草工廠，現為台灣最大的文創設計基地。每年舉辦台灣設計展、文博會等大型文化活動，保留完整的歷史廠房建築。',
-        officialUrl:'https://www.songshanculturalpark.org/',
-        mapUrl:'https://goo.gl/maps/songshan'
-    },
-    {
-        id:'anping', name:'台南安平古堡', nameEn:'Anping Fort',
-        category:'歷史建築', icon:'🏯',
-        lat:22.9966, lng:120.1610, addr:'台南市安平區國勝路82號',
-        desc:'1624年荷蘭東印度公司興建，是台灣最古老的城堡遺址。古堡旁的老街保存著傳統劍獅工藝、蜜餞文化與百年老店，是台南文史探索的必訪地點。',
-        officialUrl:'https://culture.tainan.gov.tw/',
-        mapUrl:'https://goo.gl/maps/anping'
-    },
-    {
-        id:'shenkeng', name:'深坑老街', nameEn:'Shenkeng Old Street',
-        category:'工藝商店', icon:'🧵',
-        lat:25.0021, lng:121.6183, addr:'新北市深坑區北深路三段',
-        desc:'以臭豆腐聞名，同時也是台北近郊保存完整的清代閩南式街屋聚落。在地工藝師在此製作竹編、豆腐文創商品，呈現農村生活與在地飲食文化。',
-        officialUrl:'https://www.shenkeng.ntpc.gov.tw/',
-        mapUrl:'https://goo.gl/maps/shenkeng'
+        id: 'activity', name: '文創活動', nameEn: 'Activity',
+        endpoint:  'https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity?$top=150&$format=JSON',
+        nameField: 'ActivityName',
+        icon: '🎨', color: '#9e2a1c',   // 磚紅色
     },
 ];
 
-const CATEGORY_COLOR = {
-    '歷史建築':'#c96b1a','文創市集':'#5a8f8f','工藝商店':'#b87355','文化中心':'#2b5f6e',
-};
+/* ══════════════════════════════════════════════════
+   SEED DATA：金鑰未填入 or API 失敗時的備用展示資料
+   （修正了所有 Google Maps 連結，全部使用有效格式）
+══════════════════════════════════════════════════ */
+const SEED_LOCATIONS = [
+    {
+        id:'huashan', name:'華山1914文創園區', category:'文創活動', icon:'🎨', color:'#9e2a1c',
+        lat:25.0441, lng:121.5298, addr:'台北市中正區八德路一段1號',
+        desc:'前身為台灣總督府專賣局台北酒廠，1999年轉型為文化創意產業園區。現為台灣最重要的文創展演場地之一，聚集設計師品牌、藝廊、表演場館與特色餐廳。',
+        officialUrl:'https://www.huashan1914.com/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=華山1914文創園區+台北市中正區八德路一段1號'
+    },
+    {
+        id:'jiufen', name:'九份老街', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+        lat:25.1094, lng:121.8441, addr:'新北市瑞芳區九份',
+        desc:'昔日淘金小鎮，紅燈籠、茶樓與蜿蜒石階構成台灣最具代表性的山城意象。傍晚的燈火映照著基隆山與海灣，是許多遊客心目中台灣最美的夜景之一。',
+        officialUrl:'https://www.travel.taipei/zh-tw/attraction/details/35',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=九份老街+新北市瑞芳區'
+    },
+    {
+        id:'taroko', name:'太魯閣國家公園', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+        lat:24.1573, lng:121.6210, addr:'花蓮縣秀林鄉',
+        desc:'大理石峽谷地形與立霧溪共同塑造的壯闊景觀，也是太魯閣族（Truku）世代居住的土地。園區內設有原住民文化展示，介紹編織、狩獵與祭典傳承。',
+        officialUrl:'https://www.taroko.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=太魯閣國家公園+花蓮縣秀林鄉'
+    },
+    {
+        id:'songshan', name:'松山文創園區', category:'文創活動', icon:'🎨', color:'#9e2a1c',
+        lat:25.0427, lng:121.5600, addr:'台北市信義區光復南路133號',
+        desc:'前身為日治時期松山菸草工廠，現為台灣最大的文創設計基地。每年舉辦台灣設計展、文博會等大型文化活動，保留完整的歷史廠房建築。',
+        officialUrl:'https://www.songshanculturalpark.org/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=松山文創園區+台北市信義區光復南路133號'
+    },
+    {
+        id:'anping', name:'台南安平古堡', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+        lat:22.9966, lng:120.1610, addr:'台南市安平區國勝路82號',
+        desc:'1624年荷蘭東印度公司興建，是台灣最古老的城堡遺址。古堡旁的老街保存著傳統劍獅工藝、蜜餞文化與百年老店，是台南文史探索的必訪地點。',
+        officialUrl:'https://culture.tainan.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=安平古堡+台南市安平區國勝路82號'
+    },
+    {
+        id:'shenkeng', name:'深坑老街', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+        lat:25.0021, lng:121.6183, addr:'新北市深坑區北深路三段',
+        desc:'以臭豆腐聞名，同時也是台北近郊保存完整的清代閩南式街屋聚落。在地工藝師在此製作竹編、豆腐文創商品，呈現農村生活與在地飲食文化。',
+        officialUrl:'https://www.shenkeng.ntpc.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=深坑老街+新北市深坑區北深路三段'
+    },
+    {
+        id:'lukang', name:'鹿港老街', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+        lat:24.0520, lng:120.4365, addr:'彰化縣鹿港鎮中山路',
+        desc:'保存最完整的清代街道格局，擁有天后宮、龍山寺等古廟，是台灣民俗工藝的重要聚集地。',
+        officialUrl:'https://lukang.cca.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=鹿港老街+彰化縣鹿港鎮中山路'
+    },
+    {
+        id:'hayashi', name:'台南林百貨', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+        lat:22.9969, lng:120.2016, addr:'台南市中西區忠義路二段63號',
+        desc:'1932年開幕的昭和時代百貨公司，修復後成為文創空間，頂樓保留日治時期防空砲台。',
+        officialUrl:'https://hayashi.com.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=林百貨+台南市中西區忠義路二段63號'
+    },
+    {
+        id:'shilin', name:'士林夜市', category:'觀光餐廳', icon:'🍜', color:'#2b8c6e',
+        lat:25.0883, lng:121.5237, addr:'台北市士林區基河路',
+        desc:'台灣規模最大的觀光夜市，以蚵仔煎、大餅包小餅、豪大大雞排等小吃聞名，是外國旅客體驗台灣夜市文化的首選。',
+        officialUrl:'https://www.travel.taipei/zh-tw/attraction/details/1',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=士林夜市+台北市士林區基河路'
+    },
+    {
+        id:'suao', name:'蘇澳冷泉', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+        lat:24.5965, lng:121.8609, addr:'宜蘭縣蘇澳鎮冷泉路',
+        desc:'全球少見的碳酸冷泉，水溫常年維持在22°C，泡湯後皮膚光滑細緻，是宜蘭最具特色的自然景觀。',
+        officialUrl:'https://www.tourism.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=蘇澳冷泉+宜蘭縣蘇澳鎮冷泉路'
+    },
+];
 
-/* ── 已解鎖的 stamp：用 Set 存地點 id，同步到 localStorage ── */
-const unlockedStamps = new Set(
-    JSON.parse(localStorage.getItem('tct_stamps') || '[]')
-);
-
-function saveStamps() {
-    localStorage.setItem('tct_stamps', JSON.stringify([...unlockedStamps]));
-}
+/* ══════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════ */
+const unlockedStamps = new Set(JSON.parse(localStorage.getItem('tct_stamps') || '[]'));
+function saveStamps() { localStorage.setItem('tct_stamps', JSON.stringify([...unlockedStamps])); }
 
 let allLocations = [];
 let markers = {};
 
-/* ════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════
    LOGIN
-════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════ */
 function enterApp() {
     const name = document.getElementById('username-input').value.trim() || '旅人';
     localStorage.setItem('tct_username', name);
@@ -796,26 +500,20 @@ function enterApp() {
     setTimeout(() => sp.style.display = 'none', 650);
     setTimeout(() => document.getElementById('sidebar').classList.remove('collapsed'), 400);
 }
-document.getElementById('username-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') enterApp();
-});
+document.getElementById('username-input').addEventListener('keydown', e => { if (e.key === 'Enter') enterApp(); });
 window.addEventListener('load', () => {
     const saved = localStorage.getItem('tct_username');
     if (saved) document.getElementById('username-input').value = saved;
 });
 
-/* ════════════════════════════════════════════════════
-   SIDEBAR TOGGLE
-════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   SIDEBAR / TAB / THEME
+══════════════════════════════════════════════════ */
 function toggleSidebar() {
-    const sb = document.getElementById('sidebar');
-    sb.classList.toggle('collapsed');
+    document.getElementById('sidebar').classList.toggle('collapsed');
     setTimeout(() => map.invalidateSize(), 320);
 }
 
-/* ════════════════════════════════════════════════════
-   TAB SWITCHING
-════════════════════════════════════════════════════ */
 function switchTab(tab, btn) {
     document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
@@ -823,112 +521,190 @@ function switchTab(tab, btn) {
     document.getElementById('stampPage').classList.toggle('active', tab === 'stamps');
     document.getElementById('photoPage').classList.toggle('active', tab === 'memory');
     if (tab === 'map') setTimeout(() => map.invalidateSize(), 50);
-    if (tab === 'stamps') renderStampGrid();  // 重新渲染以顯示最新解鎖狀態
+    if (tab === 'stamps') renderStampGrid();
 }
 
-/* ════════════════════════════════════════════════════
-   THEME
-════════════════════════════════════════════════════ */
 document.getElementById('themeToggle').addEventListener('click', () => {
     document.body.classList.toggle('night');
 });
 
-/* ════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════
    LEAFLET MAP
-   使用 CartoDB Voyager（米白暖色調，配合整體風格）
-════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════ */
 const map = L.map('map', { zoomControl: true }).setView([23.7, 121.0], 7);
 
-/*
-    CartoDB Voyager：暖米白底色的地圖，路名清晰，比 OpenStreetMap 更精緻
-    免費使用（需要標示 attribution）
-*/
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 19
+    subdomains: 'abcd', maxZoom: 19
 }).addTo(map);
 
 setTimeout(() => map.invalidateSize(), 150);
 
 function makeIcon(emoji, color) {
-    const bg = color || '#9e2a1c';
     return L.divIcon({
         className: '',
-        html: `<div style="background:${bg};color:white;width:32px;height:32px;
+        html: `<div style="background:${color};color:white;width:30px;height:30px;
             border-radius:50% 50% 50% 0;transform:rotate(-45deg);
             display:flex;align-items:center;justify-content:center;
-            border:2px solid #c9943a;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
-            <span style="transform:rotate(45deg);font-size:13px">${emoji}</span>
+            border:2px solid rgba(255,255,255,0.6);
+            box-shadow:0 2px 8px rgba(0,0,0,0.35);">
+            <span style="transform:rotate(45deg);font-size:12px">${emoji}</span>
         </div>`,
-        iconSize:[32,32], iconAnchor:[16,32], popupAnchor:[0,-34]
+        iconSize:[30,30], iconAnchor:[15,30], popupAnchor:[0,-32]
     });
 }
 
-/* ════════════════════════════════════════════════════
-   API
-════════════════════════════════════════════════════ */
-function showStatus(msg) {
+/* ══════════════════════════════════════════════════
+   STATUS TOAST
+══════════════════════════════════════════════════ */
+function showStatus(msg, duration=3500) {
     const el = document.getElementById('api-status');
     el.textContent = msg;
     el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 3500);
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), duration);
 }
 
+/* ══════════════════════════════════════════════════
+   TDX：取得 Access Token（OAuth2 Client Credentials）
+══════════════════════════════════════════════════ */
+async function getTDXToken() {
+    const res = await fetch(
+        'https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token',
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `grant_type=client_credentials&client_id=${TDX_CLIENT_ID}&client_secret=${TDX_CLIENT_SECRET}`
+        }
+    );
+    if (!res.ok) throw new Error('Token 取得失敗: HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.access_token) throw new Error('回應中沒有 access_token');
+    return data.access_token;
+}
+
+/* ══════════════════════════════════════════════════
+   TDX：抓全台觀光資料（4種類別並行）
+══════════════════════════════════════════════════ */
 async function fetchCultureData() {
-    showStatus('⏳ Loading from 文化部 Open Data…');
+    // 金鑰未填 → 直接用 seed data，不嘗試連線
+    if (!TDX_CLIENT_ID || !TDX_CLIENT_SECRET) {
+        showStatus('ℹ️ TDX 金鑰未填入，目前顯示展示資料（10筆）');
+        return SEED_LOCATIONS;
+    }
+
+    showStatus('⏳ 連線 TDX 觀光 API，資料量較大請稍候…', 20000);
+
     try {
-        const url = 'https://cloud.culture.tw/frontsite/trans/SearchShowAction.do'
-                  + '?method=doFindTypeJ&category=C&countyId=&actUnit=&fromDate=&toDate=&keyword=';
-        const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        if (!Array.isArray(data) || data.length === 0) throw new Error('empty');
+        const token = await getTDXToken();
+        const headers = { 'Authorization': `Bearer ${token}` };
 
-        const catMap  = { A:'文創市集', B:'歷史建築', C:'文化中心', D:'工藝商店' };
-        const iconMap = { '歷史建築':'🏯','文創市集':'🎨','工藝商店':'🧵','文化中心':'🏛️' };
+        // Promise.allSettled：就算某一類失敗，其他類別仍然照常顯示
+        const results = await Promise.allSettled(
+            TDX_SOURCES.map(src =>
+                fetch(src.endpoint, { headers, signal: AbortSignal.timeout(20000) })
+                    .then(r => r.ok ? r.json() : [])
+                    .catch(e => { console.warn(src.name, '失敗:', e.message); return []; })
+            )
+        );
 
-        const parsed = data
-            .filter(d => d.showInfo?.[0]?.latitude && d.showInfo?.[0]?.longitude)
-            .slice(0,30)
-            .map((d,i) => {
-                const info = d.showInfo[0];
-                const cat  = catMap[d.category] || '文化中心';
-                return {
-                    id:'api_'+i, name:d.showName, nameEn:d.showName, category:cat,
-                    icon:iconMap[cat]||'📍',
-                    lat:parseFloat(info.latitude), lng:parseFloat(info.longitude),
-                    addr:info.location||'',
-                    desc:(d.descriptionFilterHtml||d.masterUnit||'資料來源：文化部開放資料平台')
-                         .replace(/<[^>]*>/g,'').trim().slice(0,200),
-                    officialUrl:d.webSite||'https://cloud.culture.tw/',
-                    mapUrl:`https://www.google.com/maps?q=${info.latitude},${info.longitude}`
-                };
+        const allLocs = [];
+
+        results.forEach((result, idx) => {
+            const src  = TDX_SOURCES[idx];
+            const data = result.status === 'fulfilled' ? result.value : [];
+            if (!Array.isArray(data)) return;
+
+            data.forEach((item, i) => {
+                // TDX 觀光資料的座標欄位叫 Position
+                const pos = item.Position;
+                if (!pos?.PositionLat || !pos?.PositionLon) return;
+
+                const lat = parseFloat(pos.PositionLat);
+                const lng = parseFloat(pos.PositionLon);
+                if (isNaN(lat) || isNaN(lng)) return;
+
+                // 過濾台灣境外的異常座標
+                if (lat < 21.5 || lat > 25.5 || lng < 119.0 || lng > 122.5) return;
+
+                const name    = item[src.nameField] || item.Name || '未命名';
+                const addr    = item.Address || item.Location || '';
+                const rawDesc = item.DescriptionDetail || item.Description || item.Toldescribe || '';
+                const desc    = rawDesc.replace(/<[^>]*>/g, '').trim().slice(0, 200);
+                const web     = item.WebsiteUrl || item.Website || '';
+                const pic     = item.Picture?.PictureUrl1 || '';
+
+                allLocs.push({
+                    id:          `${src.id}_${i}`,
+                    name,
+                    category:    src.name,
+                    icon:        src.icon,
+                    color:       src.color,
+                    lat, lng, addr, desc, pic,
+                    officialUrl: web || 'https://www.taiwan.net.tw/',
+                    mapUrl:      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addr)}`
+                });
             });
-        showStatus(`✓ Loaded ${parsed.length} sites`);
-        return parsed;
-    } catch(e) {
-        console.warn('API failed, using seed data:', e.message);
-        showStatus('ℹ️ Using curated seed data');
+        });
+
+        if (allLocs.length === 0) throw new Error('API 回傳資料為空');
+
+        showStatus(`✓ 已載入 ${allLocs.length.toLocaleString()} 個觀光地點`);
+        return allLocs;
+
+    } catch (e) {
+        console.error('TDX API 錯誤:', e.message);
+        showStatus('⚠️ API 連線失敗，切換至展示資料');
         return SEED_LOCATIONS;
     }
 }
 
-/* ════════════════════════════════════════════════════
-   RENDER LOCATIONS
-════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   動態建立 Filter UI 和 Legend（根據 TDX_SOURCES）
+══════════════════════════════════════════════════ */
+function buildFilterUI() {
+    document.getElementById('legendList').innerHTML =
+        TDX_SOURCES.map(src => `
+            <div class="legend-item">
+                <div class="legend-dot" style="background:${src.color}"></div>
+                <span>${src.icon} ${src.name}</span>
+            </div>`).join('');
+
+    document.getElementById('filterContainer').innerHTML =
+        TDX_SOURCES.map(src => `
+            <label class="filter-item">
+                <input type="checkbox" value="${src.name}" checked onchange="applyFilter()">
+                <div class="filter-box"></div>
+                ${src.icon} ${src.name}
+                <span class="filter-status" style="background:${src.color}"></span>
+            </label>`).join('');
+}
+
+/* ══════════════════════════════════════════════════
+   RENDER LOCATIONS（地圖 + sidebar 清單）
+══════════════════════════════════════════════════ */
 function renderLocations(locs) {
     allLocations = locs;
 
-    // sidebar list
+    // 地點計數
+    document.getElementById('loc-count').textContent = `(${locs.length.toLocaleString()})`;
+
+    // 地圖右上角計數徽章
+    const counter = document.getElementById('map-counter');
+    counter.textContent = `${locs.length.toLocaleString()} 個地點`;
+    counter.classList.add('show');
+    setTimeout(() => counter.classList.remove('show'), 5000);
+
+    // Sidebar 清單（資料量大時只顯示前 200 筆，避免 DOM 過重）
     const list = document.getElementById('locationList');
     list.innerHTML = '';
-    locs.forEach((loc, i) => {
+    const LIMIT = 200;
+    locs.slice(0, LIMIT).forEach((loc, i) => {
         const el = document.createElement('div');
         el.className = 'loc-card';
         el.dataset.category = loc.category;
         el.innerHTML = `
-            <div class="loc-thumb">${loc.icon}</div>
+            <div class="loc-thumb" style="background:${loc.color}22">${loc.icon}</div>
             <div class="loc-info">
                 <div class="loc-name">${loc.name}</div>
                 <div class="loc-tag">${loc.category}</div>
@@ -936,16 +712,26 @@ function renderLocations(locs) {
         el.onclick = () => selectLocation(i);
         list.appendChild(el);
     });
+    if (locs.length > LIMIT) {
+        const more = document.createElement('div');
+        more.className = 'loc-loading';
+        more.textContent = `…還有 ${(locs.length - LIMIT).toLocaleString()} 個（點地圖圖標查看）`;
+        list.appendChild(more);
+    }
 
-    // markers
+    // 清除舊 markers
     Object.values(markers).forEach(m => map.removeLayer(m));
     markers = {};
+
+    // 繪製全部地標（Leaflet 處理數百個沒問題）
     locs.forEach((loc, i) => {
-        const color = CATEGORY_COLOR[loc.category] || '#2b5f6e';
-        const m = L.marker([loc.lat, loc.lng], { icon: makeIcon(loc.icon, color) })
+        const m = L.marker([loc.lat, loc.lng], { icon: makeIcon(loc.icon, loc.color) })
             .addTo(map)
-            .bindPopup(`<div class="popup-title">${loc.icon} ${loc.name}</div>
-                        <div class="popup-sub">${loc.category}</div>`)
+            .bindPopup(`
+                <div class="popup-title">${loc.icon} ${loc.name}</div>
+                <div class="popup-sub">${loc.category}</div>
+                ${loc.addr ? `<div class="popup-addr">📍 ${loc.addr.slice(0,30)}</div>` : ''}
+            `)
             .on('click', () => selectLocation(i));
         markers[loc.id] = m;
     });
@@ -953,9 +739,9 @@ function renderLocations(locs) {
     renderStampGrid();
 }
 
-/* ════════════════════════════════════════════════════
-   STAMP GRID RENDER（每次切到 stamp tab 或解鎖時呼叫）
-════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   STAMP GRID
+══════════════════════════════════════════════════ */
 function renderStampGrid() {
     const grid = document.getElementById('stampGrid');
     grid.innerHTML = '';
@@ -963,7 +749,7 @@ function renderStampGrid() {
         const unlocked = unlockedStamps.has(loc.id);
         const el = document.createElement('div');
         el.className = 'stamp-item';
-        el.id = 'stamp-' + loc.id;
+        el.id = 'stamp-' + CSS.escape(loc.id);
         el.innerHTML = `
             <div class="stamp-circle ${unlocked ? '' : 'locked'}">
                 ${loc.icon}
@@ -977,41 +763,51 @@ function renderStampGrid() {
     });
 }
 
-/* ════════════════════════════════════════════════════
-   UNLOCK STAMP（帶動畫）
-════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   UNLOCK STAMP
+══════════════════════════════════════════════════ */
 function unlockStamp(locId) {
-    if (unlockedStamps.has(locId)) return false; // 已解鎖
+    if (unlockedStamps.has(locId)) return false;
     unlockedStamps.add(locId);
     saveStamps();
     renderStampGrid();
-
-    // 加 just-unlocked class 觸發彈出動畫
-    const stampEl = document.querySelector(`#stamp-${locId} .stamp-circle`);
-    if (stampEl) stampEl.classList.add('just-unlocked');
+    const el = document.querySelector(`#stamp-${CSS.escape(locId)} .stamp-circle`);
+    if (el) el.classList.add('just-unlocked');
     return true;
 }
 
-/* ════════════════════════════════════════════════════
-   SELECT / CLOSE INFO PANEL
-════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   INFO PANEL
+══════════════════════════════════════════════════ */
 function selectLocation(i) {
     const loc = allLocations[i];
     if (!loc) return;
-    document.querySelectorAll('.loc-card').forEach((c,j) =>
+
+    document.querySelectorAll('.loc-card').forEach((c, j) =>
         c.classList.toggle('selected', j === i));
+
     document.getElementById('panelTag').textContent   = loc.category;
     document.getElementById('panelTitle').textContent = loc.name;
-    document.getElementById('panelDesc').textContent  = loc.desc;
-    document.getElementById('panelImg').textContent   = loc.icon;
+    document.getElementById('panelDesc').textContent  = loc.desc || '暫無詳細說明。';
     document.getElementById('panelAddr').innerHTML    = loc.addr ? `📍 ${loc.addr}` : '';
-    document.getElementById('panelLinks').innerHTML   = `
-        <a class="panel-link-btn btn-primary"
-           href="${loc.officialUrl}" target="_blank" rel="noopener">Official Website ›</a>
-        <a class="panel-link-btn btn-outline"
-           href="${loc.mapUrl}" target="_blank" rel="noopener">📍 View on Google Maps</a>`;
+
+    const panelImg = document.getElementById('panelImg');
+    if (loc.pic) {
+        panelImg.innerHTML = `<img src="${loc.pic}" alt="${loc.name}" onerror="this.parentElement.innerHTML='${loc.icon}'">`;
+        panelImg.style.background = '';
+    } else {
+        panelImg.innerHTML  = loc.icon;
+        panelImg.style.background = loc.color + '33';
+    }
+
+    const hasWeb = loc.officialUrl && loc.officialUrl !== 'https://www.taiwan.net.tw/';
+    document.getElementById('panelLinks').innerHTML = `
+        ${hasWeb ? `<a class="panel-link-btn btn-primary" href="${loc.officialUrl}" target="_blank" rel="noopener">官方網站 Official Website ›</a>` : ''}
+        <a class="panel-link-btn btn-outline" href="${loc.mapUrl}" target="_blank" rel="noopener">📍 View on Google Maps</a>`;
+
     document.getElementById('infoPanel').classList.add('open');
-    map.setView([loc.lat, loc.lng], 14, { animate: true });
+    map.setView([loc.lat, loc.lng], 15, { animate: true });
+    markers[loc.id]?.openPopup();
 }
 
 function closePanel() {
@@ -1019,175 +815,123 @@ function closePanel() {
     document.querySelectorAll('.loc-card').forEach(c => c.classList.remove('selected'));
 }
 
-/* ════════════════════════════════════════════════════
-   FILTER
-════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   FILTER + SEARCH
+══════════════════════════════════════════════════ */
 function applyFilter() {
-    const checked = [...document.querySelectorAll('#Filter input:checked')].map(cb => cb.value);
+    const checked = new Set(
+        [...document.querySelectorAll('#filterContainer input:checked')].map(cb => cb.value)
+    );
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+
     document.querySelectorAll('.loc-card').forEach((card, i) => {
-        const show = checked.includes(allLocations[i]?.category);
-        card.style.display = show ? 'flex' : 'none';
         const loc = allLocations[i];
-        if (loc && markers[loc.id]) {
+        if (!loc) return;
+        const catOk    = checked.has(loc.category);
+        const searchOk = !q || loc.name.toLowerCase().includes(q) || (loc.addr || '').toLowerCase().includes(q);
+        const show     = catOk && searchOk;
+        card.style.display = show ? 'flex' : 'none';
+        if (markers[loc.id]) {
             show ? map.addLayer(markers[loc.id]) : map.removeLayer(markers[loc.id]);
         }
     });
 }
 
-/* ════════════════════════════════════════════════════
-   SEARCH
-════════════════════════════════════════════════════ */
-document.getElementById('searchInput').addEventListener('input', function() {
-    const q = this.value.trim().toLowerCase();
-    document.querySelectorAll('.loc-card').forEach((card, i) => {
-        const loc = allLocations[i];
-        const match = !q || loc.name.toLowerCase().includes(q) || (loc.addr||'').toLowerCase().includes(q);
-        card.style.display = match ? 'flex' : 'none';
-    });
-});
+document.getElementById('searchInput').addEventListener('input', applyFilter);
 
-/* ════════════════════════════════════════════════════
-   HAVERSINE 公式：計算兩 GPS 座標之間的距離（公尺）
-
-   原理：地球是球形，不能直接用畢氏定理。
-   Haversine 公式把緯度/經度差轉換成弧度，
-   再用球面三角學算出弧長，乘以地球半徑得到距離。
-
-   @param {number} lat1, lng1  第一個座標
-   @param {number} lat2, lng2  第二個座標
-   @returns {number} 距離（公尺）
-════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   HAVERSINE（兩點距離，單位：公尺）
+══════════════════════════════════════════════════ */
 function haversineDistance(lat1, lng1, lat2, lng2) {
-    const R = 6371000; // 地球半徑（公尺）
-    const toRad = deg => deg * Math.PI / 180;
+    const R = 6371000;
+    const toRad = d => d * Math.PI / 180;
     const dLat = toRad(lat2 - lat1);
     const dLng = toRad(lng2 - lng1);
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2)
-            + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2))
-            * Math.sin(dLng/2) * Math.sin(dLng/2);
+    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-/* ════════════════════════════════════════════════════
-   EXIF GPS 轉換：EXIF 的 GPS 格式是 [度, 分, 秒]，
-   需要轉成小數度 (decimal degrees) 才能跟地圖座標比較
-
-   例如：[25, 2, 38.76] N  → 25 + 2/60 + 38.76/3600 = 25.0441
-════════════════════════════════════════════════════ */
-function exifGpsToDecimal(gpsArray, ref) {
-    if (!gpsArray || gpsArray.length < 3) return null;
-    const decimal = gpsArray[0] + gpsArray[1] / 60 + gpsArray[2] / 3600;
-    // S（南緯）和 W（西經）是負數
-    return (ref === 'S' || ref === 'W') ? -decimal : decimal;
+/* ══════════════════════════════════════════════════
+   EXIF GPS 轉換（度分秒 → 小數度）
+══════════════════════════════════════════════════ */
+function exifGpsToDecimal(arr, ref) {
+    if (!arr || arr.length < 3) return null;
+    const dec = arr[0] + arr[1]/60 + arr[2]/3600;
+    return (ref === 'S' || ref === 'W') ? -dec : dec;
 }
 
-/* ════════════════════════════════════════════════════
-   PHOTO UPLOAD HANDLER
-   流程：
-   1. 使用者選照片
-   2. FileReader 讀成 DataURL（顯示預覽用）和 ArrayBuffer（給 exif-js 解析）
-   3. exif-js 讀取 GPS 標籤
-   4. 轉換成小數座標
-   5. 和每個地點跑 Haversine，找 < 500m 的
-   6. 解鎖 stamp + 顯示照片卡片
-════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════
+   PHOTO UPLOAD
+══════════════════════════════════════════════════ */
 function handlePhotoUpload(input) {
     const file = input.files[0];
     if (!file) return;
-
     const toast = document.getElementById('upload-toast');
     toast.className = 'info';
-    toast.textContent = '⏳ 讀取照片中…';
+    toast.textContent = '⏳ 讀取照片 GPS 資訊…';
 
-    // 同時用兩個 FileReader：一個拿 DataURL 顯示圖片，一個拿 ArrayBuffer 解析 EXIF
-    const readerURL = new FileReader();
-    readerURL.readAsDataURL(file);
-
-    readerURL.onload = function(e) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(e) {
         const dataUrl = e.target.result;
-
-        // 建立 Image 物件給 exif-js 讀取
         const img = new Image();
         img.src = dataUrl;
         img.onload = function() {
-            /*
-                EXIF.getData(img, callback)：
-                把 EXIF 資料載入 img 物件，完成後執行 callback
-                在 callback 裡用 EXIF.getTag(img, 'TagName') 取值
-            */
             EXIF.getData(img, function() {
-                const latArr  = EXIF.getTag(this, 'GPSLatitude');
-                const latRef  = EXIF.getTag(this, 'GPSLatitudeRef');   // 'N' or 'S'
-                const lngArr  = EXIF.getTag(this, 'GPSLongitude');
-                const lngRef  = EXIF.getTag(this, 'GPSLongitudeRef');  // 'E' or 'W'
+                const latArr    = EXIF.getTag(this, 'GPSLatitude');
+                const latRef    = EXIF.getTag(this, 'GPSLatitudeRef');
+                const lngArr    = EXIF.getTag(this, 'GPSLongitude');
+                const lngRef    = EXIF.getTag(this, 'GPSLongitudeRef');
                 const dateTaken = EXIF.getTag(this, 'DateTimeOriginal') || '';
 
                 const photoLat = exifGpsToDecimal(latArr, latRef);
                 const photoLng = exifGpsToDecimal(lngArr, lngRef);
 
                 if (photoLat === null || photoLng === null) {
-                    /*
-                        ⚠️ 很多照片沒有 EXIF GPS：
-                        - 相機沒開 GPS 功能
-                        - 截圖、從網路下載的圖
-                        - iOS/Android 在設定裡關掉了相機 GPS
-                        這時候我們讓使用者手動選擇地點
-                    */
                     toast.className = 'error';
                     toast.innerHTML = `
                         ⚠️ 這張照片沒有 GPS 資訊。<br>
-                        <small>請確認手機相機有開啟位置存取，或手動選擇拍攝地點：</small><br><br>
-                        ${allLocations.map((loc, i) =>
-                            `<button onclick="manualUnlock(${i}, '${dataUrl}', '${file.name}')"
+                        <small>請確認手機相機已開啟位置存取，或手動選擇拍攝地點：</small><br><br>
+                        ${allLocations.slice(0, 20).map((loc, i) =>
+                            `<button onclick="manualUnlock(${i},'${dataUrl}')"
                              style="margin:3px;padding:4px 10px;cursor:pointer;
-                                    background:var(--seafoam);color:white;border:none;border-radius:4px;font-size:0.7rem">
+                                    background:${loc.color};color:white;border:none;border-radius:4px;font-size:0.7rem">
                              ${loc.icon} ${loc.name}</button>`
                         ).join('')}`;
-                    input.value = ''; // 清空 input 讓同一張照片可以重選
-                    return;
-                }
-
-                // ── 有 GPS：找方圓 500m 內的地點
-                const RADIUS = 500; // 公尺
-                const matches = allLocations
-                    .map((loc, i) => ({
-                        loc, i,
-                        dist: haversineDistance(photoLat, photoLng, loc.lat, loc.lng)
-                    }))
-                    .filter(m => m.dist < RADIUS)
-                    .sort((a, b) => a.dist - b.dist); // 最近的排第一
-
-                if (matches.length === 0) {
-                    toast.className = 'error';
-                    toast.innerHTML = `
-                        ❌ 這張照片的拍攝地點（${photoLat.toFixed(4)}, ${photoLng.toFixed(4)}）
-                        距離所有文化地點超過 500 公尺，無法解鎖 stamp。`;
                     input.value = '';
                     return;
                 }
 
-                // ── 找到！解鎖並新增照片卡
+                const RADIUS = 500;
+                const matches = allLocations
+                    .map((loc, i) => ({ loc, i, dist: haversineDistance(photoLat, photoLng, loc.lat, loc.lng) }))
+                    .filter(m => m.dist < RADIUS)
+                    .sort((a, b) => a.dist - b.dist);
+
+                if (matches.length === 0) {
+                    toast.className = 'error';
+                    toast.innerHTML = `❌ 這張照片的位置（${photoLat.toFixed(4)}, ${photoLng.toFixed(4)}）距離所有地點超過 500 公尺，無法解鎖 stamp。`;
+                    input.value = '';
+                    return;
+                }
+
                 const closest = matches[0];
                 const isNew   = unlockStamp(closest.loc.id);
-                const distStr = closest.dist < 1000
-                    ? `${Math.round(closest.dist)} m`
-                    : `${(closest.dist/1000).toFixed(1)} km`;
+                const distStr = `${Math.round(closest.dist)} m`;
 
                 toast.className = 'success';
                 toast.innerHTML = isNew
                     ? `🎉 已解鎖 <strong>${closest.loc.name}</strong> 的 stamp！（距離 ${distStr}）`
                     : `📍 已確認在 <strong>${closest.loc.name}</strong> 附近（距離 ${distStr}）`;
 
-                // 新增照片卡片
-                addPhotoCard(dataUrl, closest.loc.name, dateTaken || '未知日期', photoLat, photoLng);
+                addPhotoCard(dataUrl, closest.loc.name, dateTaken || new Date().toLocaleDateString(), photoLat, photoLng);
                 input.value = '';
             });
         };
     };
 }
 
-/* 手動選擇地點（沒有 EXIF 時的 fallback） */
-function manualUnlock(locIndex, dataUrl, filename) {
+function manualUnlock(locIndex, dataUrl) {
     const loc = allLocations[locIndex];
     const isNew = unlockStamp(loc.id);
     const toast = document.getElementById('upload-toast');
@@ -1198,28 +942,25 @@ function manualUnlock(locIndex, dataUrl, filename) {
     addPhotoCard(dataUrl, loc.name, new Date().toLocaleDateString(), null, null);
 }
 
-/* 新增照片卡片到 photo grid */
 function addPhotoCard(dataUrl, locName, dateStr, lat, lng) {
     const grid = document.getElementById('photoGrid');
     const card = document.createElement('div');
     card.className = 'photo-card';
-    const displayDate = dateStr.replace(/:/g, '/').replace(' ', ' ').split(' ')[0]; // 只顯示日期
+    const displayDate = String(dateStr).replace(/:/g, '/').split(' ')[0];
     const coordStr = lat ? `${lat.toFixed(3)}, ${lng.toFixed(3)}` : '';
     card.innerHTML = `
-        <div class="photo-card-img">
-            <img src="${dataUrl}" alt="${locName}">
-        </div>
+        <div class="photo-card-img"><img src="${dataUrl}" alt="${locName}"></div>
         <div class="photo-info">
             <div class="photo-loc">${locName}</div>
             <div class="photo-date">${displayDate}${coordStr ? ' · ' + coordStr : ''}</div>
         </div>`;
     card.onclick = () => openLightbox(dataUrl, `${locName} · ${displayDate}`);
-    grid.insertBefore(card, grid.firstChild); // 最新的放最前面
+    grid.insertBefore(card, grid.firstChild);
 }
 
-/* ════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════
    LIGHTBOX
-════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════ */
 function openLightbox(src, info) {
     document.getElementById('lightbox-img').src = src;
     document.getElementById('lightbox-info').textContent = info;
@@ -1228,14 +969,13 @@ function openLightbox(src, info) {
 function closeLightbox() {
     document.getElementById('lightbox').classList.remove('open');
 }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-/* ════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════
    BOOT
-════════════════════════════════════════════════════ */
-fetchCultureData().then(locs => {
-    renderLocations(locs);
-    selectLocation(0);
-});
+══════════════════════════════════════════════════ */
+buildFilterUI();
+fetchCultureData().then(locs => renderLocations(locs));
 </script>
 </body>
 </html>
