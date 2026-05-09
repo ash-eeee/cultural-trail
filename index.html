@@ -27,7 +27,7 @@
 
                 /*night mode overrides (toggled via .night class on body)*/
                 --bg:           var(--paper-white);
-                --sidebar-bg:   var(--white-blue);
+                --sidebar-bg:   var(--whale-blue);
                 --panel-bg:     #fff8f0;
                 --text:         var(--ink);
                 --header-bg:    var(--brick-red);
@@ -54,7 +54,7 @@
                 transition: background-color 0.5s, color 0.5s;
             }
             /* start page (login) */
-             #auth-overlay{
+            #auth-overlay{
                 background: rgba(2, 30, 22, 0.82);
                 display: flex;
                 align-items: center;
@@ -261,10 +261,36 @@
             .header-right{display: flex; align-items: center; gap: 10px}
             .header-user{font-size: 12px; color: var(--beige);}
 
-            /* day and night mode 
-            .theme-toggle{}
-            .toggle-track{}
-            .toggle-thumb{}*/
+            /* day and night mode */
+            .theme-toggle{
+                font-size: 12px;
+                color: var(--beige);
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                gap: 5px;
+                user-select: none;
+            }
+            .toggle-track{
+                width: 38px;
+                height: 20px;
+                background: var(--seafoam);
+                border-radius: 10px;
+                position: relative;
+                transition: background 0.3s;
+            }
+            .toggle-thumb{
+                width: 16px;
+                height: 16px;
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                background: var(--paper-white);
+                border-radius: 50%;
+                transition: transform 0.3s;
+            }
+            body.night .toogle-track{ background: #1a4a5c; }
+            body.night .toogle-thumb{ transform: translateX(18px); }
 
             /* tool bar */
             .tool-bar{
@@ -292,8 +318,6 @@
                 color: var(--paper-white);
                 background: rgba(255, 255, 255, 0.06);
             }
-            /* map page 
-            .map-container{}*/
 
             /* map */
             #map-layout{
@@ -317,7 +341,7 @@
                 position: relative;
                 transition: all 0.5s;
             }
-            /*
+            /**/
             #sidebar.collapsed{
                 width: 0;
                 overflow: visible;
@@ -331,9 +355,32 @@
                 padding: 13px 16px;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.09);
                 flex-shrink: 0;
-            }*/
+            }
+            #sidebar-button{
+                position: absolute;
+                top: 12px;
+                right: -14px;
+                z-index: 1100;/* for different layer */
+                width: 28px;
+                height: 28px;
+                background: var(--whale-blue);
+                border: 2px solid var(--stamp-gold);
+                border-radius: 50%;
+                color: var(--paper-white);
+                font-size: 12px;
 
-            /* search */
+                display: flex; align-items: center; justify-content: center;
+                cursor: pointer;
+                transition: background 0.2s, transform 0.3s;
+            }
+            #sidebar-button:hover{ background: var(--brick-red); }
+            #sidebar.collapsed #sidebar-button{transform: scaleX(-1);} /* 水平翻轉的意思 scale(1, -1)是上下都轉 */
+
+            .sidebar-section{
+                padding: 14px 2px;
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+                flex-shrink: 0;
+            }
             .sidebar-section h3{
                 font-size: 12px;
                 text-transform: uppercase;
@@ -341,10 +388,12 @@
                 color: var(--stamp-gold);
                 margin-bottom: 10px;
             }
+            
+            /* search */
             .search-wrap{
                 position: relative;
-                display: flex;
-                align-items: center;
+                /*display: flex;
+                align-items: center;*/
             }
             /* half transparent */
             .search-wrap input{
@@ -370,7 +419,131 @@
             }
             
             /* filter */
-            /* locatoin shown */
+            .filter{
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .filter-item{
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                font-size: 12px;
+                padding: 4.5px 6.5px;
+                border-radius:4px;
+                transition:background 0.15s;
+            }
+            .filter-item:hover{ background: rgba(255,255,255,0.07); }
+            .filter-item input[type="checkbox"]{display: none;}
+            .filter-item input:checked + .filter-box { background: var(--deep-orange); border-color: var(--deep-orange); }
+            .filter-item input:checked + .filter-box::after{
+                content: '✓';
+                color: white;
+                font-size: 10px;
+                font-weight: bold;
+            }
+            .filter-box{
+                width: 14px;
+                height: 14px;
+                border: 2px solid var(--beige);
+                border-radius: 3px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                transition: all 0.2s;
+            }
+            .filter-status{
+                width: 7px;
+                height: 7px;
+                border-radius: 50%;
+                margin-left: auto;
+                flex-shrink: 0;
+            }
+
+            /* loading locatoin */
+            .location-list{
+                display: flex;
+                flex-direction: column;
+            }
+            .loc-card{}
+            .loc-card:hover{}
+            .loc-card.selected{}
+            
+            .loadinf-spinner{
+                padding: 2rem 1rem;
+                text-align:center;
+                color: rgba(245,240,232,0.5);
+                font-size: 12px;
+            }
+            .spinner{
+                display: inline-block;
+                width: 24px;
+                height:24px;
+                border: 3px solid rgba(201,148,58,0.3);
+                border-top-color: var(--stamp-gold);
+                border-radius: 50%;
+                animation: spin 0.8s linear infinite;
+                margin-bottom: 9px;
+            }
+            /* how to spin */
+            @keyframes spin{ to {transform: rotate(360deg);}}
+            .loc-loading{}
+            /* map contiainer */
+            .map-container{
+                flex: 1;
+                position: relative;
+                overflow: hidden;
+                min-height: 0;
+            }
+            #map{
+                position: absolute;
+                top:0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+            #map-counter{
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(43,95,110,0.9);
+                opacity: 0;
+                color: white;
+                font-size: 12px;
+                font-family: 'Noto Serif TC',serif;
+                letter-spacing:1px;
+                padding: 4px 14px;
+                border: 1px solid var(--stamp-gold);
+                border-radius: 20px;
+                z-index: 800;
+                pointer-events: none;
+                transition: opacity 0.4s;
+            }
+            #map-counter.show{opacity:1;}
+
+            #api-status {
+                position:absolute;
+                bottom:12px;
+                left:50%;
+                transform:translateX(-50%);
+                background:rgba(43,95,110,0.92);
+                color:var(--paper-white);
+                font-size:0.67rem;
+                padding:4px 14px;
+                border-radius:20px;
+                pointer-events:none;
+                opacity:0;
+                transition:opacity 0.4s;
+                z-index:800;
+                white-space:nowrap;
+            }
+            #api-status.show { opacity:1; }
+            
+
             /* info panel */
             /* stamp page */
             /*photo storage*/
@@ -380,7 +553,7 @@
         
         <!-- Start Page -->
             <!-- Login -->
-        <div id="auth-overlay">
+            <div id="auth-overlay">
             <div id="auth-box">
                 <div id="auth-header">
                     <h2>Taiwan Cultural Trails</h2>
@@ -453,10 +626,8 @@
                 <span class="header-user" id="headerUser"></span>
                 <label class="theme-toggle" id="themeToggle" title="Day/Night">
                     ☀︎
-                    <div class="toggle-track">
-                        <div class="toggle-thumb"></div>
-                        ☾
-                    </div>
+                    <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                    ☾
                 </label>
             </div>
         </header>
@@ -470,12 +641,6 @@
 
             <!-- Map page -->
             <div class="map-layout" id="mapLayout">
-
-                <!-- Map -->
-                 <div class="map-container">
-                    <div id="map"></div>
-                    <div id="api-status"></div>
-                 </div>
 
                 <!-- Sidebar -->
                 <div id="sidebar" class="collapsed">
@@ -527,16 +692,29 @@
                             </label>
                         </div>
                     </div>
-                    
+                
                     <!-- Location Shown -->
-                    <div class="sidebar-section" style="padding-bottom:0.4rem; border-bottom:none;">
-                        <h3>Locations</h3>
+                    <div class="sidebar-section">
+                        <h3>Filter by Category</h3>
+                        <div class="filter" id="filterContainer"></div>
+                    </div>
+
+                    <div class="sidebar-section" style="padding-bottom:0.4rem;border-bottom:none;">
+                        <h3>Locations <span id="loc-count" style="opacity:0.5;font-weight:normal"></span></h3>
                     </div>
                     <!-- loading -->
                     <div class="location-list" id="locationList">
-                        <div class="loc-loading">Loading cultural sites...</div>
+                        <div class="loc-loading">
+                            <div class="spinner"></div><br>Loading cultural sites...</div>
                     </div>
                 </div>
+
+                <!-- Map -->
+                 <div class="map-container">
+                    <div id="map"></div>
+                    <div id="map-counter"></div>
+                    <div id="api-status"></div>
+                 </div>
 
                 <!-- Info panel-->
                 <div class="info-panel">
@@ -587,8 +765,66 @@
                 <div id="lightbox-info"></div>
             </div>
         <script>
-            //open first panel by default
-            selectLocation(0);
+            //map
+            const map = L.map('map', {zoomControl: true}).setView([23.7, 121.0], 7);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+                subdomains: 'abcd', maxZoom: 19
+            }).addTo(map);
+
+            setTimeout(() => map.invalidateSize(), 150);
+
+            function makeIcon(emoji, color) {
+                return L.divIcon({
+                    className: '',
+                    html: `<div style="background:${color};color:white;width:30px;height:30px;
+                        border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+                        display:flex;align-items:center;justify-content:center;
+                        border:2px solid rgba(255,255,255,0.6);
+                        box-shadow:0 2px 8px rgba(0,0,0,0.35);">
+                        <span style="transform:rotate(45deg);font-size:12px">${emoji}</span>
+                    </div>`,
+                    iconSize: [30,30], iconAnchor:[15,30], popupAnchor:[0,-32]
+                });
+            }
+
+            //sidebar
+            function toggleSidebar(){
+                document.getElementById('sidebar').classList.toggle('collapsed');
+                setTimeout(() => map.invalidateSize(), 320);//map resize
+            }
+            function switchTab(tab, btn){
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                if(btn)btn.classList.add('active');
+                document.getElementById('mapLayout').classList.toggle('hidden', tab !== 'map');
+                document.getElementById('stampPage').classList.toggle('active', tab === 'stamps');
+                document.getElementById('photoPage').classList.toggle('active', tab === 'memory');
+                if(tab == 'map')setTimeout(() => map.invalidateSize(), 50);
+                if(tab == 'stamps') renderStampGrid();
+            }
+            //theme
+            document.getElementById('themeToggle').addEventListener('click', () =>{
+                document.body.classList.toggle('night');
+            });
+            //sidebar
+            const counter = document.getElementById('map-counter');
+            //filter
+            function buildFilter(){
+                document.getElementById('legendList').innerHTML = TDX_SOURCES.map(scr => `
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:${src.color}"><div>
+                        <span>${src.icon} ${src.name}</span>
+                    </div>`).join('');
+
+                document.getElementById('filterContianer').innerHTML = TDX_SOURCES.map(src => `
+                    <label class"filter-item">
+                        <input type="checkbox" value="${src.name}" checked onchange="applyfilter()">
+                        <div class="filter-box"></div>
+                        ${src.icon} ${src.name}
+                        <span class="filter-status" style="background: ${src.color}"></span>
+                    </label>`).join('');
+            }
         </script>
     </body>
 </html>
