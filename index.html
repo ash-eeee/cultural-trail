@@ -54,6 +54,7 @@
                 transition: background-color 0.5s, color 0.5s;
             }
             /* start page (login) */
+            /*
             #auth-overlay{
                 background: var(--whale-blue);
                 display: flex;
@@ -234,7 +235,8 @@
 
             .auth-switch a { color: var(--whale-blue); cursor: pointer; }
             .auth-switch a:hover { text-decoration: underline; }
-            
+            */
+
             /* header */
             header{
                 background-color: var(--header-bg);
@@ -468,9 +470,18 @@
                 display: flex;
                 flex-direction: column;
             }
-            .loc-card{}
-            .loc-card:hover{}
-            .loc-card.selected{}
+            .loc-card{
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                padding: 0.28rem 0.4rem;
+                border-radius: 4px;
+                transition: background 0.15s;
+            }
+            .loc-card:hover{background: rgba(255,255,255,0.06);}
+            .loc-card.selected{background: rgba(158,42,28,0.3); border-left: 3px solid var(--brick-red);}
             
             .loadinf-spinner{
                 padding: 2rem 1rem;
@@ -490,7 +501,13 @@
             }
             /* how to spin */
             @keyframes spin{ to {transform: rotate(360deg);}}
-            .loc-loading{}
+            .loc-loading{
+                padding: 2px;
+                font-size: 14px;
+                color: rgba(245,240,232,0.4);
+                text-align: center;
+                font-style: italic;
+            }
             /* map contiainer */
             .map-container{
                 flex: 1;
@@ -525,6 +542,79 @@
             }
             #map-counter.show{opacity:1;}
 
+            /* info panel */
+            .info-panel{
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 300px;
+                background: var(--panel-bg);
+                display: felx;
+                flex-direction: column;
+                border-left: 2px solid var(--stamp-gold);
+                overflow-y: auto;
+                transform: translateX(100%);
+                transition:transform 0.35s cubic-bezier(0.4,0,0.2,1),background 0.5s; z-index:900;
+            }
+            .info-panel.open{transform:translateX(0); }
+
+            .panel-header{
+                background: var(--brick-red);
+                color: var(--paper-white);
+                padding:0.9rem 1rem;
+                position:relative;
+                flex-shrink:0 ;
+            }
+            .panel-tag{
+                display: inline-block;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                background:var(--deep-orange);
+                color:white;
+                padding:2px 7px;
+                border-radius:2px;
+                margin-bottom:0.3rem;
+            }
+            .panel-header h2{ font-family:'Playfair Display',serif; font-size:1rem; line-height:1.35; padding-right:1.4rem;}
+            .panel-close{
+                position:absolute;
+                top:0.7rem;
+                right:0.7rem;
+                background:rgba(255,255,255,0.15);
+                border:none;
+                color:white;
+                width:24px;
+                height:24px;
+                border-radius:50%;
+                cursor:pointer;
+                font-size:0.72rem; 
+                display:flex; align-items:center; justify-content:center;
+                transition:background 0.2s;
+            }
+            .panel-close:hover{ background:rgba(255,255,255,0.3); }
+            .panel-img{
+                width:100%;
+                height:148px;
+                background:var(--seafoam);
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:2.9rem;
+                flex-shrink:0; 
+                overflow:hidden;}
+            .panel-img img { width:100%; height:100%; object-fit:cover; }
+            .panel-body{ padding: 0.85rem 1rem; flex: 1;}
+            .panel-body p { font-size:0.78rem; line-height:1.8; color:var(--text); opacity:0.85; }
+            .panel-addr { font-size:0.7rem; color:var(--seafoam); margin-top:0.55rem; }
+            .panel-links { padding:0 1rem 1rem; display:flex; flex-direction:column; gap:0.45rem; }
+            .panel-link-btn { display:block; padding:0.58rem; text-align:center; font-family:'Noto Serif TC',serif; font-size:0.73rem; letter-spacing:0.1em; text-transform:uppercase; border-radius:3px; cursor:pointer; text-decoration:none; transition:opacity 0.2s; }
+            .panel-link-btn:hover { opacity:0.8; }
+            .btn-primary { background:var(--brick-red); color:var(--paper-white); border:none; }
+            .btn-outline { background:transparent; color:var(--seafoam); border:1px solid var(--seafoam); }
+
+            
             #api-status {
                 position:absolute;
                 bottom:12px;
@@ -544,7 +634,6 @@
             #api-status.show { opacity:1; }
             
 
-            /* info panel */
             /* stamp page */
             /*photo storage*/
         </style>
@@ -553,6 +642,7 @@
         
         <!-- Start Page -->
             <!-- Login -->
+        
             <div id="auth-overlay">
             <div id="auth-box">
                 <div id="auth-header">
@@ -613,7 +703,7 @@
                 </div>
             </div>
         </div>
-            
+    
         <!-- Header -->
         <header>
             <div class="header-left">
@@ -664,32 +754,26 @@
                         <div class="filter" id="Filter">
 
                             <label class="filter-item">
-                                <input type="checkbox" value="Historical Sites" checked onchange="applyFilter()">
+                                <input type="checkbox" value="Scenic Spot" checked onchange="applyFilter()">
                                 <div class="filter-box"></div>
-                                Historical Building
+                                Scenic Spot
                                 <span class="filter-status" style="background:#c05a04"></span>
                             </label>
 
                             <label class="filter-item">
-                                <input type="checkbox" value="Cretive Markets" onchange="applyFilter()">
+                                <input type="checkbox" value="Restaurant" onchange="applyFilter()">
                                 <div class="filter-box"></div>
-                                Creative Market
+                                Restaurants
                                 <span class="filter-status" style="background:#c05a04"></span>
                             </label>
 
                             <label class="filter-item">
-                                <input type="checkbox" value="Craft Shops" onchange="applyFilter()">
+                                <input type="checkbox" value="Activity" onchange="applyFilter()">
                                 <div class="filter-box"></div>
-                                Local Craft Shop
+                                Activities
                                 <span class="filter-status" style="background:#c05a04"></span>
                             </label>
 
-                            <label class="filter-item">
-                                <input type="checkbox" value="Cultural Center" onchange="applyFilter()">
-                                <div class="filter-box"></div>
-                                Cultural Center
-                                <span class="filter-status" style="background:#c05a04"></span>
-                            </label>
                         </div>
                     </div>
                 
@@ -723,6 +807,7 @@
                         <h2 id="panelTitle">Location Name</h2>
                         <button class="panel-close" onclick="closePanel()">x</button>
                     </div>
+                    <div class="panel-img" id="panelImg"></div>
                     <div class="panel-body">
                         <p id="panelDesc">Description...</p>
                         <div class="panel-addr" id="panelAddr"></div>
@@ -757,6 +842,7 @@
             <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
             <!-- Uploaded Photo -->
             <div id="uploaded-toast"></div>
+            <div class="photo-grid" id="photoGrid"></div>
             
             <!-- Zoom in photo -->
             <div class="lightbox" onclick="closeLightbox()">
@@ -765,6 +851,115 @@
                 <div id="lightbox-info"></div>
             </div>
         <script>
+            // TDX (taiwan cultural sites data) API
+            const TDX_CLIENT_ID     = ''; //'s113403510-c6cd54f2-32ee-4654';
+            const TDX_CLIENT_SECRET = ''; //'60c76113-344d-43a3-9cef-02c009ba4f34';
+
+            //data sources
+            const TDX_SOURCES = [
+                {
+                    id: 'scenic', name: 'Scenic Spot',
+                    endpoint: 'https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot?$top=500&$format=JSON',
+                    nameFiled: 'ScenicSpotName',
+                    color: '#c96b1a',//orange
+                },
+                {
+                    id: 'restaurant', name: 'Restaurant',
+                    endpoint: 'https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant?$top=200&$format=JSON',
+                    nameFiled: 'RestaurantName',
+                    color: '#2b8c6e',//green
+                },
+                {
+                    id: 'activity', name: 'Activity',
+                    endpoint: 'https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity?$top=150&$format=JSON',
+                    nameFiled: 'ActivityName',
+                    color: '#9e2a1c',//brick red
+                },
+            ];
+
+            //seed data (for when loading failed)
+            const SEED_LOCATIONS = [
+                {
+                    id: 'huashan', name: '華山1914文創園區', category: 'Activity', color:'#9e2a1c',
+                    lat: 25.0041, lng: 121.5298, addr: '台北市中正區八德路一段1號',
+                    desc:'前身為台灣總督府專賣局台北酒廠，1999年轉型為文化創意產業園區。現為台灣最重要的文創展演場地之一，聚集設計師品牌、藝廊、表演場館與特色餐廳。',
+                    officialUrl:'https://www.huashan1914.com/',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=華山1914文創園區+台北市中正區八德路一段1號'
+                },
+                {
+                    id:'jiufen', name:'九份老街', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+                    lat:25.1094, lng:121.8441, addr:'新北市瑞芳區九份',
+                    desc:'昔日淘金小鎮，紅燈籠、茶樓與蜿蜒石階構成台灣最具代表性的山城意象。傍晚的燈火映照著基隆山與海灣，是許多遊客心目中台灣最美的夜景之一。',
+                    officialUrl:'https://www.travel.taipei/zh-tw/attraction/details/35',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=九份老街+新北市瑞芳區'
+                },
+                {
+                    id:'taroko', name:'太魯閣國家公園', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+                    lat:24.1573, lng:121.6210, addr:'花蓮縣秀林鄉',
+                    desc:'大理石峽谷地形與立霧溪共同塑造的壯闊景觀，也是太魯閣族（Truku）世代居住的土地。園區內設有原住民文化展示，介紹編織、狩獵與祭典傳承。',
+                    officialUrl:'https://www.taroko.gov.tw/',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=太魯閣國家公園+花蓮縣秀林鄉'
+                },
+                {
+                    id:'songshan', name:'松山文創園區', category:'文創活動', icon:'🎨', color:'#9e2a1c',
+                    lat:25.0427, lng:121.5600, addr:'台北市信義區光復南路133號',
+                    desc:'前身為日治時期松山菸草工廠，現為台灣最大的文創設計基地。每年舉辦台灣設計展、文博會等大型文化活動，保留完整的歷史廠房建築。',
+                    officialUrl:'https://www.songshanculturalpark.org/',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=松山文創園區+台北市信義區光復南路133號'
+                },
+                {
+                    id:'anping', name:'台南安平古堡', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+                    lat:22.9966, lng:120.1610, addr:'台南市安平區國勝路82號',
+                    desc:'1624年荷蘭東印度公司興建，是台灣最古老的城堡遺址。古堡旁的老街保存著傳統劍獅工藝、蜜餞文化與百年老店，是台南文史探索的必訪地點。',
+                    officialUrl:'https://culture.tainan.gov.tw/',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=安平古堡+台南市安平區國勝路82號'
+                },
+                {
+                    id:'shenkeng', name:'深坑老街', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+                    lat:25.0021, lng:121.6183, addr:'新北市深坑區北深路三段',
+                    desc:'以臭豆腐聞名，同時也是台北近郊保存完整的清代閩南式街屋聚落。在地工藝師在此製作竹編、豆腐文創商品，呈現農村生活與在地飲食文化。',
+                    officialUrl:'https://www.shenkeng.ntpc.gov.tw/',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=深坑老街+新北市深坑區北深路三段'
+                },
+                {
+                    id:'lukang', name:'鹿港老街', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+                    lat:24.0520, lng:120.4365, addr:'彰化縣鹿港鎮中山路',
+                    desc:'保存最完整的清代街道格局，擁有天后宮、龍山寺等古廟，是台灣民俗工藝的重要聚集地。',
+                    officialUrl:'https://lukang.cca.gov.tw/',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=鹿港老街+彰化縣鹿港鎮中山路'
+                },
+                {
+                    id:'hayashi', name:'台南林百貨', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+                    lat:22.9969, lng:120.2016, addr:'台南市中西區忠義路二段63號',
+                    desc:'1932年開幕的昭和時代百貨公司，修復後成為文創空間，頂樓保留日治時期防空砲台。',
+                    officialUrl:'https://hayashi.com.tw/',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=林百貨+台南市中西區忠義路二段63號'
+                },
+                {
+                    id:'shilin', name:'士林夜市', category:'觀光餐廳', icon:'🍜', color:'#2b8c6e',
+                    lat:25.0883, lng:121.5237, addr:'台北市士林區基河路',
+                    desc:'台灣規模最大的觀光夜市，以蚵仔煎、大餅包小餅、豪大大雞排等小吃聞名，是外國旅客體驗台灣夜市文化的首選。',
+                    officialUrl:'https://www.travel.taipei/zh-tw/attraction/details/1',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=士林夜市+台北市士林區基河路'
+                },
+                {
+                    id:'suao', name:'蘇澳冷泉', category:'觀光景點', icon:'🏛️', color:'#c96b1a',
+                    lat:24.5965, lng:121.8609, addr:'宜蘭縣蘇澳鎮冷泉路',
+                    desc:'全球少見的碳酸冷泉，水溫常年維持在22°C，泡湯後皮膚光滑細緻，是宜蘭最具特色的自然景觀。',
+                    officialUrl:'https://www.tourism.gov.tw/',
+                    mapUrl:'https://www.google.com/maps/search/?api=1&query=蘇澳冷泉+宜蘭縣蘇澳鎮冷泉路'
+                },
+            ];
+
+            //last updated
+            const unlockedStamps = new Set(JSON.parse(localStorage.getItem('tct_stamps') || '[]'));
+            function saveStamps() { localStorage.setItem('tct_stamps', JSON.stringify([...unlockedStamps])); }
+
+            let allLocations = [];
+            let markers = {};
+
+            //login
+
             //map
             const map = L.map('map', {zoomControl: true}).setView([23.7, 121.0], 7);
 
