@@ -1,0 +1,30 @@
+name: Deploy to GitHub Pages with Secrets Protection
+
+on:
+  push:
+    branches:
+      - main  # 如果你的預設分支名稱是 master，請將這裡改成 master
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 複製 GitHub 上的程式碼到虛擬伺服器
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. 核心資安防禦：使用 Linux 的 sed 指令，動態將 index.html 裡的預留字串替換成保險箱的真實金鑰
+      - name: Inject TDX Credentials Safely
+        run: |
+          sed -i 's/YOUR_GITHUB_TDX_CLIENT_ID/${{ secrets.TDX_CLIENT_ID }}/g' index.html
+          sed -i 's/YOUR_GITHUB_TDX_CLIENT_SECRET/${{ secrets.TDX_CLIENT_SECRET }}/g' index.html
+
+      # 3. 將替換好金鑰的網頁自動部署到 github-pages 分支，完成上線
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: .  # 發佈當前資料夾下的所有內容
+          branch: gh-pages  # 自動建立並發佈到 gh-pages 分支
