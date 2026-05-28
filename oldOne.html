@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js@2.3.0/exif.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Serif+TC:wght@300;400;600&display=swap">
+    <title>Taiwan Cultural Trails</title>
+    <style>
+        :root {
+            --brick-red:    #9e2a1c;
+            --brick-light:  #c4503a;
+            --paper-white:  #faf6ef;
+            --beige:        #e2c9b5;
+            --whale-blue:   #2b5f6e;
+            --deep-orange:  #c96b1a;
+            --seafoam:      #5a8f8f;
+            --amber:        #b87355;
+            --ink:          #2c2420;
+            --stamp-gold:   #c9943a;
+            --stamp-shadow: rgba(0,0,0,0.10);
+            --bg:           var(--paper-white);
+            --sidebar-bg:   var(--whale-blue);
+            --panel-bg:     #fdf9f4;
+            --text:         var(--ink);
+            --header-bg:    var(--brick-red);
+        }
+
+        body.night {
+            --bg:           #1e1b18;
+            --sidebar-bg:   #1a262f;
+            --panel-bg:     #25221f;
+            --text:         #e6dfd3;
+            --header-bg:    #42120e;
+            --stamp-shadow: rgba(0,0,0,0.4);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Serif TC', 'Times New Roman', serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        /* START PAGE */
+        #start-page {
+            position: fixed; inset: 0; z-index: 9999;
+            background: var(--whale-blue);
+            display: flex; align-items: center; justify-content: center;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px),
+                repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px);
+        }
+        #start-page::before { content:''; position:absolute; top:0; left:0; right:0; height:6px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 10px, transparent 10px 18px); }
+        #start-page::after  { content:''; position:absolute; bottom:0; left:0; right:0; height:6px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 10px, transparent 10px 18px); }
+        .start-card { background:rgba(255,255,255,0.06); border:1px solid rgba(201,148,58,0.4); border-radius:8px; padding:3rem 3.5rem; text-align:center; max-width:440px; width:90%; backdrop-filter:blur(4px); }
+        .start-stamp { font-size:4rem; display:block; margin-bottom:1rem; }
+        .start-card h1 { font-family:'Playfair Display',serif; font-size:2rem; color:var(--paper-white); letter-spacing:0.06em; margin-bottom:0.3rem; }
+        .start-card .subtitle { font-size:0.8rem; color:var(--stamp-gold); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:2rem; font-style:italic; }
+        .dot-divider { height:3px; margin:1.5rem 0; border-radius:2px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 6px, transparent 6px 12px); }
+        .start-label { font-size:0.72rem; color:rgba(245,240,232,0.5); letter-spacing:0.1em; text-transform:uppercase; text-align:left; margin-bottom:0.4rem; }
+        .start-input { width:100%; padding:0.7rem 1rem; background:rgba(255,255,255,0.1); border:1px solid rgba(201,148,58,0.5); border-radius:4px; color:var(--paper-white); font-family:'Noto Serif TC',serif; font-size:0.9rem; outline:none; margin-bottom:1.2rem; transition:border-color 0.2s,background 0.2s; }
+        .start-input::placeholder { color:rgba(255,255,255,0.3); }
+        .start-input:focus { border-color:var(--stamp-gold); background:rgba(255,255,255,0.15); }
+        .start-btn { width:100%; padding:0.8rem; background:var(--brick-red); color:var(--paper-white); font-family:'Playfair Display',serif; font-size:1rem; letter-spacing:0.1em; border:none; border-radius:4px; cursor:pointer; transition:background 0.2s,transform 0.1s; }
+        .start-btn:hover { background:var(--brick-light); }
+        .start-btn:active { transform:scale(0.98); }
+        .start-note { font-size:0.68rem; color:rgba(245,240,232,0.35); margin-top:1rem; line-height:1.6; }
+        #start-page.fade-out { animation:fadeOut 0.6s ease forwards; }
+        @keyframes fadeOut { to { opacity:0; pointer-events:none; } }
+
+        /* HEADER */
+        header { background-color:var(--header-bg); color:var(--paper-white); padding:0.6rem 1rem 0.6rem 1.2rem; display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid var(--stamp-gold); flex-shrink:0; position:relative; transition:background-color 0.5s; }
+        header::after { content:''; position:absolute; left:0; right:0; bottom:-6px; height:4px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 8px, transparent 8px 14px); }
+        .header-left { display:flex; align-items:center; gap:0.8rem; }
+        header h1 { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; letter-spacing:0.06em; }
+        .header-sub { font-size:0.73rem; opacity:0.62; font-style:italic; }
+        .header-right { display:flex; align-items:center; gap:0.6rem; }
+        .header-user { font-size:0.75rem; color:var(--beige); }
+        .theme-toggle { display:flex; align-items:center; gap:0.4rem; cursor:pointer; user-select:none; font-size:0.75rem; color:var(--beige); }
+        .toggle-track { width:38px; height:20px; background:var(--seafoam); border-radius:10px; position:relative; transition:background 0.3s; }
+        .toggle-thumb { position:absolute; top:2px; left:2px; width:16px; height:16px; background:var(--paper-white); border-radius:50%; transition:transform 0.3s; }
+        body.night .toggle-track { background:#1a4a5c; }
+        body.night .toggle-thumb { transform:translateX(18px); }
+
+        /* TOOL BAR */
+        .tool-bar { background:var(--whale-blue); display:flex; flex-shrink:0; border-bottom:2px solid var(--stamp-gold); }
+        .tool-btn { font-family:'Noto Serif TC',serif; font-size:0.78rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.55rem 1.2rem; background:transparent; color:rgba(245,240,232,0.55); border:none; border-right:1px solid rgba(255,255,255,0.08); cursor:pointer; position:relative; transition:all 0.2s; }
+        .tool-btn:hover { color:var(--paper-white); background:rgba(255,255,255,0.06); }
+        .tool-btn.active { color:var(--paper-white); background:var(--brick-red); }
+        .tool-btn.active::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:2px; background:var(--stamp-gold); }
+
+        /* MAP LAYOUT */
+        .map-layout { display:flex; flex:1; overflow:hidden; position:relative; }
+        .map-layout.hidden { display:none; }
+
+        /* SIDEBAR */
+        #sidebar { width:270px; background:var(--sidebar-bg); color:var(--paper-white); display:flex; flex-direction:column; flex-shrink:0; overflow-y:auto; border-right:2px solid var(--stamp-gold); position:relative; transition:width 0.3s ease,border 0.3s ease,background 0.5s; }
+        #sidebar.collapsed { width:0; overflow:visible; border-right:none; }
+        #sidebar.collapsed .sidebar-section, #sidebar.collapsed .location-list { display:none; }
+        #sidebar-toggle { position:absolute; top:12px; right:-14px; z-index:1100; width:28px; height:28px; background:var(--whale-blue); border:2px solid var(--stamp-gold); border-radius:50%; color:var(--paper-white); font-size:0.8rem; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.22); transition:background 0.2s,transform 0.3s; }
+        #sidebar-toggle:hover { background:var(--brick-red); }
+        #sidebar.collapsed #sidebar-toggle { transform:scaleX(-1); }
+        .sidebar-section { padding:0.85rem 1rem; border-bottom:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
+        .sidebar-section h3 { font-size:0.67rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--stamp-gold); margin-bottom:0.6rem; }
+
+        .cat-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 0.04em;
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .search-wrap { position:relative; }
+        .search-wrap input { width:100%; padding:0.42rem 0.65rem 0.42rem 1.7rem; background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.16); border-radius:4px; color:var(--paper-white); font-family:inherit; font-size:0.78rem; outline:none; transition:border-color 0.2s; }
+        .search-wrap input::placeholder { color:rgba(255,255,255,0.33); }
+        .search-wrap input:focus { border-color:var(--stamp-gold); }
+        .search-icon { position:absolute; left:0.45rem; top:50%; transform:translateY(-50%); font-size:0.7rem; opacity:0.42; }
+
+        .filter { display:flex; flex-direction:column; gap:0.35rem; }
+        .filter-item { display:flex; align-items:center; gap:0.5rem; cursor:pointer; font-size:0.76rem; padding:0.28rem 0.4rem; border-radius:4px; transition:background 0.15s; }
+        .filter-item:hover { background:rgba(255,255,255,0.07); }
+        .filter-item input[type="checkbox"] { display:none; }
+        .filter-box { width:14px; height:14px; border:2px solid var(--beige); border-radius:3px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; }
+        .filter-item input:checked + .filter-box { background:var(--deep-orange); border-color:var(--deep-orange); }
+        .filter-item input:checked + .filter-box::after { content:'✓'; color:white; font-size:10px; font-weight:bold; }
+        .filter-status { width:7px; height:7px; border-radius:50%; margin-left:auto; flex-shrink:0; }
+
+        .location-list { display:flex; flex-direction:column; }
+        .loc-card { display:flex; align-items:center; gap:0.6rem; padding:0.6rem 1rem; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.05); transition:background 0.15s; }
+        .loc-card:hover { background:rgba(255,255,255,0.06); }
+        .loc-card.selected { background:rgba(158,42,28,0.3); border-left:3px solid var(--brick-red); }
+        .loc-thumb { width:38px; height:38px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+        .loc-info { flex:1; min-width:0; }
+        .loc-name { font-size:0.75rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--paper-white); }
+        .loc-tag { font-size:0.6rem; color:var(--beige); opacity:0.75; margin-top:2px; }
+
+        .loading-spinner { padding:2rem 1rem; text-align:center; color:rgba(245,240,232,0.5); font-size:0.78rem; }
+        .spinner { display:inline-block; width:24px; height:24px; border:3px solid rgba(201,148,58,0.3); border-top-color:var(--stamp-gold); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:0.6rem; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .loc-loading { padding:1rem; font-size:0.7rem; color:rgba(245,240,232,0.4); text-align:center; font-style:italic; }
+
+        .map-container { flex:1; position:relative; overflow:hidden; min-height:0; }
+        #map { position:absolute; top:0; left:0; right:0; bottom:0; }
+        #map-counter { position:absolute; top:10px; left:50%; transform:translateX(-50%); background:rgba(43,95,110,0.9); color:white; font-size:0.68rem; padding:4px 14px; border-radius:20px; z-index:800; pointer-events:none; font-family:'Noto Serif TC',serif; border:1px solid var(--stamp-gold); letter-spacing:0.05em; opacity:0; transition:opacity 0.4s; }
+        #map-counter.show { opacity:1; }
+
+        .info-panel { position:absolute; top:0; right:0; bottom:0; width:300px; background:var(--panel-bg); display:flex; flex-direction:column; border-left:2px solid var(--stamp-gold); overflow-y:auto; transform:translateX(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1),background 0.5s; z-index:900; }
+        .info-panel.open { transform:translateX(0); }
+        .panel-header { background:var(--brick-red); color:var(--paper-white); padding:0.9rem 1rem; position:relative; flex-shrink:0; }
+        .panel-tag { display:inline-block; font-size:0.58rem; text-transform:uppercase; letter-spacing:0.1em; background:var(--deep-orange); color:white; padding:2px 7px; border-radius:2px; margin-bottom:0.3rem; }
+        .panel-header h2 { font-family:'Playfair Display',serif; font-size:1rem; line-height:1.35; padding-right:1.4rem; }
+        .panel-close { position:absolute; top:0.7rem; right:0.7rem; background:rgba(255,255,255,0.15); border:none; color:white; width:24px; height:24px; border-radius:50%; cursor:pointer; font-size:0.72rem; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+        .panel-close:hover { background:rgba(255,255,255,0.3); }
+        .panel-img { width:100%; height:148px; background:var(--seafoam); display:flex; align-items:center; justify-content:center; font-size:2.9rem; flex-shrink:0; overflow:hidden; }
+        .panel-img img { width:100%; height:100%; object-fit:cover; }
+        .panel-body { padding:0.85rem 1rem; flex:1; }
+        .panel-body p { font-size:0.78rem; line-height:1.8; color:var(--text); opacity:0.85; }
+        .panel-addr { font-size:0.7rem; color:var(--seafoam); margin-top:0.55rem; }
+        .panel-links { padding:0 1rem 1rem; display:flex; flex-direction:column; gap:0.45rem; }
+        .panel-link-btn { display:block; padding:0.58rem; text-align:center; font-family:'Noto Serif TC',serif; font-size:0.73rem; letter-spacing:0.1em; text-transform:uppercase; border-radius:3px; cursor:pointer; text-decoration:none; transition:opacity 0.2s; }
+        .panel-link-btn:hover { opacity:0.8; }
+        .btn-primary { background:var(--brick-red); color:var(--paper-white); border:none; }
+        .btn-outline { background:transparent; color:var(--seafoam); border:1px solid var(--seafoam); }
+
+        #api-status { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); background:rgba(43,95,110,0.92); color:var(--paper-white); font-size:0.67rem; padding:4px 14px; border-radius:20px; pointer-events:none; opacity:0; transition:opacity 0.4s; z-index:800; white-space:nowrap; }
+        #api-status.show { opacity:1; }
+
+        /* ══════════════════════════════════════════
+           STAMP PAGE
+        ══════════════════════════════════════════ */
+        .stamp-page { flex:1; overflow-y:auto; background:var(--bg); padding:1.5rem 2rem; display:none; transition:background 0.5s; }
+        .stamp-page.active { display:block; }
+        .page-title { font-family:'Playfair Display',serif; font-size:1.35rem; color:var(--brick-red); text-align:center; margin-bottom:0.25rem; }
+        .page-sub { font-size:0.75rem; text-align:center; color:var(--seafoam); font-style:italic; margin-bottom:1rem; }
+
+        /* ── Digital Passport Card (Vintage Boarding Pass Style) ── */
+        #passport-card {
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto 1.5rem;
+            background: #fcf6e8;
+            border: 2px solid #cfbfa8;
+            border-radius: 6px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(44, 36, 32, 0.08);
+        }
+        body.night #passport-card {
+            background: #25211c;
+            border-color: #54493f;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .passport-inner {
+            padding: 1.2rem 1.4rem;
+            position: relative;
+        }
+
+        /* Flight stamp / Barcode style decoration on top right */
+        .passport-deco-stamp {
+            position: absolute;
+            top: 0.8rem; right: 1.4rem;
+            border: 1.5px dashed var(--brick-light);
+            padding: 2px 6px;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.55rem;
+            color: var(--brick-light);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transform: rotate(3deg);
+            opacity: 0.6;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Ticket header row */
+        .passport-header {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed #cfbfa8;
+        }
+        body.night .passport-header { border-bottom-color: #54493f; }
+        
+        .passport-header .passport-issuer {
+            font-size: 0.55rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--stamp-gold);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 1px;
+        }
+        .passport-header .passport-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--brick-red);
+            letter-spacing: 0.04em;
+        }
+
+        /* Ticket layout body */
+        .passport-body {
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+        }
+
+        /* Left side: Stub-like user detail */
+        .passport-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.45rem;
+            min-width: 120px;
+            position: relative;
+        }
+        
+        /* Typography Stamp Avatar (No Emoji) */
+        .passport-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: transparent;
+            color: var(--brick-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', 'Noto Serif TC', serif;
+            font-weight: 700;
+            font-size: 1.6rem;
+            border: 2px dashed var(--brick-red);
+            box-shadow: inset 0 0 0 3px rgba(158,42,28,0.05);
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+        body.night .passport-avatar {
+            color: var(--brick-light);
+            border-color: var(--brick-light);
+        }
+        
+        .passport-name {
+            font-family: 'Noto Serif TC', serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--ink);
+            text-align: center;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        body.night .passport-name { color: var(--text); }
+        
+        .passport-role {
+            font-size: 0.58rem;
+            color: var(--seafoam);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Ticket Progress bar */
+        .passport-progress-wrap {
+            margin-top: 0.3rem;
+            width: 100%;
+        }
+        .passport-progress-label {
+            font-size: 0.58rem;
+            color: var(--amber);
+            text-align: center;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .passport-progress-bar-bg {
+            width: 100%;
+            height: 5px;
+            background: rgba(44, 36, 32, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        body.night .passport-progress-bar-bg { background: rgba(255,255,255,0.08); }
+        
+        .passport-progress-bar-fill {
+            height: 100%;
+            background: var(--brick-red);
+            transition: width 0.6s ease;
+            min-width: 2px;
+        }
+        body.night .passport-progress-bar-fill { background: var(--brick-light); }
+        
+        .passport-progress-text {
+            font-size: 0.55rem;
+            color: var(--text);
+            opacity: 0.65;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        /* Ticket Perforated Dotted Divider Line */
+        .passport-divider {
+            width: 1px;
+            align-self: stretch;
+            border-left: 2px dashed #cfbfa8;
+            position: relative;
+            flex-shrink: 0;
+        }
+        body.night .passport-divider { border-left-color: #54493f; }
+        
+        /* Ticket Cut Notches (Top and Bottom circles) */
+        .passport-divider::before {
+            content: ''; position: absolute;
+            width: 14px; height: 14px;
+            background: var(--bg);
+            border: 2px solid #cfbfa8;
+            border-radius: 50%;
+            top: -20px; left: -8px;
+            box-shadow: inset 0 -3px 5px rgba(0,0,0,0.02);
+            transition: background 0.5s;
+        }
+        .passport-divider::after {
+            content: ''; position: absolute;
+            width: 14px; height: 14px;
+            background: var(--bg);
+            border: 2px solid #cfbfa8;
+            border-radius: 50%;
+            bottom: -20px; left: -8px;
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.02);
+            transition: background 0.5s;
+        }
+        body.night .passport-divider::before, body.night .passport-divider::after { border-color: #54493f; }
+
+        /* Right: Vintage Achievements */
+        .passport-right {
+            flex: 1;
+            min-width: 0;
+            padding-left: 0.2rem;
+        }
+        .passport-right-title {
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--stamp-gold);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+        #sdg-badges-wall {
+            display: flex;
+            gap: 1.1rem;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        /* Vintage Engraved Badge Styles (No Emoji, No modern glow) */
+        .sdg-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.45rem;
+            cursor: default;
+            position: relative;
+        }
+        .sdg-badge-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 1.5px solid rgba(0,0,0,0.15);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        /* Custom geometric/engraved badge graphic centers instead of Emojis */
+        .sdg-badge-circle::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border: 1px double rgba(0,0,0,0.1);
+            border-radius: 50%;
+        }
+        
+        /* Central design configurations using standard typographic typography symbols */
+        .sdg-badge .sdg-symbol {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            line-height: 1;
+            z-index: 2;
+        }
+        
+        .sdg-badge-circle .sdg-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.5rem;
+            letter-spacing: 0.02em;
+            font-weight: 600;
+            margin-top: 1px;
+            z-index: 2;
+            opacity: 0.8;
+        }
+        .sdg-badge-label {
+            font-size: 0.55rem;
+            text-align: center;
+            max-width: 72px;
+            line-height: 1.3;
+            letter-spacing: 0.01em;
+            color: var(--text);
+            opacity: 0.5;
+        }
+
+        /* Locked State: Intaglio debossed imprint */
+        .sdg-badge.locked .sdg-badge-circle {
+            background: transparent;
+            border: 1.5px dashed rgba(44,36,32,0.18);
+            color: rgba(44,36,32,0.25);
+        }
+        body.night .sdg-badge.locked .sdg-badge-circle {
+            border-color: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.2);
+        }
+        .sdg-badge.locked .sdg-badge-circle::before { display: none; }
+
+        /* Unlocked State: Letterpress vintage ink stamp style (No glow) */
+        .sdg-badge.unlocked .sdg-badge-circle {
+            background: #ffffff;
+            border-color: var(--badge-color);
+            color: var(--badge-color);
+            box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 3px var(--badge-color);
+        }
+        body.night .sdg-badge.unlocked .sdg-badge-circle {
+            background: #2a251f;
+            box-shadow: inset 0 0 0 2px #2a251f, inset 0 0 0 3px var(--badge-color);
+        }
+        .sdg-badge.unlocked .sdg-badge-circle::before {
+            border-color: var(--badge-color);
+            opacity: 0.3;
+        }
+        .sdg-badge.unlocked .sdg-badge-label {
+            opacity: 0.9;
+            font-weight: 600;
+        }
+
+        /* Animation */
+        @keyframes badgeUnlock {
+            0%   { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .sdg-badge.just-unlocked .sdg-badge-circle {
+            animation: badgeUnlock 0.5s ease-out forwards;
+        }
+
+        /* Tooltip */
+        .sdg-badge[data-tip]:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--ink);
+            color: var(--paper-white);
+            font-size: 0.62rem;
+            line-height: 1.5;
+            padding: 0.45rem 0.65rem;
+            border-radius: 5px;
+            white-space: normal;
+            width: 180px;
+            text-align: center;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            filter: none !important;
+        }
+        .sdg-badge[data-tip]:hover::before {
+            content: ''; position: absolute;
+            bottom: calc(100% + 2px); left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--ink);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Ticket footer export block */
+        .passport-export-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed #cfbfa8;
+        }
+        body.night .passport-export-row { border-top-color: #54493f; }
+        
+        .passport-export-btn {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 0.5rem 1.4rem;
+            background: transparent;
+            color: var(--brick-red);
+            border: 1.5px solid var(--brick-red);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        body.night .passport-export-btn {
+            color: var(--text);
+            border-color: #cfbfa8;
+        }
+        .passport-export-btn:hover {
+            background: var(--brick-red);
+            color: white;
+        }
+        body.night .passport-export-btn:hover {
+            background: #cfbfa8;
+            color: #231e18;
+        }
+        .passport-export-btn:active { transform: scale(0.98); }
+
+        /* ── Upload bar ── */
+        .upload-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--panel-bg);
+            border: 1.5px dashed var(--beige);
+            border-radius: 8px;
+            padding: 0.75rem 1.1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .upload-bar:hover { border-color: var(--stamp-gold); background: rgba(201,148,58,0.05); }
+        .upload-bar-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .upload-bar-text { flex: 1; }
+        .upload-bar-text strong { display: block; font-size: 0.8rem; color: var(--text); }
+        .upload-bar-text small { font-size: 0.68rem; color: var(--seafoam); }
+        .upload-bar-btn {
+            padding: 0.42rem 1rem;
+            background: var(--brick-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 0.73rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .upload-bar-btn:hover { background: var(--brick-light); }
+
+        .geo-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--seafoam);
+            color: white;
+            font-size: 0.62rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-top: 0.4rem;
+            letter-spacing: 0.04em;
+            font-style: normal;
+        }
+
+        #upload-toast { margin:0 auto 1rem; max-width:100%; padding:0.7rem 1rem; border-radius:6px; font-size:0.78rem; text-align:center; display:none; line-height:1.5; }
+        #upload-toast.success { background:#e8f5e4; color:#2e7d32; border:1px solid #a5d6a7; display:block; }
+        #upload-toast.error   { background:#fdecea; color:#c62828; border:1px solid #ef9a9a; display:block; }
+        #upload-toast.info    { background:#e3f2fd; color:#1565c0; border:1px solid #90caf9; display:block; }
+
+        .manual-select-wrap {
+            margin-top: 0.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .manual-select-wrap select {
+            padding: 0.4rem 0.65rem;
+            border: 1px solid #ef9a9a;
+            border-radius: 4px;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 0.76rem;
+            background: white;
+            color: #c62828;
+            cursor: pointer;
+            outline: none;
+        }
+        .manual-confirm-btn {
+            padding: 0.4rem 1rem;
+            background: var(--brick-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 0.76rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .manual-confirm-btn:hover { background: var(--brick-light); }
+
+        /* ── Stamp category tabs ── */
+        .stamp-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .stamp-tab {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            padding: 0.4rem 1.1rem;
+            border: 1.5px solid var(--beige);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .stamp-tab:hover { border-color: var(--stamp-gold); color: var(--brick-red); }
+        .stamp-tab.active {
+            background: var(--brick-red);
+            border-color: var(--brick-red);
+            color: white;
+        }
+
+        /* ── Stamp grid ── */
+        .stamp-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(118px,1fr)); gap:1.4rem; }
+        .stamp-item { display:flex; flex-direction:column; align-items:center; gap:0.5rem; text-align:center; }
+
+        .stamp-piece {
+            position: relative;
+            width: 90px;
+            height: 108px;
+            flex-shrink: 0;
+            background-color: #faf6ef;
+            border-radius: 2px;
+            filter: drop-shadow(0 3px 10px rgba(0,0,0,0.18));
+            -webkit-mask-image:
+                radial-gradient(circle at   0%   0%, transparent 6px, white 6px),
+                radial-gradient(circle at 100%   0%, transparent 6px, white 6px),
+                radial-gradient(circle at   0% 100%, transparent 6px, white 6px),
+                radial-gradient(circle at 100% 100%, transparent 6px, white 6px),
+                radial-gradient(circle at  50%   0%, transparent 5px, white 5px),
+                radial-gradient(circle at  50% 100%, transparent 5px, white 5px),
+                radial-gradient(circle at   0%  50%, transparent 5px, white 5px),
+                radial-gradient(circle at 100%  50%, transparent 5px, white 5px),
+                radial-gradient(circle at  25%   0%, transparent 5px, white 5px),
+                radial-gradient(circle at  75%   0%, transparent 5px, white 5px),
+                radial-gradient(circle at  25% 100%, transparent 5px, white 5px),
+                radial-gradient(circle at  75% 100%, transparent 5px, white 5px),
+                radial-gradient(circle at   0%  25%, transparent 5px, white 5px),
+                radial-gradient(circle at   0%  75%, transparent 5px, white 5px),
+                radial-gradient(circle at 100%  25%, transparent 5px, white 5px),
+                radial-gradient(circle at 100%  75%, transparent 5px, white 5px),
+                linear-gradient(white, white);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            transition: transform 0.2s;
+        }
+
+        .stamp-piece.locked { background-color: #f0ece4; }
+        .stamp-item.locked-item { filter: grayscale(100%); }
+
+        .stamp-img-box {
+            position: absolute;
+            top: 12px;
+            left: 8px;
+            right: 8px;
+            bottom: 12px;
+            background: white;
+            border-radius: 2px;
+            border: 1.5px solid rgba(0,0,0,0.07);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stamp-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .stamp-img-box.locked-box {
+            background: rgba(0,0,0,0.04);
+            border-color: rgba(0,0,0,0.07);
+        }
+        .stamp-img-box.empty-box {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .stamp-bar-top {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+        }
+        .stamp-bar-bot {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 6px;
+        }
+
+        .stamp-item:not(.locked-item) .stamp-piece { cursor: pointer; }
+        .stamp-item:not(.locked-item) .stamp-piece:hover { transform: scale(1.07) rotate(-1deg); }
+        .stamp-item.locked-item .stamp-piece { cursor: default; }
+
+        @keyframes stampIn {
+            0%   { transform: scale(0.3) rotate(-20deg); opacity: 0; }
+            70%  { transform: scale(1.15) rotate(3deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .stamp-piece.just-unlocked { animation: stampIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+        .stamp-name   { font-size:0.67rem; font-weight:600; color:var(--text); }
+        .stamp-status { font-size:0.59rem; color:var(--seafoam); }
+        .stamp-status.unlocked { color:var(--deep-orange); }
+
+        /* Lightbox */
+        #lightbox { position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,0.88); display:none; align-items:center; justify-content:center; flex-direction:column; gap:0.8rem; }
+        #lightbox.open { display:flex; }
+        #lightbox img { max-width:90vw; max-height:80vh; border-radius:4px; }
+        #lightbox-info { color:white; font-size:0.8rem; text-align:center; opacity:0.8; }
+        #lightbox-close { position:absolute; top:1rem; right:1.2rem; background:rgba(255,255,255,0.15); border:none; color:white; width:32px; height:32px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+        /* SDG Fact Modal */
+        #sdg-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 9500;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        #sdg-modal.open { display: flex; }
+        .sdg-modal-card {
+            background: var(--panel-bg);
+            border: 2px solid var(--stamp-gold);
+            border-radius: 10px;
+            max-width: 420px;
+            width: 100%;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            position: relative;
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.7) translateY(30px); opacity: 0; }
+            to   { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .sdg-modal-icon { font-size: 2.5rem; display: block; margin-bottom: 0.7rem; font-family: 'Playfair Display', serif; font-weight: bold; }
+        .sdg-modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--brick-red);
+            margin-bottom: 0.9rem;
+        }
+        .sdg-modal-fact {
+            font-size: 0.82rem;
+            line-height: 1.8;
+            color: var(--text);
+            font-style: italic;
+            margin-bottom: 1.2rem;
+        }
+        .sdg-modal-close {
+            padding: 0.55rem 1.5rem;
+            background: var(--brick-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .sdg-modal-close:hover { background: var(--brick-light); }
+
+        /* Leaflet popup */
+        .leaflet-popup-content-wrapper { background:var(--paper-white); border-top:3px solid var(--brick-red); border-radius:4px; font-family:'Noto Serif TC',serif; box-shadow:0 4px 20px rgba(0,0,0,0.2); }
+        .leaflet-popup-content { margin:9px 12px; }
+        .popup-title { font-family:'Playfair Display',serif; font-size:0.86rem; color:var(--brick-red); font-weight:700; }
+        .popup-sub { font-size:0.66rem; color:var(--seafoam); margin-top:2px; }
+        .popup-addr { font-size:0.62rem; color:#888; margin-top:3px; }
+
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:var(--beige); border-radius:2px; }
+
+        /* Responsive passport card */
+        @media (max-width: 540px) {
+            .passport-body { flex-direction: column; gap: 1.5rem; }
+            .passport-left { flex-direction: row; align-items: center; min-width: unset; width: 100%; justify-content: space-around; gap: 1rem; }
+            .passport-divider { width: 100%; height: 1px; border-left: none; border-top: 2px dashed #cfbfa8; align-self: unset; }
+            .passport-divider::before { top: -8px; left: -20px; }
+            .passport-divider::after { bottom: -8px; left: unset; right: -20px; }
+            #sdg-badges-wall { justify-content: space-around; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="start-page">
+    <div class="start-card">
+        <span class="start-stamp">🗺</span>
+        <h1>Taiwan Cultural Trails</h1>
+        <p class="subtitle">Beneficial & Sustainable Tourism</p>
+        <div class="dot-divider"></div>
+        <p class="start-label">你的名字 / Your Name</p>
+        <input class="start-input" id="username-input" type="text" placeholder="輸入你的名字開始旅程…" maxlength="20">
+        <button class="start-btn" onclick="enterApp()">開始探索 · Begin Journey</button>
+        <p class="start-note">名字只儲存在你的瀏覽器，不會上傳任何伺服器。</p>
+    </div>
+</div>
+
+<header>
+    <div class="header-left">
+        <div>
+            <h1>Taiwan Cultural Trails</h1>
+            <div class="header-sub">Explore cultural sites & tourism spots across Taiwan</div>
+        </div>
+    </div>
+    <div class="header-right">
+        <span class="header-user" id="header-user"></span>
+        <label class="theme-toggle" id="themeToggle" title="Day/Night">
+            ☼
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            ☾
+        </label>
+    </div>
+</header>
+
+<div class="tool-bar">
+    <button class="tool-btn active" onclick="switchTab('map',this)">Explore Map</button>
+    <button class="tool-btn"        onclick="switchTab('stamps',this)">Stamp Collection</button>
+</div>
+
+<div class="map-layout" id="mapLayout">
+
+    <div id="sidebar" class="collapsed">
+        <button id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">‹</button>
+
+        <div class="sidebar-section">
+            <h3>Search</h3>
+            <div class="search-wrap">
+                <span class="search-icon">⚲</span>
+                <input type="text" id="searchInput" placeholder="搜尋名稱、地址或 ID…">
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>Filter by Category</h3>
+            <div class="filter" id="filterContainer"></div>
+        </div>
+
+        <div class="sidebar-section" style="padding-bottom:0.4rem;border-bottom:none;">
+            <h3>Locations <span id="loc-count" style="opacity:0.5;font-weight:normal"></span></h3>
+        </div>
+        <div class="location-list" id="locationList">
+            <div class="loading-spinner">
+                <div class="spinner"></div><br>載入觀光資料中…
+            </div>
+        </div>
+    </div>
+
+    <div class="map-container">
+        <div id="map"></div>
+        <div id="map-counter"></div>
+        <div id="api-status"></div>
+    </div>
+
+    <div class="info-panel" id="infoPanel">
+        <div class="panel-header">
+            <div class="panel-tag" id="panelTag">Category</div>
+            <h2 id="panelTitle">Location Name</h2>
+            <button class="panel-close" onclick="closePanel()">✕</button>
+        </div>
+        <div class="panel-img" id="panelImg"></div>
+        <div class="panel-body">
+            <p id="panelDesc">Description...</p>
+            <div class="panel-addr" id="panelAddr"></div>
+        </div>
+        <div class="panel-links" id="panelLinks"></div>
+    </div>
+</div>
+
+<div class="stamp-page" id="stampPage">
+
+    <div class="page-title">Stamp Collection</div>
+    <p class="page-sub">Visit each location in person and upload a photo to unlock your stamp.</p>
+
+    <div id="passport-card">
+        <div class="passport-deco-stamp">Valid for Entry</div>
+        <div class="passport-inner">
+            <div class="passport-header">
+                <span class="passport-issuer">Taiwan Cultural Trails · OAuth Boarding Pass</span>
+                <div class="passport-title">BOARDING PASS · 永續文化通行證</div>
+            </div>
+
+            <div class="passport-body">
+                <div class="passport-left">
+                    <div class="passport-avatar" id="passport-avatar">T</div>
+                    <div class="passport-name" id="passport-name">Traveler</div>
+                    <div class="passport-role">Eco Explorer</div>
+                    <div class="passport-progress-wrap">
+                        <div class="passport-progress-label">Milestone</div>
+                        <div class="passport-progress-bar-bg">
+                            <div class="passport-progress-bar-fill" id="progress-bar-fill" style="width:0%"></div>
+                        </div>
+                        <div class="passport-progress-text" id="progress-text">Progress: 0 / 0 (0%)</div>
+                    </div>
+                </div>
+
+                <div class="passport-divider"></div>
+
+                <div class="passport-right">
+                    <div class="passport-right-title">Imprinted Achievements</div>
+                    <div id="sdg-badges-wall">
+                        </div>
+                </div>
+            </div>
+
+            <div class="passport-export-row">
+                <button class="passport-export-btn" onclick="exportPassport()">📥 Export Boarding Pass</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="upload-bar" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-bar-icon">📤</div>
+        <div class="upload-bar-text">
+            <strong>Upload a Memory Photo to Unlock Stamps</strong>
+            <small>GPS location in the photo will be verified automatically</small>
+            <span class="geo-badge">GPS Active</span>
+        </div>
+        <button class="upload-bar-btn" onclick="event.stopPropagation();document.getElementById('fileInput').click()">Choose Photo</button>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
+    <div id="upload-toast"></div>
+
+    <div class="stamp-tabs" id="stampTabs"></div>
+    <div class="stamp-grid" id="stampGrid"></div>
+</div>
+
+<div id="lightbox" onclick="closeLightbox()">
+    <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="">
+    <div id="lightbox-info"></div>
+</div>
+
+<div id="sdg-modal">
+    <div class="sdg-modal-card">
+        <span class="sdg-modal-icon" id="sdg-modal-icon">S</span>
+        <div class="sdg-modal-title" id="sdg-modal-title">Stamp Unlocked!</div>
+        <div class="sdg-modal-fact" id="sdg-modal-fact"></div>
+        <button class="sdg-modal-close" onclick="closeSdgModal()">Keep Exploring ›</button>
+    </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   TDX API credentials
+══════════════════════════════════════════════════ */
+const TDX_CLIENT_ID     = ''; 
+const TDX_CLIENT_SECRET = ''; 
+
+/* ══════════════════════════════════════════════════
+   Data source config
+══════════════════════════════════════════════════ */
+const TDX_SOURCES = [
+    {
+        id: 'scenic', name: 'Tourist attractions',
+        endpoint: 'https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot?$top=600&$format=JSON',
+        nameField: 'ScenicSpotName',
+        icon: 'S', color: '#c96b1a',
+    },
+    {
+        id: 'restaurant', name: 'Tourist restaurant',
+        endpoint: 'https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant?$top=200&$format=JSON',
+        nameField: 'RestaurantName',
+        icon: 'R', color: '#2b8c6e',
+    },
+    {
+        id: 'activity', name: 'Cultural and creative activities',
+        endpoint: 'https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity?$top=150&$format=JSON',
+        nameField: 'ActivityName',
+        icon: 'A', color: '#9e2a1c',
+    },
+];
+
+/* ══════════════════════════════════════════════════
+   Seed data (fallback)
+══════════════════════════════════════════════════ */
+const SEED_LOCATIONS = [
+    {
+        id:'huashan', name:'華山1914文創園區', category:'Cultural and creative activities', icon:'A', color:'#9e2a1c',
+        lat:25.0441, lng:121.5298, addr:'台北市中正區八德路一段1號',
+        desc:'前身為台灣總督府專賣局台北酒廠，1999年轉型為文化創意產業園區。現為台灣最重要的文創展演場地之一，聚集設計師品牌、藝廊、表演場館與特色餐廳。',
+        officialUrl:'https://www.huashan1914.com/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=華山1914文創園區+台北市中正區八德路一段1號'
+    },
+    {
+        id:'jiufen', name:'九份老街', category:'Tourist attractions', icon:'S', color:'#c96b1a',
+        lat:25.1094, lng:121.8441, addr:'新北市瑞芳區九份',
+        desc:'昔日淘金小鎮，紅燈籠、茶樓與蜿蜒石階構成台灣最具代表性的山城意象。傍晚的燈火映照著基隆山與海灣，是許多遊客心目中台灣最美的夜景之一。',
+        officialUrl:'https://www.travel.taipei/zh-tw/attraction/details/35',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=九份老街+新北市瑞芳區'
+    },
+    {
+        id:'taroko', name:'太魯閣國家公園', category:'Tourist attractions', icon:'S', color:'#c96b1a',
+        lat:24.1573, lng:121.6210, addr:'花蓮縣秀林鄉',
+        desc:'大理石峽谷地形與立霧溪共同塑造的壯闊景觀，也是太魯閣族（Truku）世代居住的土地。園區內設有原住民文化展示，介紹編織、狩獵與祭典傳承。',
+        officialUrl:'https://www.taroko.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=太魯閣國家公園+花蓮縣秀林鄉'
+    },
+    {
+        id:'songshan', name:'松山文創園區', category:'Cultural and creative activities', icon:'A', color:'#9e2a1c',
+        lat:25.0427, lng:121.5600, addr:'台北市信義區光復南路133號',
+        desc:'前身為日治時期松山菸草工廠，現為台灣最大的文創設計基地。每年舉辦台灣設計展、文博會等大型文化活動，保留完整的歷史廠房建築。',
+        officialUrl:'https://www.songshanculturalpark.org/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=松山文創園區+台北市信義區光復南路133號'
+    },
+    {
+        id:'anping', name:'台南安平古堡', category:'Tourist attractions', icon:'S', color:'#c96b1a',
+        lat:22.9966, lng:120.1610, addr:'台南市安平區國勝路82號',
+        desc:'1624年荷蘭東印度公司興建，是台灣最古老的城堡遺址。古堡旁的老街保存著傳統劍獅工藝、蜜餞文化與百年老店，是台南文史探索的必訪地點。',
+        officialUrl:'https://culture.tainan.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=安平古堡+台南市安平區國勝路82號'
+    },
+    {
+        id:'shenkeng', name:'深坑老街', category:'Tourist attractions', icon:'S', color:'#c96b1a',
+        lat:25.0021, lng:121.6183, addr:'新北市深坑區北深路三段',
+        desc:'以臭豆腐聞名，同時也是台北近郊保存完整的清代閩南式街屋聚落。在地工藝師在此製作竹編、豆腐文創商品，呈現農村生活與在地飲食文化。',
+        officialUrl:'https://www.shenkeng.ntpc.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=深坑老街+新北市深坑區北深路三段'
+    },
+    {
+        id:'lukang', name:'鹿港老街', category:'Tourist attractions', icon:'S', color:'#c96b1a',
+        lat:24.0520, lng:120.4365, addr:'彰化縣鹿港鎮中山路',
+        desc:'保存最完整的清代街道格局，擁有天后宮、龍山寺等古廟，是台灣民俗工藝的重要聚集地。',
+        officialUrl:'https://lukang.cca.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=鹿港老街+彰化縣鹿港鎮中山路'
+    },
+    {
+        id:'hayashi', name:'台南林百貨', category:'Tourist attractions', icon:'S', color:'#c96b1a',
+        lat:22.9969, lng:120.2016, addr:'台南市中西區忠義路二段63號',
+        desc:'1932年開幕的昭和時代百貨公司，修復後成為文創空間，頂樓保留日治時期防空砲台。',
+        officialUrl:'https://hayashi.com.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=林百貨+台南市中西區忠義路二段63號'
+    },
+    {
+        id:'shilin', name:'士林夜市', category:'Tourist restaurant', icon:'R', color:'#2b8c6e',
+        lat:25.0883, lng:121.5237, addr:'台北市士林區基河路',
+        desc:'台灣規模最大的觀光夜市，以蚵仔煎、大餅包小餅、豪大大雞排等小吃聞名，是外國旅客體驗台灣夜市文化的首選。',
+        officialUrl:'https://www.travel.taipei/zh-tw/attraction/details/1',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=士林夜市+台北市士林區基河路'
+    },
+    {
+        id:'suao', name:'蘇澳冷泉', category:'Tourist attractions', icon:'S', color:'#c96b1a',
+        lat:24.5965, lng:121.8609, addr:'宜蘭縣蘇澳鎮冷泉路',
+        desc:'全球少見的碳酸冷泉，水溫常年維持在22°C，泡湯後皮膚光滑細緻，是宜蘭最具特色的自然景觀。',
+        officialUrl:'https://www.tourism.gov.tw/',
+        mapUrl:'https://www.google.com/maps/search/?api=1&query=蘇澳冷泉+宜蘭縣蘇澳鎮冷泉路'
+    },
+];
+
+/* ══════════════════════════════════════════════════
+   SDG VINTAGE BADGES DEFINITION (Typography-Based Art)
+══════════════════════════════════════════════════ */
+const SDG_BADGES = [
+    {
+        id: 'green_traveler',
+        symbol: 'A', // Typographic representation for Activity / Art
+        label: 'Green Traveler',
+        sdgColor: '#3F7E44',
+        sdgNum: 'SDG 11',
+        category: 'Cultural and creative activities',
+        threshold: 3,
+        tip: 'GREEN TRAVELER: Supporting local artists & reviving historic spaces directly advances SDG 11 — Sustainable Cities & Communities. Keep exploring!'
+    },
+    {
+        id: 'sustainable_foodie',
+        symbol: 'R', // Typographic representation for Restaurant
+        label: 'Sustainable Foodie',
+        sdgColor: '#BF8B2E',
+        sdgNum: 'SDG 12',
+        category: 'Tourist restaurant',
+        threshold: 3,
+        tip: 'SUSTAINABLE FOODIE: Dining at certified local restaurants reduces food miles and supports SDG 12 — Responsible Consumption & Production. Delicious impact!'
+    },
+    {
+        id: 'heritage_explorer',
+        symbol: 'S', // Typographic representation for Scenic Spot
+        label: 'Heritage Explorer',
+        sdgColor: '#9E2A1C',
+        sdgNum: 'SDG 8.9',
+        category: 'Tourist attractions',
+        threshold: 3,
+        tip: 'HERITAGE EXPLORER: Deep exploration of Taiwan\'s natural & cultural assets promotes SDG 8.9 — Sustainable Tourism that creates local jobs and preserves culture.'
+    },
+];
+
+/* ══════════════════════════════════════════════════
+   SDG FACT MESSAGES (randomly shown on unlock)
+══════════════════════════════════════════════════ */
+const SDG_FACTS = {
+    'Tourist attractions': [
+        "Stamp unlocked! Preserving historical sites like this directly supports UN SDG 11 for Sustainable Cities and Communities — every visit helps keep heritage alive!",
+        "Heritage stamp collected! Taiwan's unique natural landscapes contribute to SDG 15 (Life on Land). Sustainable tourism funds conservation of these irreplaceable ecosystems.",
+    ],
+    'Tourist restaurant': [
+        "Stamp unlocked! By dining at certified local tourist restaurants, you actively support Sustainable Consumption & Production (SDG 12) and reduce your food-mile footprint!",
+        "Local foodie stamp! Supporting Taiwan's regional food culture strengthens local supply chains and advances SDG 8 — Decent Work and Economic Growth for rural communities.",
+    ],
+    'Cultural and creative activities': [
+        "Cultural stamp unlocked! Attending local creative events revitalizes historic spaces and supports SDG 11 — Sustainable Cities. Art is the heartbeat of community resilience!",
+        "Creative explorer! Engaging with Taiwan's cultural industries helps preserve intangible heritage and advances SDG 4 — Quality Education through living cultural transmission.",
+    ],
+};
+
+/* ══════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════ */
+const unlockedStamps = new Set(JSON.parse(localStorage.getItem('tct_stamps') || '[]'));
+let stampPhotos = {};
+try {
+    stampPhotos = JSON.parse(localStorage.getItem('tct_stamp_photos') || '{}');
+} catch(e) { stampPhotos = {}; }
+
+function saveStamps() {
+    localStorage.setItem('tct_stamps', JSON.stringify([...unlockedStamps]));
+}
+function saveStampPhotos() {
+    try {
+        localStorage.setItem('tct_stamp_photos', JSON.stringify(stampPhotos));
+    } catch(e) {
+        console.warn('Could not persist stamp photos (storage quota exceeded).');
+    }
+}
+
+let allLocations = [];
+let markers = {};
+let activeStampCategory = TDX_SOURCES[0].name;
+
+const _badgeAnimatedThisSession = new Set();
+
+/* ══════════════════════════════════════════════════
+   LOGIN
+══════════════════════════════════════════════════ */
+function updateAvatarAndName(name) {
+    document.getElementById('passport-name').textContent = name;
+    // Get the first character for the ticket typography stamp avatar
+    const firstChar = name.charAt(0).toUpperCase() || 'T';
+    document.getElementById('passport-avatar').textContent = firstChar;
+}
+
+function enterApp() {
+    const name = document.getElementById('username-input').value.trim() || '旅人';
+    localStorage.setItem('tct_username', name);
+    document.getElementById('header-user').textContent = `Hi, ${name}`;
+    updateAvatarAndName(name);
+    const sp = document.getElementById('start-page');
+    sp.classList.add('fade-out');
+    setTimeout(() => sp.style.display = 'none', 650);
+    setTimeout(() => document.getElementById('sidebar').classList.remove('collapsed'), 400);
+}
+
+document.getElementById('username-input').addEventListener('keydown', e => { if (e.key === 'Enter') enterApp(); });
+window.addEventListener('load', () => {
+    const saved = localStorage.getItem('tct_username');
+    if (saved) {
+        document.getElementById('username-input').value = saved;
+        updateAvatarAndName(saved);
+    }
+});
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR / TAB / THEME
+══════════════════════════════════════════════════ */
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+    setTimeout(() => map.invalidateSize(), 320);
+}
+
+function switchTab(tab, btn) {
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    document.getElementById('mapLayout').classList.toggle('hidden', tab !== 'map');
+    document.getElementById('stampPage').classList.toggle('active', tab === 'stamps');
+    if (tab === 'map') setTimeout(() => map.invalidateSize(), 50);
+    if (tab === 'stamps') renderStampGrid();
+}
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+    document.body.classList.toggle('night');
+});
+
+/* ══════════════════════════════════════════════════
+   LEAFLET MAP
+══════════════════════════════════════════════════ */
+const map = L.map('map', { zoomControl: true }).setView([23.7, 121.0], 7);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd', maxZoom: 19
+}).addTo(map);
+
+setTimeout(() => map.invalidateSize(), 150);
+
+function makeIcon(letter, color) {
+    return L.divIcon({
+        className: '',
+        html: `<div style="background:${color};color:white;width:30px;height:30px;
+            border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+            display:flex;align-items:center;justify-content:center;
+            border:2px solid rgba(255,255,255,0.6);
+            box-shadow:0 2px 8px rgba(0,0,0,0.35);">
+            <span style="transform:rotate(45deg);font-size:11px;font-family:'Playfair Display',Georgia,serif;font-weight:700">${letter}</span>
+        </div>`,
+        iconSize:[30,30], iconAnchor:[15,30], popupAnchor:[0,-32]
+    });
+}
+
+/* ══════════════════════════════════════════════════
+   STATUS TOAST
+══════════════════════════════════════════════════ */
+function showStatus(msg, duration=3500) {
+    const el = document.getElementById('api-status');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), duration);
+}
+
+/* ══════════════════════════════════════════════════
+   TDX: Access Token
+══════════════════════════════════════════════════ */
+async function getTDXToken() {
+    const res = await fetch(
+        'https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token',
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `grant_type=client_credentials&client_id=${TDX_CLIENT_ID}&client_secret=${TDX_CLIENT_SECRET}`
+        }
+    );
+    if (!res.ok) throw new Error('Token error: HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.access_token) throw new Error('No access_token in response');
+    return data.access_token;
+}
+
+/* ══════════════════════════════════════════════════
+   TDX: Fetch data
+══════════════════════════════════════════════════ */
+async function fetchCultureData() {
+    if (!TDX_CLIENT_ID || !TDX_CLIENT_SECRET) {
+        showStatus('TDX credentials not set — showing demo data (10 entries)');
+        return SEED_LOCATIONS;
+    }
+
+    showStatus('Connecting to TDX Tourism API, please wait…', 20000);
+
+    try {
+        const token = await getTDXToken();
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        const results = await Promise.allSettled(
+            TDX_SOURCES.map(src =>
+                fetch(src.endpoint, { headers, signal: AbortSignal.timeout(20000) })
+                    .then(r => r.ok ? r.json() : [])
+                    .catch(e => { console.warn(src.name, 'failed:', e.message); return []; })
+            )
+        );
+
+        const allLocs = [];
+
+        results.forEach((result, idx) => {
+            const src  = TDX_SOURCES[idx];
+            const data = result.status === 'fulfilled' ? result.value : [];
+            if (!Array.isArray(data)) return;
+
+            data.forEach((item, i) => {
+                const pos = item.Position;
+                if (!pos?.PositionLat || !pos?.PositionLon) return;
+
+                const lat = parseFloat(pos.PositionLat);
+                const lng = parseFloat(pos.PositionLon);
+                if (isNaN(lat) || isNaN(lng)) return;
+                if (lat < 21.5 || lat > 25.5 || lng < 119.0 || lng > 122.5) return;
+
+                const name    = item[src.nameField] || item.Name || '未命名';
+                const addr    = item.Address || item.Location || '';
+                const rawDesc = item.DescriptionDetail || item.Description || item.Toldescribe || '';
+                const desc    = rawDesc.replace(/<[^>]*>/g, '').trim().slice(0, 200);
+                const web     = item.WebsiteUrl || item.Website || '';
+                const pic     = item.Picture?.PictureUrl1 || '';
+
+                allLocs.push({
+                    id:          `${src.id}_${i}`,
+                    name,
+                    category:    src.name,
+                    icon:        src.icon,
+                    color:       src.color,
+                    lat, lng, addr, desc, pic,
+                    officialUrl: web || 'https://www.taiwan.net.tw/',
+                    mapUrl:      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addr)}`
+                });
+            });
+        });
+
+        if (allLocs.length === 0) throw new Error('API returned empty data');
+
+        showStatus(`Loaded ${allLocs.length.toLocaleString()} locations`);
+        return allLocs;
+
+    } catch (e) {
+        console.error('TDX API error:', e.message);
+        showStatus('API connection failed — using demo data');
+        return SEED_LOCATIONS;
+    }
+}
+
+/* ══════════════════════════════════════════════════
+   Build Filter UI
+══════════════════════════════════════════════════ */
+function buildFilterUI() {
+    document.getElementById('filterContainer').innerHTML =
+        TDX_SOURCES.map(src => `
+            <label class="filter-item">
+                <input type="checkbox" value="${src.name}" checked onchange="applyFilter()">
+                <div class="filter-box"></div>
+                <span class="cat-letter" style="background:${src.color}">${src.icon}</span>
+                ${src.name}
+                <span class="filter-status" style="background:${src.color}"></span>
+            </label>`).join('');
+
+    const tabsEl = document.getElementById('stampTabs');
+    tabsEl.innerHTML = TDX_SOURCES.map((src, i) => `
+        <button class="stamp-tab ${i === 0 ? 'active' : ''}"
+                onclick="selectStampTab('${src.name}', this)">
+            <span style="display:inline-flex;align-items:center;justify-content:center;
+                width:16px;height:16px;border-radius:3px;background:${src.color};
+                color:white;font-family:'Playfair Display',serif;font-weight:700;
+                font-size:0.6rem;margin-right:5px">${src.icon}</span>${src.name}
+        </button>`).join('');
+
+    renderPassportDashboard();
+}
+
+function selectStampTab(categoryName, btn) {
+    activeStampCategory = categoryName;
+    document.querySelectorAll('.stamp-tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderStampGrid();
+}
+
+/* ══════════════════════════════════════════════════
+   RENDER LOCATIONS (map + sidebar)
+══════════════════════════════════════════════════ */
+function renderLocations(locs) {
+    allLocations = locs;
+
+    document.getElementById('loc-count').textContent = `(${locs.length.toLocaleString()})`;
+
+    const counter = document.getElementById('map-counter');
+    counter.textContent = `${locs.length.toLocaleString()} locations`;
+    counter.classList.add('show');
+    setTimeout(() => counter.classList.remove('show'), 5000);
+
+    const list = document.getElementById('locationList');
+    list.innerHTML = '';
+    const LIMIT = 200;
+    locs.slice(0, LIMIT).forEach((loc, i) => {
+        const el = document.createElement('div');
+        el.className = 'loc-card';
+        el.dataset.category = loc.category;
+        el.innerHTML = `
+            <div class="loc-thumb" style="background:${loc.color}22">
+                <span class="cat-letter" style="background:${loc.color};font-size:0.65rem;width:22px;height:22px;border-radius:3px">${loc.icon}</span>
+            </div>
+            <div class="loc-info">
+                <div class="loc-name">${loc.name}</div>
+                <div class="loc-tag">${loc.category}</div>
+            </div>`;
+        el.onclick = () => selectLocation(i);
+        list.appendChild(el);
+    });
+    if (locs.length > LIMIT) {
+        const more = document.createElement('div');
+        more.className = 'loc-loading';
+        more.textContent = `… ${(locs.length - LIMIT).toLocaleString()} more (click map markers to view)`;
+        list.appendChild(more);
+    }
+
+    Object.values(markers).forEach(m => map.removeLayer(m));
+    markers = {};
+
+    locs.forEach((loc, i) => {
+        const m = L.marker([loc.lat, loc.lng], { icon: makeIcon(loc.icon, loc.color) })
+            .addTo(map)
+            .bindPopup(`
+                <div class="popup-title">${loc.name}</div>
+                <div class="popup-sub">${loc.category}</div>
+                ${loc.addr ? `<div class="popup-addr">${loc.addr.slice(0,30)}</div>` : ''}
+            `)
+            .on('click', () => selectLocation(i));
+        markers[loc.id] = m;
+    });
+
+    renderStampGrid();
+    renderPassportDashboard();
+}
+
+/* ══════════════════════════════════════════════════
+   PASSPORT DASHBOARD (Updated to Vintage Boarding Pass)
+══════════════════════════════════════════════════ */
+function renderPassportDashboard() {
+    const savedName = localStorage.getItem('tct_username') || '旅人';
+    updateAvatarAndName(savedName);
+
+    const totalLocs   = allLocations.length;
+    const totalUnlocked = unlockedStamps.size;
+    const pct = totalLocs > 0 ? (totalUnlocked / totalLocs * 100).toFixed(1) : 0;
+    document.getElementById('progress-bar-fill').style.width = Math.min(100, pct) + '%';
+    document.getElementById('progress-text').textContent =
+        `Progress: ${totalUnlocked} / ${totalLocs > 0 ? totalLocs : 200} (${pct}%)`;
+
+    const catCounts = {};
+    TDX_SOURCES.forEach(src => { catCounts[src.name] = 0; });
+    unlockedStamps.forEach(id => {
+        const loc = allLocations.find(l => l.id === id);
+        if (loc && catCounts.hasOwnProperty(loc.category)) {
+            catCounts[loc.category]++;
+        }
+    });
+
+    const wall = document.getElementById('sdg-badges-wall');
+    wall.innerHTML = '';
+
+    SDG_BADGES.forEach(badge => {
+        const count      = catCounts[badge.category] || 0;
+        const isUnlocked = count >= badge.threshold;
+
+        const div = document.createElement('div');
+        div.className = 'sdg-badge ' + (isUnlocked ? 'unlocked' : 'locked');
+        div.setAttribute('data-tip', isUnlocked
+            ? badge.tip
+            : `Unlock ${badge.threshold} stamps in "${badge.category}" to earn this badge! (${count}/${badge.threshold})`
+        );
+
+        if (isUnlocked && !_badgeAnimatedThisSession.has(badge.id)) {
+            div.classList.add('just-unlocked');
+            _badgeAnimatedThisSession.add(badge.id);
+        }
+
+        div.innerHTML = `
+            <div class="sdg-badge-circle"
+                 style="${isUnlocked
+                    ? `background: transparent; border-color:${badge.sdgColor}; --badge-color:${badge.sdgColor};`
+                    : ''
+                 }">
+                <span class="sdg-symbol">${badge.symbol}</span>
+                <span class="sdg-num" style="${isUnlocked ? `color:${badge.sdgColor}` : ''}">${badge.sdgNum}</span>
+            </div>
+            <div class="sdg-badge-label">${badge.label}</div>`;
+
+        wall.appendChild(div);
+    });
+}
+
+/* ══════════════════════════════════════════════════
+   SDG FACT MODAL
+══════════════════════════════════════════════════ */
+function showSdgModal(category) {
+    const facts = SDG_FACTS[category] || SDG_FACTS['Tourist attractions'];
+    const fact  = facts[Math.floor(Math.random() * facts.length)];
+
+    const badge = SDG_BADGES.find(b => b.category === category);
+    document.getElementById('sdg-modal-icon').textContent  = badge ? badge.symbol : 'S';
+    document.getElementById('sdg-modal-title').textContent = 'Stamp Unlocked! 🎫';
+    document.getElementById('sdg-modal-fact').textContent  = fact;
+    document.getElementById('sdg-modal').classList.add('open');
+}
+
+function closeSdgModal() {
+    document.getElementById('sdg-modal').classList.remove('open');
+}
+
+/* ══════════════════════════════════════════════════
+   STAMP GRID
+══════════════════════════════════════════════════ */
+function renderStampGrid() {
+    const grid = document.getElementById('stampGrid');
+    grid.innerHTML = '';
+
+    const filtered = allLocations.filter(loc => loc.category === activeStampCategory);
+
+    filtered.forEach(loc => {
+        const unlocked = unlockedStamps.has(loc.id);
+        const photoUrl = stampPhotos[loc.id] || null;
+
+        const el = document.createElement('div');
+        el.className = 'stamp-item' + (unlocked ? '' : ' locked-item');
+        el.id = 'stamp-' + CSS.escape(loc.id);
+
+        let stampInner;
+        if (unlocked && photoUrl) {
+            stampInner = `
+                <div class="stamp-bar-top" style="background:${loc.color}"></div>
+                <div class="stamp-img-box">
+                    <img src="${photoUrl}" alt="${loc.name}">
+                </div>
+                <div class="stamp-bar-bot" style="background:${loc.color}"></div>`;
+        } else if (unlocked) {
+            stampInner = `
+                <div class="stamp-bar-top" style="background:${loc.color}"></div>
+                <div class="stamp-img-box empty-box" style="border-color:${loc.color}33">
+                    <span style="font-size:1.2rem;opacity:0.3;color:${loc.color}">✓</span>
+                </div>
+                <div class="stamp-bar-bot" style="background:${loc.color}"></div>`;
+        } else {
+            stampInner = `<div class="stamp-img-box locked-box"></div>`;
+        }
+
+        el.innerHTML = `
+            <div class="stamp-piece ${unlocked ? '' : 'locked'}">${stampInner}</div>
+            <div class="stamp-name">${loc.name}</div>
+            <div class="stamp-status ${unlocked ? 'unlocked' : ''}">${unlocked ? '+ Collected' : 'Locked'}</div>`;
+
+        if (unlocked && photoUrl) {
+            el.querySelector('.stamp-piece').addEventListener('click', () => {
+                openLightbox(photoUrl, loc.name);
+            });
+        }
+
+        grid.appendChild(el);
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.5;font-size:0.8rem;padding:2rem">No data loaded yet — explore the map first.</p>';
+    }
+
+    renderPassportDashboard();
+}
+
+/* ══════════════════════════════════════════════════
+   UNLOCK STAMP
+══════════════════════════════════════════════════ */
+function unlockStamp(locId, dataUrl) {
+    const isNew = !unlockedStamps.has(locId);
+    unlockedStamps.add(locId);
+    saveStamps();
+
+    if (dataUrl && !stampPhotos[locId]) {
+        stampPhotos[locId] = dataUrl;
+        saveStampPhotos();
+    }
+
+    renderStampGrid();
+
+    const piece = document.querySelector(`#stamp-${CSS.escape(locId)} .stamp-piece`);
+    if (piece) piece.classList.add('just-unlocked');
+
+    if (isNew) {
+        const loc = allLocations.find(l => l.id === locId);
+        if (loc) {
+            setTimeout(() => showSdgModal(loc.category), 700);
+        }
+    }
+
+    return isNew;
+}
+
+/* ══════════════════════════════════════════════════
+   EXPORT PASSPORT (html2canvas)
+══════════════════════════════════════════════════ */
+async function exportPassport() {
+    const btn = document.querySelector('.passport-export-btn');
+    const origText = btn.textContent;
+    btn.textContent = '⏳ Generating…';
+    btn.disabled = true;
+
+    try {
+        const card    = document.getElementById('passport-card');
+        const canvas  = await html2canvas(card, {
+            backgroundColor: document.body.classList.contains('night') ? '#25211c' : '#fcf6e8',
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+            logging: false,
+        });
+
+        const link    = document.createElement('a');
+        link.download = 'Taiwan_Cultural_BoardingPass.png';
+        link.href     = canvas.toDataURL('image/png');
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (err) {
+        console.error('Export failed:', err);
+        alert('Export failed — please try again. (' + err.message + ')');
+    } finally {
+        btn.textContent = origText;
+        btn.disabled = false;
+    }
+}
+
+/* ══════════════════════════════════════════════════
+   INFO PANEL
+══════════════════════════════════════════════════ */
+function selectLocation(i) {
+    const loc = allLocations[i];
+    if (!loc) return;
+
+    document.querySelectorAll('.loc-card').forEach((c, j) =>
+        c.classList.toggle('selected', j === i));
+
+    document.getElementById('panelTag').textContent   = loc.category;
+    document.getElementById('panelTitle').textContent = loc.name;
+    document.getElementById('panelDesc').textContent  = loc.desc || '暫無詳細說明。';
+    document.getElementById('panelAddr').innerHTML    = loc.addr ? `${loc.addr}` : '';
+
+    const panelImg = document.getElementById('panelImg');
+    if (loc.pic) {
+        panelImg.innerHTML = `<img src="${loc.pic}" alt="${loc.name}" onerror="this.parentElement.innerHTML='<span style=font-size:2.5rem>${loc.icon}</span>'">`;
+        panelImg.style.background = '';
+    } else {
+        panelImg.innerHTML = `<span class="cat-letter" style="background:${loc.color};width:54px;height:54px;font-size:1.6rem;border-radius:6px">${loc.icon}</span>`;
+        panelImg.style.background = loc.color + '22';
+    }
+
+    const hasWeb = loc.officialUrl && loc.officialUrl !== 'https://www.taiwan.net.tw/';
+    document.getElementById('panelLinks').innerHTML = `
+        ${hasWeb ? `<a class="panel-link-btn btn-primary" href="${loc.officialUrl}" target="_blank" rel="noopener">Official Website ›</a>` : ''}
+        <a class="panel-link-btn btn-outline" href="${loc.mapUrl}" target="_blank" rel="noopener">View on Google Maps</a>`;
+
+    document.getElementById('infoPanel').classList.add('open');
+    map.setView([loc.lat, loc.lng], 15, { animate: true });
+    markers[loc.id]?.openPopup();
+}
+
+function closePanel() {
+    document.getElementById('infoPanel').classList.remove('open');
+    document.querySelectorAll('.loc-card').forEach(c => c.classList.remove('selected'));
+}
+
+/* ══════════════════════════════════════════════════
+   FILTER + SEARCH
+══════════════════════════════════════════════════ */
+function applyFilter() {
+    const checked = new Set(
+        [...document.querySelectorAll('#filterContainer input:checked')].map(cb => cb.value)
+    );
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    document.querySelectorAll('.loc-card').forEach((card, i) => {
+        const loc = allLocations[i];
+        if (!loc) return;
+        const catOk    = checked.has(loc.category);
+        const searchOk = !q ||
+            loc.name.toLowerCase().includes(q) ||
+            loc.id.toLowerCase().includes(q) ||
+            (loc.addr || '').toLowerCase().includes(q);
+        const show = catOk && searchOk;
+        card.style.display = show ? 'flex' : 'none';
+        if (markers[loc.id]) {
+            show ? map.addLayer(markers[loc.id]) : map.removeLayer(markers[loc.id]);
+        }
+    });
+}
+
+document.getElementById('searchInput').addEventListener('input', applyFilter);
+
+/* ══════════════════════════════════════════════════
+   HAVERSINE
+══════════════════════════════════════════════════ */
+function haversineDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371000;
+    const toRad = d => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+/* ══════════════════════════════════════════════════
+   EXIF GPS conversion
+══════════════════════════════════════════════════ */
+function exifGpsToDecimal(arr, ref) {
+    if (!arr || arr.length < 3) return null;
+    const dec = arr[0] + arr[1]/60 + arr[2]/3600;
+    return (ref === 'S' || ref === 'W') ? -dec : dec;
+}
+
+/* ══════════════════════════════════════════════════
+   Cascading manual-select UI
+══════════════════════════════════════════════════ */
+function buildCascadingSelect(toastEl, dataUrl) {
+    const catOptions = TDX_SOURCES.map(src =>
+        `<option value="${src.name}">${src.name}</option>`
+    ).join('');
+
+    toastEl.innerHTML = `
+        <strong>⚠ This photo does not have GPS information.</strong><br>
+        <small>Please manually select where this photo was taken:</small>
+        <div class="manual-select-wrap">
+            <select id="manual-cat-select" onchange="updateLocSelect()">
+                ${catOptions}
+            </select>
+            <select id="manual-loc-select"></select>
+            <button class="manual-confirm-btn" onclick="confirmManualUnlock('${encodeURIComponent(JSON.stringify(dataUrl))}')">
+                Confirm
+            </button>
+        </div>`;
+
+    updateLocSelect();
+}
+
+function updateLocSelect() {
+    const catSel = document.getElementById('manual-cat-select');
+    const locSel = document.getElementById('manual-loc-select');
+    if (!catSel || !locSel) return;
+    const chosenCat = catSel.value;
+    const filtered  = allLocations
+        .map((loc, i) => ({ loc, i }))
+        .filter(({ loc }) => loc.category === chosenCat);
+    locSel.innerHTML = filtered.length
+        ? filtered.map(({ loc, i }) => `<option value="${i}">${loc.name}</option>`).join('')
+        : '<option value="">— No locations —</option>';
+}
+
+function confirmManualUnlock(encodedDataUrl) {
+    const catSel = document.getElementById('manual-cat-select');
+    const locSel = document.getElementById('manual-loc-select');
+    if (!catSel || !locSel || locSel.value === '') return;
+    const idx = parseInt(locSel.value, 10);
+    let dataUrl;
+    try { dataUrl = JSON.parse(decodeURIComponent(encodedDataUrl)); } catch(e) { dataUrl = ''; }
+    manualUnlock(idx, dataUrl);
+}
+
+/* ══════════════════════════════════════════════════
+   PHOTO UPLOAD
+══════════════════════════════════════════════════ */
+function handlePhotoUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const toast = document.getElementById('upload-toast');
+    toast.className = 'info';
+    toast.textContent = 'Reading photo GPS info…';
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        const img = new Image();
+        img.src = dataUrl;
+        img.onload = function() {
+            EXIF.getData(img, function() {
+                const latArr = EXIF.getTag(this, 'GPSLatitude');
+                const latRef = EXIF.getTag(this, 'GPSLatitudeRef');
+                const lngArr = EXIF.getTag(this, 'GPSLongitude');
+                const lngRef = EXIF.getTag(this, 'GPSLongitudeRef');
+
+                const photoLat = exifGpsToDecimal(latArr, latRef);
+                const photoLng = exifGpsToDecimal(lngArr, lngRef);
+
+                if (photoLat === null || photoLng === null) {
+                    toast.className = 'error';
+                    buildCascadingSelect(toast, dataUrl);
+                    input.value = '';
+                    return;
+                }
+
+                const RADIUS = 500;
+                const matches = allLocations
+                    .map((loc, i) => ({ loc, i, dist: haversineDistance(photoLat, photoLng, loc.lat, loc.lng) }))
+                    .filter(m => m.dist < RADIUS)
+                    .sort((a, b) => a.dist - b.dist);
+
+                if (matches.length === 0) {
+                    toast.className = 'error';
+                    toast.innerHTML = `No location within 500 m of (${photoLat.toFixed(4)}, ${photoLng.toFixed(4)}) — stamp not unlocked.`;
+                    input.value = '';
+                    return;
+                }
+
+                const closest = matches[0];
+                const isNew   = unlockStamp(closest.loc.id, dataUrl);
+                const distStr = `${Math.round(closest.dist)} m`;
+
+                toast.className = 'success';
+                toast.innerHTML = isNew
+                    ? `Unlocked stamp: <strong>${closest.loc.name}</strong> (${distStr} away)`
+                    : `Confirmed near <strong>${closest.loc.name}</strong> (${distStr} away)`;
+
+                input.value = '';
+            });
+        };
+    };
+}
+
+function manualUnlock(locIndex, dataUrl) {
+    const loc   = allLocations[locIndex];
+    const isNew = unlockStamp(loc.id, dataUrl || null);
+    const toast = document.getElementById('upload-toast');
+    toast.className = 'success';
+    toast.innerHTML = isNew
+        ? `Stamp manually unlocked: <strong>${loc.name}</strong>`
+        : `<strong>${loc.name}</strong> stamp already in your collection.`;
+}
+
+/* ══════════════════════════════════════════════════
+   LIGHTBOX
+══════════════════════════════════════════════════ */
+function openLightbox(src, info) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-info').textContent = info;
+    document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+}
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        closeLightbox();
+        closeSdgModal();
+    }
+});
+
+/* ══════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════ */
+buildFilterUI();
+fetchCultureData().then(locs => renderLocations(locs));
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</body>
+</html>
