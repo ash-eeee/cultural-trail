@@ -1381,15 +1381,12 @@ function handleAuthSubmit() {
             return;
         }
     }
-
-    // 登入成功後狀態設定
     currentUserEmail = email;
     localStorage.setItem('tct_session_user', email);
-    
-    // 載入該使用者的文化足跡與印章歷史
-    unlockedStamps = new Set(db[email].stamps || []);
+    unlockedStamps.clear();
+    (db[email].stamps || []).forEach(id => unlockedStamps.add(id));
     stampPhotos = db[email].photos || {};
-
+    
     enterApp(db[email].username);
 }
 
