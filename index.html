@@ -2104,7 +2104,8 @@ fetchCultureData().then(locs => {
     const db = getUsersDB();
     if (savedUserEmail && db[savedUserEmail]) {
         currentUserEmail = savedUserEmail;
-        unlockedStamps = new Set(db[savedUserEmail].stamps || []);
+        unlockedStamps.clear();
+        (db[savedUserEmail].stamps || []).forEach(id => unlockedStamps.add(id));
         stampPhotos = db[savedUserEmail].photos || {};
         enterApp(db[savedUserEmail].username);
     }
