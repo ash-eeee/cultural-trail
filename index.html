@@ -2099,6 +2099,14 @@ document.addEventListener('keydown', e => {
 ══════════════════════════════════════════════════ */
 buildFilterUI();
 fetchCultureData().then(locs => renderLocations(locs));
+    const savedUserEmail = localStorage.getItem('tct_session_user');
+    const db = getUsersDB();
+    if (savedUserEmail && db[savedUserEmail]) {
+        currentUserEmail = savedUserEmail;
+        unlockedStamps = new Set(db[savedUserEmail].stamps || []);
+        stampPhotos = db[savedUserEmail].photos || {};
+        enterApp(db[savedUserEmail].username);
+    }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
