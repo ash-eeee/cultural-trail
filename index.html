@@ -2099,7 +2099,7 @@ document.addEventListener('keydown', e => {
 ══════════════════════════════════════════════════ */
 buildFilterUI();
 fetchCultureData().then(locs => {
-    renderLocations(locs));
+    renderLocations(locs);
     const savedUserEmail = localStorage.getItem('tct_session_user');
     const db = getUsersDB();
     if (savedUserEmail && db[savedUserEmail]) {
