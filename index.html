@@ -1683,9 +1683,6 @@ function renderLocations(locs) {
    PASSPORT DASHBOARD (Updated to Vintage Boarding Pass)
 ══════════════════════════════════════════════════ */
 function renderPassportDashboard() {
-    const savedName = localStorage.getItem('tct_username') || '旅人';
-    updateAvatarAndName(savedName);
-
     const totalLocs   = allLocations.length;
     const totalUnlocked = unlockedStamps.size;
     const pct = totalLocs > 0 ? (totalUnlocked / totalLocs * 100).toFixed(1) : 0;
