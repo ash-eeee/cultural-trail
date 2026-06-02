@@ -58,6 +58,8 @@
             background-image:
                 repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px),
                 repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 41px);
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
         #start-page::before { content:''; position:absolute; top:0; left:0; right:0; height:6px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 10px, transparent 10px 18px); }
         #start-page::after  { content:''; position:absolute; bottom:0; left:0; right:0; height:6px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 10px, transparent 10px 18px); }
@@ -66,10 +68,23 @@
         .start-card h1 { font-family:'Playfair Display',serif; font-size:2rem; color:var(--paper-white); letter-spacing:0.06em; margin-bottom:0.3rem; }
         .start-card .subtitle { font-size:0.8rem; color:var(--stamp-gold); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:2rem; font-style:italic; }
         .dot-divider { height:3px; margin:1.5rem 0; border-radius:2px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 6px, transparent 6px 12px); }
+        
+        .auth-toggle-group { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.2rem; }
+        .auth-toggle-btn { background: transparent; border: none; color: rgba(255,255,255,0.5); font-family: inherit; font-size: 0.9rem; cursor: pointer; padding: 0.2rem 0.5rem; transition: color 0.2s; }
+        .auth-toggle-btn.active { color: var(--stamp-gold); font-weight: 600; border-bottom: 2px solid var(--stamp-gold); }
+        
+        .form-group { text-align: left; margin-bottom: 0.9rem; }
         .start-label { font-size:0.72rem; color:rgba(245,240,232,0.5); letter-spacing:0.1em; text-transform:uppercase; text-align:left; margin-bottom:0.4rem; }
         .start-input { width:100%; padding:0.7rem 1rem; background:rgba(255,255,255,0.1); border:1px solid rgba(201,148,58,0.5); border-radius:4px; color:var(--paper-white); font-family:'Noto Serif TC',serif; font-size:0.9rem; outline:none; margin-bottom:1.2rem; transition:border-color 0.2s,background 0.2s; }
         .start-input::placeholder { color:rgba(255,255,255,0.3); }
         .start-input:focus { border-color:var(--stamp-gold); background:rgba(255,255,255,0.15); }
+
+        /* Password Strength Meter */
+        .strength-meter { height: 4px; background: rgba(255,255,255,0.1); margin-top: 0.4rem; border-radius: 2px; overflow: hidden; display: none; }
+        .strength-bar { height: 100%; width: 0%; transition: width 0.3s ease, background-color 0.3s ease; }
+        .strength-text { font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-top: 0.2rem; display: block; text-align: right; }
+
+        .auth-hint { font-size: 0.75rem; color: #ffdd6b; background: rgba(255,221,107,0.15); padding: 0.5rem; border-radius: 4px; margin-bottom: 1rem; display: none; animation: fadeIn 0.3s; }
         .start-btn { width:100%; padding:0.8rem; background:var(--brick-red); color:var(--paper-white); font-family:'Playfair Display',serif; font-size:1rem; letter-spacing:0.1em; border:none; border-radius:4px; cursor:pointer; transition:background 0.2s,transform 0.1s; }
         .start-btn:hover { background:var(--brick-light); }
         .start-btn:active { transform:scale(0.98); }
@@ -85,6 +100,8 @@
         .header-sub { font-size:0.73rem; opacity:0.62; font-style:italic; }
         .header-right { display:flex; align-items:center; gap:0.6rem; }
         .header-user { font-size:0.75rem; color:var(--beige); }
+        .signout-btn { background: transparent; border: 1px solid var(--beige); color: var(--beige); padding: 0.25rem 0.6rem; font-family: inherit; font-size: 0.7rem; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+        .signout-btn:hover { background: var(--paper-white); color: var(--brick-red); border-color: var(--paper-white); }
         .theme-toggle { display:flex; align-items:center; gap:0.4rem; cursor:pointer; user-select:none; font-size:0.75rem; color:var(--beige); }
         .toggle-track { width:38px; height:20px; background:var(--seafoam); border-radius:10px; position:relative; transition:background 0.3s; }
         .toggle-thumb { position:absolute; top:2px; left:2px; width:16px; height:16px; background:var(--paper-white); border-radius:50%; transition:transform 0.3s; }
@@ -871,10 +888,35 @@
         <h1>Taiwan Cultural Trails</h1>
         <p class="subtitle">Beneficial & Sustainable Tourism</p>
         <div class="dot-divider"></div>
-        <p class="start-label">你的名字 / Your Name</p>
-        <input class="start-input" id="username-input" type="text" placeholder="輸入你的名字開始旅程…" maxlength="20">
-        <button class="start-btn" onclick="enterApp()">開始探索 · Begin Journey</button>
-        <p class="start-note">名字只儲存在你的瀏覽器，不會上傳任何伺服器。</p>
+        
+        <div class="auth-toggle-group">
+            <button id="toggle-login" class="auth-toggle-btn active" onclick="setAuthMode('login')">登入 / Sign In</button>
+            <button id="toggle-register" class="auth-toggle-btn" onclick="setAuthMode('register')">註冊 / Register</button>
+        </div>
+
+        <div id="auth-hint" class="auth-hint"></div>
+
+        <div class="form-group" id="name-group" style="display: none;">
+            <label class="start-label">使用者名稱 / User Name</label>
+            <input class="start-input" id="username-input" type="text" placeholder="請輸入您在旅行護照上顯示的名稱" maxlength="20">
+        </div>
+
+        <div class="form-group">
+            <label class="start-label">電子信箱 / Email Account</label>
+            <input class="start-input" id="email-input" type="email" placeholder="example@mail.com" oninput="checkEmailExists()">
+        </div>
+
+        <div class="form-group">
+            <label class="start-label">密碼 / Password</label>
+            <input class="start-input" id="password-input" type="password" placeholder="輸入密碼..." oninput="evaluatePasswordStrength()">
+            <div class="strength-meter" id="strength-meter">
+                <div class="strength-bar" id="strength-bar"></div>
+            </div>
+            <small class="strength-text" id="strength-text" style="display: none;"></small>
+        </div>
+
+        <button class="start-btn" id="submit-auth-btn" onclick="handleAuthSubmit()">開始探索 / Begin Journey</button>
+        <p class="start-note">所有帳號與旅程進度皆安全儲存於您的瀏覽器本地空間。</p>
     </div>
 </div>
 
@@ -887,6 +929,7 @@
     </div>
     <div class="header-right">
         <span class="header-user" id="header-user"></span>
+        <button class="signout-btn" onclick="handleSignOut()">Sign Out</button>
         <label class="theme-toggle" id="themeToggle" title="Day/Night">
             ☼
             <div class="toggle-track"><div class="toggle-thumb"></div></div>
@@ -1202,42 +1245,200 @@ function saveStampPhotos() {
         console.warn('Could not persist stamp photos (storage quota exceeded).');
     }
 }
-
+let authMode = 'login'; // 'login' or 'register'
+let currentUserEmail = null;
 let allLocations = [];
 let markers = {};
 let activeStampCategory = TDX_SOURCES[0].name;
 
 const _badgeAnimatedThisSession = new Set();
 
+// 本地端註冊用戶數據庫模擬
+function getUsersDB() {
+    return JSON.parse(localStorage.getItem('tct_users_db') || '{}');
+}
+function saveUsersDB(db) {
+    localStorage.setItem('tct_users_db', JSON.stringify(db));
+}
+
 /* ══════════════════════════════════════════════════
    LOGIN
 ══════════════════════════════════════════════════ */
+function setAuthMode(mode) {
+    authMode = mode;
+    document.getElementById('toggle-login').classList.toggle('active', mode === 'login');
+    document.getElementById('toggle-register').classList.toggle('active', mode === 'register');
+    document.getElementById('name-group').style.display = mode === 'register' ? 'block' : 'none';
+    document.getElementById('strength-meter').style.display = mode === 'register' ? 'block' : 'none';
+    document.getElementById('submit-auth-btn').textContent = mode === 'login' ? '開始探索 / Begin Journey' : '註冊 / Register';
+    
+    // 清除欄位
+    document.getElementById('password-input').value = '';
+    document.getElementById('strength-text').style.display = 'none';
+    document.getElementById('auth-hint').style.display = 'none';
+}
+
+// 偵測使用者如果沒註冊過就登入的自動反應
+function checkEmailExists() {
+    if (authMode !== 'login') return;
+    const email = document.getElementById('email-input').value.trim();
+    if (!email) return;
+    
+    const db = getUsersDB();
+    const hintEl = document.getElementById('auth-hint');
+    
+    if (email.includes('@') && !db[email]) {
+        hintEl.textContent = "💡 偵測到新旅人！此 Email 尚未註冊，系統已為您自動切換到「新帳號註冊」模式。";
+        hintEl.style.display = 'block';
+        setTimeout(() => setAuthMode('register'), 1200);
+    } else {
+        hintEl.style.display = 'none';
+    }
+}
+
+// 密碼強度計算法
+function evaluatePasswordStrength() {
+    const password = document.getElementById('password-input').value;
+    const bar = document.getElementById('strength-bar');
+    const txt = document.getElementById('strength-text');
+    
+    if (authMode !== 'register') {
+        bar.parentElement.style.display = 'none';
+        txt.style.display = 'none';
+        return;
+    }
+    
+    bar.parentElement.style.display = 'block';
+    txt.style.display = 'block';
+
+    if (!password) {
+        bar.style.width = '0%';
+        txt.textContent = '';
+        return;
+    }
+
+    let score = 0;
+    if (password.length >= 6) score++;
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+
+    if (score <= 2) {
+        bar.style.width = '33%';
+        bar.style.backgroundColor = '#ef9a9a';
+        txt.textContent = '密碼強度：弱 (Weak) - 建議加入字母、數字混合';
+        txt.style.color = '#ef9a9a';
+    } else if (score <= 4) {
+        bar.style.width = '66%';
+        bar.style.backgroundColor = '#fff59d';
+        txt.textContent = '密碼強度：中 (Medium) - 可以加入大寫字母或符號';
+        txt.style.color = '#fff59d';
+    } else {
+        bar.style.width = '100%';
+        bar.style.backgroundColor = '#a5d6a7';
+        txt.textContent = '密碼強度：強 (Strong) - 完美的永續通行防護';
+        txt.style.color = '#a5d6a7';
+    }
+}
+
+// 處理登入與註冊的主控制邏輯
+function handleAuthSubmit() {
+    const email = document.getElementById('email-input').value.trim();
+    const password = document.getElementById('password-input').value;
+    const db = getUsersDB();
+
+    if (!email || !password) {
+        alert('請填寫信箱與密碼！');
+        return;
+    }
+
+    if (authMode === 'register') {
+        const username = document.getElementById('username-input').value.trim() || '新旅人';
+        if (db[email]) {
+            alert('此 Email 已經被註冊過，請直接選擇登入。');
+            setAuthMode('login');
+            return;
+        }
+        if (password.length < 6) {
+            alert('為了安全起見，請密碼至少設定 6 碼以上。');
+            return;
+        }
+        
+        // 建立新使用者
+        db[email] = {
+            username: username,
+            password: password, // 本地演示直接明文比對
+            stamps: [],
+            photos: {}
+        };
+        saveUsersDB(db);
+        alert('✨ 註冊成功！已為您自動登入。');
+    } else {
+        // 登入驗證
+        if (!db[email] || db[email].password !== password) {
+            alert('信箱或密碼錯誤，請重新再試一次。');
+            return;
+        }
+    }
+    currentUserEmail = email;
+    localStorage.setItem('tct_session_user', email);
+    unlockedStamps.clear();
+    (db[email].stamps || []).forEach(id => unlockedStamps.add(id));
+    stampPhotos = db[email].photos || {};
+
+    setTimeout(() => {
+    enterApp(db[email].username);
+    }, 100);
+}
+
+// logout
+function handleSignOut() {
+    if(confirm('確定要結束本次探索旅程並登出嗎？')) {
+        currentUserEmail = null;
+        localStorage.removeItem('tct_session_user');
+        
+        // 重置畫面欄位與回到登入介面
+        document.getElementById('email-input').value = '';
+        document.getElementById('password-input').value = '';
+        setAuthMode('login');
+        
+        const sp = document.getElementById('start-page');
+        sp.style.display = 'flex';
+        sp.classList.remove('fade-out');
+        closePanel();
+    }
+}
+
+function enterApp(name) {
+    document.getElementById('header-user').textContent = `Hi, ${name} 🧭`;
+    updateAvatarAndName(name);
+    
+    const sp = document.getElementById('start-page');
+    sp.classList.add('fade-out');
+    setTimeout(() => sp.style.display = 'none', 500);
+    setTimeout(() => document.getElementById('sidebar').classList.remove('collapsed'), 400);
+    
+    // 重新校正地圖大小並渲染
+    setTimeout(() => map.invalidateSize(), 50);
+    renderStampGrid();
+}
+
 function updateAvatarAndName(name) {
     document.getElementById('passport-name').textContent = name;
-    // Get the first character for the ticket typography stamp avatar
     const firstChar = name.charAt(0).toUpperCase() || 'T';
     document.getElementById('passport-avatar').textContent = firstChar;
 }
 
-function enterApp() {
-    const name = document.getElementById('username-input').value.trim() || '旅人';
-    localStorage.setItem('tct_username', name);
-    document.getElementById('header-user').textContent = `Hi, ${name}`;
-    updateAvatarAndName(name);
-    const sp = document.getElementById('start-page');
-    sp.classList.add('fade-out');
-    setTimeout(() => sp.style.display = 'none', 650);
-    setTimeout(() => document.getElementById('sidebar').classList.remove('collapsed'), 400);
-}
-
-document.getElementById('username-input').addEventListener('keydown', e => { if (e.key === 'Enter') enterApp(); });
-window.addEventListener('load', () => {
-    const saved = localStorage.getItem('tct_username');
-    if (saved) {
-        document.getElementById('username-input').value = saved;
-        updateAvatarAndName(saved);
+function saveStampsToUser() {
+    if (!currentUserEmail) return;
+    const db = getUsersDB();
+    if (db[currentUserEmail]) {
+        db[currentUserEmail].stamps = [...unlockedStamps];
+        db[currentUserEmail].photos = stampPhotos;
+        saveUsersDB(db);
     }
-});
+}
 
 /* ══════════════════════════════════════════════════
    SIDEBAR / TAB / THEME
@@ -1481,9 +1682,6 @@ function renderLocations(locs) {
    PASSPORT DASHBOARD (Updated to Vintage Boarding Pass)
 ══════════════════════════════════════════════════ */
 function renderPassportDashboard() {
-    const savedName = localStorage.getItem('tct_username') || '旅人';
-    updateAvatarAndName(savedName);
-
     const totalLocs   = allLocations.length;
     const totalUnlocked = unlockedStamps.size;
     const pct = totalLocs > 0 ? (totalUnlocked / totalLocs * 100).toFixed(1) : 0;
@@ -1899,7 +2097,18 @@ document.addEventListener('keydown', e => {
    BOOT
 ══════════════════════════════════════════════════ */
 buildFilterUI();
-fetchCultureData().then(locs => renderLocations(locs));
+fetchCultureData().then(locs => {
+    renderLocations(locs);
+    const savedUserEmail = localStorage.getItem('tct_session_user');
+    const db = getUsersDB();
+    if (savedUserEmail && db[savedUserEmail]) {
+        currentUserEmail = savedUserEmail;
+        unlockedStamps.clear();
+        (db[savedUserEmail].stamps || []).forEach(id => unlockedStamps.add(id));
+        stampPhotos = db[savedUserEmail].photos || {};
+        enterApp(db[savedUserEmail].username);
+    }
+});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
