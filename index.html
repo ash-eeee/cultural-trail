@@ -118,12 +118,6 @@
         /* MAP LAYOUT */
         .map-layout { display:flex; flex:1; overflow:hidden; position:relative; }
         .map-layout.hidden { display:none; }
-        .leaflet-tile-pane {
-            filter: grayscale(100%) brightness(1.05) contrast(0.92);
-        }
-        body.night .leaflet-tile-pane {
-            filter: grayscale(100%) invert(1) brightness(0.85) contrast(0.9);
-        }
 
         /* SIDEBAR */
         #sidebar { width:270px; background:var(--sidebar-bg); color:var(--paper-white); display:flex; flex-direction:column; flex-shrink:0; overflow-y:auto; border-right:2px solid var(--stamp-gold); position:relative; transition:width 0.3s ease,border 0.3s ease,background 0.5s; }
@@ -1075,8 +1069,8 @@
 /* ══════════════════════════════════════════════════
    TDX API credentials
 ══════════════════════════════════════════════════ */
-const TDX_CLIENT_ID     = 'YOUR_GITHUB_TDX_CLIENT_ID';
-const TDX_CLIENT_SECRET = 'YOUR_GITHUB_TDX_CLIENT_SECRET';
+const TDX_CLIENT_ID     = 's113403510-c6cd54f2-32ee-4654';
+const TDX_CLIENT_SECRET = '60c76113-344d-43a3-9cef-02c009ba4f34';
 
 /* ══════════════════════════════════════════════════
    Data source config
