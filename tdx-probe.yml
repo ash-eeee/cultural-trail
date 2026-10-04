@@ -1,0 +1,30 @@
+name: TDX probe
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe TDX tourism V2.1
+        env:
+          TDX_CLIENT_ID: ${{ secrets.TDX_CLIENT_ID }}
+          TDX_CLIENT_SECRET: ${{ secrets.TDX_CLIENT_SECRET }}
+        run: |
+          TOKEN=$(curl -s -X POST "https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "grant_type=client_credentials" \
+            --data-urlencode "client_id=$TDX_CLIENT_ID" \
+            --data-urlencode "client_secret=$TDX_CLIENT_SECRET" \
+            | python3 -c "import sys,json;print(json.load(sys.stdin).get('access_token',''))")
+          echo "::add-mask::$TOKEN"
+          echo "token length: ${#TOKEN}"
+          for P in Attraction Restaurant Event; do
+            echo "===== $P ====="
+            curl -s -o "/tmp/$P.json" -w "HTTP %{http_code}\n" \
+              -H "authorization: Bearer $TOKEN" \
+              "https://tdx.transportdata.tw/api/tourism/service/odata/V2/Tourism/$P?\$top=1"
+            head -c 3000 "/tmp/$P.json"
+            echo
+          done

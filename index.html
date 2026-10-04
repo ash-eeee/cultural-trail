@@ -1067,35 +1067,13 @@
 
 <script>
 /* ══════════════════════════════════════════════════
-   TDX API credentials
-══════════════════════════════════════════════════ */
-const TDX_CLIENT_ID     = 's113403510-c6cd54f2-32ee-4654';
-const TDX_CLIENT_SECRET = '60c76113-344d-43a3-9cef-02c009ba4f34';
-
-/* ══════════════════════════════════════════════════
    Data source config
 ══════════════════════════════════════════════════ */
 const TDX_SOURCES = [
-    {
-        id: 'scenic', name: 'Tourist attractions',
-        endpoint: 'https://tdx.transportdata.tw/api/basic/v2/Tourism/ScenicSpot?$top=600&$format=JSON',
-        nameField: 'ScenicSpotName',
-        icon: 'S', color: '#c96b1a',
-    },
-    {
-        id: 'restaurant', name: 'Tourist restaurant',
-        endpoint: 'https://tdx.transportdata.tw/api/basic/v2/Tourism/Restaurant?$top=200&$format=JSON',
-        nameField: 'RestaurantName',
-        icon: 'R', color: '#2b8c6e',
-    },
-    {
-        id: 'activity', name: 'Cultural and creative activities',
-        endpoint: 'https://tdx.transportdata.tw/api/basic/v2/Tourism/Activity?$top=150&$format=JSON',
-        nameField: 'ActivityName',
-        icon: 'A', color: '#9e2a1c',
-    },
+    { id: 'scenic',     name: 'Tourist attractions',              icon: 'S', color: '#c96b1a' },
+    { id: 'restaurant', name: 'Tourist restaurant',               icon: 'R', color: '#2b8c6e' },
+    { id: 'activity',   name: 'Cultural and creative activities', icon: 'A', color: '#9e2a1c' },
 ];
-
 /* ══════════════════════════════════════════════════
    Seed data (fallback)
 ══════════════════════════════════════════════════ */
@@ -1499,90 +1477,20 @@ function showStatus(msg, duration=3500) {
 }
 
 /* ══════════════════════════════════════════════════
-   TDX: Access Token
-══════════════════════════════════════════════════ */
-async function getTDXToken() {
-    const res = await fetch(
-        'https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token',
-        {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `grant_type=client_credentials&client_id=${TDX_CLIENT_ID}&client_secret=${TDX_CLIENT_SECRET}`
-        }
-    );
-    if (!res.ok) throw new Error('Token error: HTTP ' + res.status);
-    const data = await res.json();
-    if (!data.access_token) throw new Error('No access_token in response');
-    return data.access_token;
-}
-
-/* ══════════════════════════════════════════════════
    TDX: Fetch data
 ══════════════════════════════════════════════════ */
 async function fetchCultureData() {
-    if (!TDX_CLIENT_ID || !TDX_CLIENT_SECRET) {
-        showStatus('TDX credentials not set — showing demo data (10 entries)');
-        return SEED_LOCATIONS;
-    }
-
-    showStatus('Connecting to TDX Tourism API, please wait…', 20000);
-
+    showStatus('Loading tourism data…', 20000);
     try {
-        const token = await getTDXToken();
-        const headers = { 'Authorization': `Bearer ${token}` };
-
-        const results = await Promise.allSettled(
-            TDX_SOURCES.map(src =>
-                fetch(src.endpoint, { headers, signal: AbortSignal.timeout(20000) })
-                    .then(r => r.ok ? r.json() : [])
-                    .catch(e => { console.warn(src.name, 'failed:', e.message); return []; })
-            )
-        );
-
-        const allLocs = [];
-
-        results.forEach((result, idx) => {
-            const src  = TDX_SOURCES[idx];
-            const data = result.status === 'fulfilled' ? result.value : [];
-            if (!Array.isArray(data)) return;
-
-            data.forEach((item, i) => {
-                const pos = item.Position;
-                if (!pos?.PositionLat || !pos?.PositionLon) return;
-
-                const lat = parseFloat(pos.PositionLat);
-                const lng = parseFloat(pos.PositionLon);
-                if (isNaN(lat) || isNaN(lng)) return;
-                if (lat < 21.5 || lat > 25.5 || lng < 119.0 || lng > 122.5) return;
-
-                const name    = item[src.nameField] || item.Name || '未命名';
-                const addr    = item.Address || item.Location || '';
-                const rawDesc = item.DescriptionDetail || item.Description || item.Toldescribe || '';
-                const desc    = rawDesc.replace(/<[^>]*>/g, '').trim().slice(0, 200);
-                const web     = item.WebsiteUrl || item.Website || '';
-                const pic     = item.Picture?.PictureUrl1 || '';
-
-                allLocs.push({
-                    id:          `${src.id}_${i}`,
-                    name,
-                    category:    src.name,
-                    icon:        src.icon,
-                    color:       src.color,
-                    lat, lng, addr, desc, pic,
-                    officialUrl: web || 'https://www.taiwan.net.tw/',
-                    mapUrl:      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addr)}`
-                });
-            });
-        });
-
-        if (allLocs.length === 0) throw new Error('API returned empty data');
-
-        showStatus(`Loaded ${allLocs.length.toLocaleString()} locations`);
-        return allLocs;
-
+        const res = await fetch('./data/locations.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const locs = await res.json();
+        if (!Array.isArray(locs) || locs.length === 0) throw new Error('empty data');
+        showStatus(`Loaded ${locs.length.toLocaleString()} locations`);
+        return locs;
     } catch (e) {
-        console.error('TDX API error:', e.message);
-        showStatus('API connection failed — using demo data');
+        console.warn('Using demo data:', e.message);
+        showStatus('Using demo data (10 entries)');
         return SEED_LOCATIONS;
     }
 }
