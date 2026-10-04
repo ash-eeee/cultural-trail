@@ -68,11 +68,11 @@
         .start-card h1 { font-family:'Playfair Display',serif; font-size:2rem; color:var(--paper-white); letter-spacing:0.06em; margin-bottom:0.3rem; }
         .start-card .subtitle { font-size:0.8rem; color:var(--stamp-gold); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:2rem; font-style:italic; }
         .dot-divider { height:3px; margin:1.5rem 0; border-radius:2px; background:repeating-linear-gradient(90deg, var(--stamp-gold) 0px 6px, transparent 6px 12px); }
-        
+
         .auth-toggle-group { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.2rem; }
         .auth-toggle-btn { background: transparent; border: none; color: rgba(255,255,255,0.5); font-family: inherit; font-size: 0.9rem; cursor: pointer; padding: 0.2rem 0.5rem; transition: color 0.2s; }
         .auth-toggle-btn.active { color: var(--stamp-gold); font-weight: 600; border-bottom: 2px solid var(--stamp-gold); }
-        
+
         .form-group { text-align: left; margin-bottom: 0.9rem; }
         .start-label { font-size:0.72rem; color:rgba(245,240,232,0.5); letter-spacing:0.1em; text-transform:uppercase; text-align:left; margin-bottom:0.4rem; }
         .start-input { width:100%; padding:0.7rem 1rem; background:rgba(255,255,255,0.1); border:1px solid rgba(201,148,58,0.5); border-radius:4px; color:var(--paper-white); font-family:'Noto Serif TC',serif; font-size:0.9rem; outline:none; margin-bottom:1.2rem; transition:border-color 0.2s,background 0.2s; }
@@ -199,15 +199,13 @@
         #api-status { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); background:rgba(43,95,110,0.92); color:var(--paper-white); font-size:0.67rem; padding:4px 14px; border-radius:20px; pointer-events:none; opacity:0; transition:opacity 0.4s; z-index:800; white-space:nowrap; }
         #api-status.show { opacity:1; }
 
-        /* ══════════════════════════════════════════
-           STAMP PAGE
-        ══════════════════════════════════════════ */
+        /* STAMP PAGE */
         .stamp-page { flex:1; overflow-y:auto; background:var(--bg); padding:1.5rem 2rem; display:none; transition:background 0.5s; }
         .stamp-page.active { display:block; }
         .page-title { font-family:'Playfair Display',serif; font-size:1.35rem; color:var(--brick-red); text-align:center; margin-bottom:0.25rem; }
         .page-sub { font-size:0.75rem; text-align:center; color:var(--seafoam); font-style:italic; margin-bottom:1rem; }
 
-        /* ── Digital Passport Card (Vintage Boarding Pass Style) ── */
+        /* Digital Passport Card */
         #passport-card {
             width: 100%;
             max-width: 640px;
@@ -223,13 +221,7 @@
             border-color: #54493f;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-
-        .passport-inner {
-            padding: 1.2rem 1.4rem;
-            position: relative;
-        }
-
-        /* Flight stamp / Barcode style decoration on top right */
+        .passport-inner { padding: 1.2rem 1.4rem; position: relative; }
         .passport-deco-stamp {
             position: absolute;
             top: 0.8rem; right: 1.4rem;
@@ -245,475 +237,132 @@
             user-select: none;
             pointer-events: none;
         }
-
-        /* Ticket header row */
-        .passport-header {
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px dashed #cfbfa8;
-        }
+        .passport-header { margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px dashed #cfbfa8; }
         body.night .passport-header { border-bottom-color: #54493f; }
-        
-        .passport-header .passport-issuer {
-            font-size: 0.55rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--stamp-gold);
-            font-weight: 600;
-            display: block;
-            margin-bottom: 1px;
-        }
-        .passport-header .passport-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--brick-red);
-            letter-spacing: 0.04em;
-        }
-
-        /* Ticket layout body */
-        .passport-body {
-            display: flex;
-            gap: 1.2rem;
-            align-items: center;
-        }
-
-        /* Left side: Stub-like user detail */
-        .passport-left {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.45rem;
-            min-width: 120px;
-            position: relative;
-        }
-        
-        /* Typography Stamp Avatar (No Emoji) */
+        .passport-header .passport-issuer { font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--stamp-gold); font-weight: 600; display: block; margin-bottom: 1px; }
+        .passport-header .passport-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--brick-red); letter-spacing: 0.04em; }
+        .passport-body { display: flex; gap: 1.2rem; align-items: center; }
+        .passport-left { display: flex; flex-direction: column; align-items: center; gap: 0.45rem; min-width: 120px; position: relative; }
         .passport-avatar {
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
-            background: transparent;
-            color: var(--brick-red);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 54px; height: 54px; border-radius: 50%;
+            background: transparent; color: var(--brick-red);
+            display: flex; align-items: center; justify-content: center;
             font-family: 'Playfair Display', 'Noto Serif TC', serif;
-            font-weight: 700;
-            font-size: 1.6rem;
+            font-weight: 700; font-size: 1.6rem;
             border: 2px dashed var(--brick-red);
             box-shadow: inset 0 0 0 3px rgba(158,42,28,0.05);
-            flex-shrink: 0;
-            text-transform: uppercase;
+            flex-shrink: 0; text-transform: uppercase;
         }
-        body.night .passport-avatar {
-            color: var(--brick-light);
-            border-color: var(--brick-light);
-        }
-        
-        .passport-name {
-            font-family: 'Noto Serif TC', serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--ink);
-            text-align: center;
-            max-width: 120px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        body.night .passport-avatar { color: var(--brick-light); border-color: var(--brick-light); }
+        .passport-name { font-family: 'Noto Serif TC', serif; font-weight: 600; font-size: 0.9rem; color: var(--ink); text-align: center; max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         body.night .passport-name { color: var(--text); }
-        
-        .passport-role {
-            font-size: 0.58rem;
-            color: var(--seafoam);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        /* Ticket Progress bar */
-        .passport-progress-wrap {
-            margin-top: 0.3rem;
-            width: 100%;
-        }
-        .passport-progress-label {
-            font-size: 0.58rem;
-            color: var(--amber);
-            text-align: center;
-            margin-bottom: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .passport-progress-bar-bg {
-            width: 100%;
-            height: 5px;
-            background: rgba(44, 36, 32, 0.08);
-            border-radius: 2px;
-            overflow: hidden;
-        }
+        .passport-role { font-size: 0.58rem; color: var(--seafoam); letter-spacing: 0.08em; text-transform: uppercase; text-align: center; font-weight: 600; }
+        .passport-progress-wrap { margin-top: 0.3rem; width: 100%; }
+        .passport-progress-label { font-size: 0.58rem; color: var(--amber); text-align: center; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .passport-progress-bar-bg { width: 100%; height: 5px; background: rgba(44, 36, 32, 0.08); border-radius: 2px; overflow: hidden; }
         body.night .passport-progress-bar-bg { background: rgba(255,255,255,0.08); }
-        
-        .passport-progress-bar-fill {
-            height: 100%;
-            background: var(--brick-red);
-            transition: width 0.6s ease;
-            min-width: 2px;
-        }
+        .passport-progress-bar-fill { height: 100%; background: var(--brick-red); transition: width 0.6s ease; min-width: 2px; }
         body.night .passport-progress-bar-fill { background: var(--brick-light); }
-        
-        .passport-progress-text {
-            font-size: 0.55rem;
-            color: var(--text);
-            opacity: 0.65;
-            text-align: center;
-            margin-top: 4px;
-        }
+        .passport-progress-text { font-size: 0.55rem; color: var(--text); opacity: 0.65; text-align: center; margin-top: 4px; }
 
-        /* Ticket Perforated Dotted Divider Line */
-        .passport-divider {
-            width: 1px;
-            align-self: stretch;
-            border-left: 2px dashed #cfbfa8;
-            position: relative;
-            flex-shrink: 0;
-        }
+        .passport-divider { width: 1px; align-self: stretch; border-left: 2px dashed #cfbfa8; position: relative; flex-shrink: 0; }
         body.night .passport-divider { border-left-color: #54493f; }
-        
-        /* Ticket Cut Notches (Top and Bottom circles) */
         .passport-divider::before {
-            content: ''; position: absolute;
-            width: 14px; height: 14px;
-            background: var(--bg);
-            border: 2px solid #cfbfa8;
-            border-radius: 50%;
-            top: -20px; left: -8px;
-            box-shadow: inset 0 -3px 5px rgba(0,0,0,0.02);
-            transition: background 0.5s;
+            content: ''; position: absolute; width: 14px; height: 14px;
+            background: var(--bg); border: 2px solid #cfbfa8; border-radius: 50%;
+            top: -20px; left: -8px; box-shadow: inset 0 -3px 5px rgba(0,0,0,0.02); transition: background 0.5s;
         }
         .passport-divider::after {
-            content: ''; position: absolute;
-            width: 14px; height: 14px;
-            background: var(--bg);
-            border: 2px solid #cfbfa8;
-            border-radius: 50%;
-            bottom: -20px; left: -8px;
-            box-shadow: inset 0 3px 5px rgba(0,0,0,0.02);
-            transition: background 0.5s;
+            content: ''; position: absolute; width: 14px; height: 14px;
+            background: var(--bg); border: 2px solid #cfbfa8; border-radius: 50%;
+            bottom: -20px; left: -8px; box-shadow: inset 0 3px 5px rgba(0,0,0,0.02); transition: background 0.5s;
         }
         body.night .passport-divider::before, body.night .passport-divider::after { border-color: #54493f; }
 
-        /* Right: Vintage Achievements */
-        .passport-right {
-            flex: 1;
-            min-width: 0;
-            padding-left: 0.2rem;
-        }
-        .passport-right-title {
-            font-size: 0.6rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--stamp-gold);
-            margin-bottom: 0.8rem;
-            font-weight: 600;
-        }
-        #sdg-badges-wall {
-            display: flex;
-            gap: 1.1rem;
-            flex-wrap: wrap;
-            align-items: flex-start;
-        }
+        .passport-right { flex: 1; min-width: 0; padding-left: 0.2rem; }
+        .passport-right-title { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--stamp-gold); margin-bottom: 0.8rem; font-weight: 600; }
+        #sdg-badges-wall { display: flex; gap: 1.1rem; flex-wrap: wrap; align-items: flex-start; }
 
-        /* Vintage Engraved Badge Styles (No Emoji, No modern glow) */
-        .sdg-badge {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.45rem;
-            cursor: default;
-            position: relative;
-        }
+        .sdg-badge { display: flex; flex-direction: column; align-items: center; gap: 0.45rem; cursor: default; position: relative; }
         .sdg-badge-circle {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            border: 1.5px solid rgba(0,0,0,0.15);
-            transition: all 0.4s ease;
-            position: relative;
+            width: 56px; height: 56px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            border: 1.5px solid rgba(0,0,0,0.15); transition: all 0.4s ease; position: relative;
         }
-        
-        /* Custom geometric/engraved badge graphic centers instead of Emojis */
-        .sdg-badge-circle::before {
-            content: '';
-            position: absolute;
-            inset: 4px;
-            border: 1px double rgba(0,0,0,0.1);
-            border-radius: 50%;
-        }
-        
-        /* Central design configurations using standard typographic typography symbols */
-        .sdg-badge .sdg-symbol {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            line-height: 1;
-            z-index: 2;
-        }
-        
-        .sdg-badge-circle .sdg-num {
-            font-family: 'Playfair Display', serif;
-            font-size: 0.5rem;
-            letter-spacing: 0.02em;
-            font-weight: 600;
-            margin-top: 1px;
-            z-index: 2;
-            opacity: 0.8;
-        }
-        .sdg-badge-label {
-            font-size: 0.55rem;
-            text-align: center;
-            max-width: 72px;
-            line-height: 1.3;
-            letter-spacing: 0.01em;
-            color: var(--text);
-            opacity: 0.5;
-        }
+        .sdg-badge-circle::before { content: ''; position: absolute; inset: 4px; border: 1px double rgba(0,0,0,0.1); border-radius: 50%; }
+        .sdg-badge .sdg-symbol { font-family: 'Playfair Display', Georgia, serif; font-size: 1.1rem; font-weight: 700; line-height: 1; z-index: 2; }
+        .sdg-badge-circle .sdg-num { font-family: 'Playfair Display', serif; font-size: 0.5rem; letter-spacing: 0.02em; font-weight: 600; margin-top: 1px; z-index: 2; opacity: 0.8; }
+        .sdg-badge-label { font-size: 0.55rem; text-align: center; max-width: 72px; line-height: 1.3; letter-spacing: 0.01em; color: var(--text); opacity: 0.5; }
 
-        /* Locked State: Intaglio debossed imprint */
-        .sdg-badge.locked .sdg-badge-circle {
-            background: transparent;
-            border: 1.5px dashed rgba(44,36,32,0.18);
-            color: rgba(44,36,32,0.25);
-        }
-        body.night .sdg-badge.locked .sdg-badge-circle {
-            border-color: rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.2);
-        }
+        .sdg-badge.locked .sdg-badge-circle { background: transparent; border: 1.5px dashed rgba(44,36,32,0.18); color: rgba(44,36,32,0.25); }
+        body.night .sdg-badge.locked .sdg-badge-circle { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.2); }
         .sdg-badge.locked .sdg-badge-circle::before { display: none; }
 
-        /* Unlocked State: Letterpress vintage ink stamp style (No glow) */
         .sdg-badge.unlocked .sdg-badge-circle {
-            background: #ffffff;
-            border-color: var(--badge-color);
-            color: var(--badge-color);
+            background: #ffffff; border-color: var(--badge-color); color: var(--badge-color);
             box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 3px var(--badge-color);
         }
-        body.night .sdg-badge.unlocked .sdg-badge-circle {
-            background: #2a251f;
-            box-shadow: inset 0 0 0 2px #2a251f, inset 0 0 0 3px var(--badge-color);
-        }
-        .sdg-badge.unlocked .sdg-badge-circle::before {
-            border-color: var(--badge-color);
-            opacity: 0.3;
-        }
-        .sdg-badge.unlocked .sdg-badge-label {
-            opacity: 0.9;
-            font-weight: 600;
-        }
+        body.night .sdg-badge.unlocked .sdg-badge-circle { background: #2a251f; box-shadow: inset 0 0 0 2px #2a251f, inset 0 0 0 3px var(--badge-color); }
+        .sdg-badge.unlocked .sdg-badge-circle::before { border-color: var(--badge-color); opacity: 0.3; }
+        .sdg-badge.unlocked .sdg-badge-label { opacity: 0.9; font-weight: 600; }
 
-        /* Animation */
-        @keyframes badgeUnlock {
-            0%   { transform: scale(0.6); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .sdg-badge.just-unlocked .sdg-badge-circle {
-            animation: badgeUnlock 0.5s ease-out forwards;
-        }
+        @keyframes badgeUnlock { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .sdg-badge.just-unlocked .sdg-badge-circle { animation: badgeUnlock 0.5s ease-out forwards; }
 
-        /* Tooltip */
         .sdg-badge[data-tip]:hover::after {
             content: attr(data-tip);
-            position: absolute;
-            bottom: calc(100% + 8px);
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--ink);
-            color: var(--paper-white);
-            font-size: 0.62rem;
-            line-height: 1.5;
-            padding: 0.45rem 0.65rem;
-            border-radius: 5px;
-            white-space: normal;
-            width: 180px;
-            text-align: center;
-            pointer-events: none;
-            z-index: 100;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-            filter: none !important;
+            position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+            background: var(--ink); color: var(--paper-white);
+            font-size: 0.62rem; line-height: 1.5; padding: 0.45rem 0.65rem; border-radius: 5px;
+            white-space: normal; width: 180px; text-align: center; pointer-events: none; z-index: 100;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18); filter: none !important;
         }
         .sdg-badge[data-tip]:hover::before {
-            content: ''; position: absolute;
-            bottom: calc(100% + 2px); left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: var(--ink);
-            pointer-events: none;
-            z-index: 100;
+            content: ''; position: absolute; bottom: calc(100% + 2px); left: 50%; transform: translateX(-50%);
+            border: 5px solid transparent; border-top-color: var(--ink); pointer-events: none; z-index: 100;
         }
 
-        /* Ticket footer export block */
-        .passport-export-row {
-            display: flex;
-            justify-content: center;
-            margin-top: 1rem;
-            padding-top: 0.8rem;
-            border-top: 1px dashed #cfbfa8;
-        }
+        .passport-export-row { display: flex; justify-content: center; margin-top: 1rem; padding-top: 0.8rem; border-top: 1px dashed #cfbfa8; }
         body.night .passport-export-row { border-top-color: #54493f; }
-        
-        .passport-export-btn {
-            font-family: 'Noto Serif TC', serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            padding: 0.5rem 1.4rem;
-            background: transparent;
-            color: var(--brick-red);
-            border: 1.5px solid var(--brick-red);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        body.night .passport-export-btn {
-            color: var(--text);
-            border-color: #cfbfa8;
-        }
-        .passport-export-btn:hover {
-            background: var(--brick-red);
-            color: white;
-        }
-        body.night .passport-export-btn:hover {
-            background: #cfbfa8;
-            color: #231e18;
-        }
+        .passport-export-btn { font-family: 'Noto Serif TC', serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; padding: 0.5rem 1.4rem; background: transparent; color: var(--brick-red); border: 1.5px solid var(--brick-red); border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+        body.night .passport-export-btn { color: var(--text); border-color: #cfbfa8; }
+        .passport-export-btn:hover { background: var(--brick-red); color: white; }
+        body.night .passport-export-btn:hover { background: #cfbfa8; color: #231e18; }
         .passport-export-btn:active { transform: scale(0.98); }
 
-        /* ── Upload bar ── */
-        .upload-bar {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: var(--panel-bg);
-            border: 1.5px dashed var(--beige);
-            border-radius: 8px;
-            padding: 0.75rem 1.1rem;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: border-color 0.2s, background 0.2s;
-        }
+        /* Upload bar */
+        .upload-bar { display: flex; align-items: center; gap: 0.75rem; background: var(--panel-bg); border: 1.5px dashed var(--beige); border-radius: 8px; padding: 0.75rem 1.1rem; margin-bottom: 1rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
         .upload-bar:hover { border-color: var(--stamp-gold); background: rgba(201,148,58,0.05); }
         .upload-bar-icon { font-size: 1.5rem; flex-shrink: 0; }
         .upload-bar-text { flex: 1; }
         .upload-bar-text strong { display: block; font-size: 0.8rem; color: var(--text); }
         .upload-bar-text small { font-size: 0.68rem; color: var(--seafoam); }
-        .upload-bar-btn {
-            padding: 0.42rem 1rem;
-            background: var(--brick-red);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-family: 'Noto Serif TC', serif;
-            font-size: 0.73rem;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s;
-            flex-shrink: 0;
-        }
+        .upload-bar-btn { padding: 0.42rem 1rem; background: var(--brick-red); color: white; border: none; border-radius: 4px; font-family: 'Noto Serif TC', serif; font-size: 0.73rem; cursor: pointer; white-space: nowrap; transition: background 0.2s; flex-shrink: 0; }
         .upload-bar-btn:hover { background: var(--brick-light); }
-
-        .geo-badge {
-            display: inline-flex;
-            align-items: center;
-            background: var(--seafoam);
-            color: white;
-            font-size: 0.62rem;
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-top: 0.4rem;
-            letter-spacing: 0.04em;
-            font-style: normal;
-        }
+        .geo-badge { display: inline-flex; align-items: center; background: var(--seafoam); color: white; font-size: 0.62rem; padding: 2px 8px; border-radius: 20px; margin-top: 0.4rem; letter-spacing: 0.04em; font-style: normal; }
 
         #upload-toast { margin:0 auto 1rem; max-width:100%; padding:0.7rem 1rem; border-radius:6px; font-size:0.78rem; text-align:center; display:none; line-height:1.5; }
         #upload-toast.success { background:#e8f5e4; color:#2e7d32; border:1px solid #a5d6a7; display:block; }
         #upload-toast.error   { background:#fdecea; color:#c62828; border:1px solid #ef9a9a; display:block; }
         #upload-toast.info    { background:#e3f2fd; color:#1565c0; border:1px solid #90caf9; display:block; }
 
-        .manual-select-wrap {
-            margin-top: 0.8rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .manual-select-wrap select {
-            padding: 0.4rem 0.65rem;
-            border: 1px solid #ef9a9a;
-            border-radius: 4px;
-            font-family: 'Noto Serif TC', serif;
-            font-size: 0.76rem;
-            background: white;
-            color: #c62828;
-            cursor: pointer;
-            outline: none;
-        }
-        .manual-confirm-btn {
-            padding: 0.4rem 1rem;
-            background: var(--brick-red);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-family: 'Noto Serif TC', serif;
-            font-size: 0.76rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+        .manual-select-wrap { margin-top: 0.8rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; }
+        .manual-select-wrap select { padding: 0.4rem 0.65rem; border: 1px solid #ef9a9a; border-radius: 4px; font-family: 'Noto Serif TC', serif; font-size: 0.76rem; background: white; color: #c62828; cursor: pointer; outline: none; }
+        .manual-confirm-btn { padding: 0.4rem 1rem; background: var(--brick-red); color: white; border: none; border-radius: 4px; font-family: 'Noto Serif TC', serif; font-size: 0.76rem; cursor: pointer; transition: background 0.2s; }
         .manual-confirm-btn:hover { background: var(--brick-light); }
 
-        /* ── Stamp category tabs ── */
-        .stamp-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .stamp-tab {
-            font-family: 'Noto Serif TC', serif;
-            font-size: 0.75rem;
-            letter-spacing: 0.08em;
-            padding: 0.4rem 1.1rem;
-            border: 1.5px solid var(--beige);
-            border-radius: 20px;
-            background: transparent;
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        /* Stamp category tabs */
+        .stamp-tabs { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .stamp-tab { font-family: 'Noto Serif TC', serif; font-size: 0.75rem; letter-spacing: 0.08em; padding: 0.4rem 1.1rem; border: 1.5px solid var(--beige); border-radius: 20px; background: transparent; color: var(--text); cursor: pointer; transition: all 0.2s; }
         .stamp-tab:hover { border-color: var(--stamp-gold); color: var(--brick-red); }
-        .stamp-tab.active {
-            background: var(--brick-red);
-            border-color: var(--brick-red);
-            color: white;
-        }
+        .stamp-tab.active { background: var(--brick-red); border-color: var(--brick-red); color: white; }
 
-        /* ── Stamp grid ── */
+        /* Stamp grid */
         .stamp-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(118px,1fr)); gap:1.4rem; }
         .stamp-item { display:flex; flex-direction:column; align-items:center; gap:0.5rem; text-align:center; }
-
         .stamp-piece {
-            position: relative;
-            width: 90px;
-            height: 108px;
-            flex-shrink: 0;
-            background-color: #faf6ef;
-            border-radius: 2px;
+            position: relative; width: 90px; height: 108px; flex-shrink: 0;
+            background-color: #faf6ef; border-radius: 2px;
             filter: drop-shadow(0 3px 10px rgba(0,0,0,0.18));
             -webkit-mask-image:
                 radial-gradient(circle at   0%   0%, transparent 6px, white 6px),
@@ -737,60 +386,19 @@
             mask-composite: exclude;
             transition: transform 0.2s;
         }
-
         .stamp-piece.locked { background-color: #f0ece4; }
         .stamp-item.locked-item { filter: grayscale(100%); }
-
-        .stamp-img-box {
-            position: absolute;
-            top: 12px;
-            left: 8px;
-            right: 8px;
-            bottom: 12px;
-            background: white;
-            border-radius: 2px;
-            border: 1.5px solid rgba(0,0,0,0.07);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .stamp-img-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .stamp-img-box.locked-box {
-            background: rgba(0,0,0,0.04);
-            border-color: rgba(0,0,0,0.07);
-        }
-        .stamp-img-box.empty-box {
-            background: rgba(0,0,0,0.03);
-        }
-
-        .stamp-bar-top {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 6px;
-        }
-        .stamp-bar-bot {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 6px;
-        }
-
+        .stamp-img-box { position: absolute; top: 12px; left: 8px; right: 8px; bottom: 12px; background: white; border-radius: 2px; border: 1.5px solid rgba(0,0,0,0.07); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .stamp-img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .stamp-img-box.locked-box { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.07); }
+        .stamp-img-box.empty-box { background: rgba(0,0,0,0.03); }
+        .stamp-bar-top { position: absolute; top: 0; left: 0; right: 0; height: 6px; }
+        .stamp-bar-bot { position: absolute; bottom: 0; left: 0; right: 0; height: 6px; }
         .stamp-item:not(.locked-item) .stamp-piece { cursor: pointer; }
         .stamp-item:not(.locked-item) .stamp-piece:hover { transform: scale(1.07) rotate(-1deg); }
         .stamp-item.locked-item .stamp-piece { cursor: default; }
-
-        @keyframes stampIn {
-            0%   { transform: scale(0.3) rotate(-20deg); opacity: 0; }
-            70%  { transform: scale(1.15) rotate(3deg); }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
+        @keyframes stampIn { 0% { transform: scale(0.3) rotate(-20deg); opacity: 0; } 70% { transform: scale(1.15) rotate(3deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
         .stamp-piece.just-unlocked { animation: stampIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-
         .stamp-name   { font-size:0.67rem; font-weight:600; color:var(--text); }
         .stamp-status { font-size:0.59rem; color:var(--seafoam); }
         .stamp-status.unlocked { color:var(--deep-orange); }
@@ -803,59 +411,14 @@
         #lightbox-close { position:absolute; top:1rem; right:1.2rem; background:rgba(255,255,255,0.15); border:none; color:white; width:32px; height:32px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 
         /* SDG Fact Modal */
-        #sdg-modal {
-            position: fixed;
-            inset: 0;
-            z-index: 9500;
-            background: rgba(0,0,0,0.6);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
+        #sdg-modal { position: fixed; inset: 0; z-index: 9500; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; padding: 1rem; }
         #sdg-modal.open { display: flex; }
-        .sdg-modal-card {
-            background: var(--panel-bg);
-            border: 2px solid var(--stamp-gold);
-            border-radius: 10px;
-            max-width: 420px;
-            width: 100%;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
-            position: relative;
-        }
-        @keyframes modalIn {
-            from { transform: scale(0.7) translateY(30px); opacity: 0; }
-            to   { transform: scale(1) translateY(0); opacity: 1; }
-        }
+        .sdg-modal-card { background: var(--panel-bg); border: 2px solid var(--stamp-gold); border-radius: 10px; max-width: 420px; width: 100%; padding: 2rem; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1); position: relative; }
+        @keyframes modalIn { from { transform: scale(0.7) translateY(30px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
         .sdg-modal-icon { font-size: 2.5rem; display: block; margin-bottom: 0.7rem; font-family: 'Playfair Display', serif; font-weight: bold; }
-        .sdg-modal-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--brick-red);
-            margin-bottom: 0.9rem;
-        }
-        .sdg-modal-fact {
-            font-size: 0.82rem;
-            line-height: 1.8;
-            color: var(--text);
-            font-style: italic;
-            margin-bottom: 1.2rem;
-        }
-        .sdg-modal-close {
-            padding: 0.55rem 1.5rem;
-            background: var(--brick-red);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-family: 'Noto Serif TC', serif;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+        .sdg-modal-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: bold; color: var(--brick-red); margin-bottom: 0.9rem; }
+        .sdg-modal-fact { font-size: 0.82rem; line-height: 1.8; color: var(--text); font-style: italic; margin-bottom: 1.2rem; }
+        .sdg-modal-close { padding: 0.55rem 1.5rem; background: var(--brick-red); color: white; border: none; border-radius: 4px; font-family: 'Noto Serif TC', serif; font-size: 0.8rem; cursor: pointer; transition: background 0.2s; }
         .sdg-modal-close:hover { background: var(--brick-light); }
 
         /* Leaflet popup */
@@ -868,6 +431,54 @@
         ::-webkit-scrollbar { width:4px; }
         ::-webkit-scrollbar-track { background:transparent; }
         ::-webkit-scrollbar-thumb { background:var(--beige); border-radius:2px; }
+
+        /* ══════════ AI CHAT PAGE ══════════ */
+        .chat-page { flex:1; display:none; flex-direction:column; min-height:0; background:var(--bg); padding:1rem; transition:background 0.5s; }
+        .chat-page.active { display:flex; }
+        .chat-wrap {
+            flex:1; min-height:0; width:100%; max-width:760px; margin:0 auto;
+            display:flex; flex-direction:column;
+            background:var(--panel-bg); border:1.5px solid var(--beige); border-radius:8px;
+            overflow:hidden; box-shadow:0 4px 15px var(--stamp-shadow);
+        }
+        .chat-head { padding:0.8rem 1.1rem; background:var(--whale-blue); color:var(--paper-white); border-bottom:2px solid var(--stamp-gold); display:flex; align-items:center; gap:0.7rem; }
+        .chat-head-avatar { width:34px; height:34px; border-radius:50%; border:2px dashed var(--stamp-gold); display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-weight:700; color:var(--stamp-gold); flex-shrink:0; }
+        .chat-head h2 { font-family:'Playfair Display',serif; font-size:1rem; letter-spacing:0.04em; }
+        .chat-head small { font-size:0.65rem; opacity:0.65; font-style:italic; }
+        .chat-demo-tag { margin-left:auto; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; border:1px dashed var(--stamp-gold); color:var(--stamp-gold); padding:2px 7px; border-radius:3px; }
+
+        .chat-messages { flex:1; overflow-y:auto; padding:1rem 1.1rem; display:flex; flex-direction:column; gap:0.8rem; scroll-behavior:smooth; }
+        .chat-msg { display:flex; gap:0.5rem; max-width:88%; animation:chatIn 0.3s ease; }
+        @keyframes chatIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+        .chat-msg.bot  { align-self:flex-start; }
+        .chat-msg.user { align-self:flex-end; flex-direction:row-reverse; }
+        .chat-msg-avatar { width:26px; height:26px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-weight:700; font-size:0.7rem; }
+        .chat-msg.bot .chat-msg-avatar  { background:var(--whale-blue); color:var(--stamp-gold); }
+        .chat-msg.user .chat-msg-avatar { background:var(--brick-red); color:white; }
+        .chat-bubble { padding:0.6rem 0.9rem; border-radius:10px; font-size:0.8rem; line-height:1.8; }
+        .chat-msg.bot .chat-bubble  { background:rgba(43,95,110,0.10); color:var(--text); border-top-left-radius:2px; }
+        .chat-msg.user .chat-bubble { background:var(--brick-red); color:var(--paper-white); border-top-right-radius:2px; white-space:pre-wrap; }
+        .chat-bubble ol, .chat-bubble ul { padding-left:1.2rem; margin:0.3rem 0; }
+        .chat-bubble b { color:var(--brick-red); }
+        body.night .chat-bubble b { color:var(--stamp-gold); }
+        .chat-bubble .chat-note { display:block; font-size:0.7rem; opacity:0.65; margin-top:0.3rem; }
+
+        .typing { display:inline-flex; gap:4px; padding:0.3rem 0; }
+        .typing span { width:6px; height:6px; border-radius:50%; background:var(--seafoam); animation:typingDot 1s infinite ease-in-out; }
+        .typing span:nth-child(2) { animation-delay:0.15s; }
+        .typing span:nth-child(3) { animation-delay:0.3s; }
+        @keyframes typingDot { 0%,60%,100% { transform:translateY(0); opacity:0.4; } 30% { transform:translateY(-5px); opacity:1; } }
+
+        .chat-chips { display:flex; flex-wrap:wrap; gap:0.4rem; padding:0.5rem 1.1rem 0; }
+        .chat-chip { font-family:inherit; font-size:0.72rem; padding:0.3rem 0.8rem; border:1.5px solid var(--beige); border-radius:20px; background:transparent; color:var(--text); cursor:pointer; transition:all 0.2s; }
+        .chat-chip:hover { border-color:var(--stamp-gold); color:var(--brick-red); }
+
+        .chat-input-row { display:flex; gap:0.5rem; padding:0.8rem 1.1rem; border-top:1px dashed var(--beige); margin-top:0.5rem; }
+        .chat-input-row input { flex:1; padding:0.6rem 0.9rem; border:1.5px solid var(--beige); border-radius:20px; background:var(--bg); color:var(--text); font-family:inherit; font-size:0.82rem; outline:none; transition:border-color 0.2s; }
+        .chat-input-row input:focus { border-color:var(--stamp-gold); }
+        .chat-input-row button { padding:0 1.3rem; border:none; border-radius:20px; background:var(--brick-red); color:white; font-family:inherit; font-size:0.78rem; cursor:pointer; transition:background 0.2s; }
+        .chat-input-row button:hover { background:var(--brick-light); }
+        .chat-input-row button:disabled { opacity:0.5; cursor:default; }
 
         /* Responsive passport card */
         @media (max-width: 540px) {
@@ -888,7 +499,7 @@
         <h1>Taiwan Cultural Trails</h1>
         <p class="subtitle">Beneficial & Sustainable Tourism</p>
         <div class="dot-divider"></div>
-        
+
         <div class="auth-toggle-group">
             <button id="toggle-login" class="auth-toggle-btn active" onclick="setAuthMode('login')">登入 / Sign In</button>
             <button id="toggle-register" class="auth-toggle-btn" onclick="setAuthMode('register')">註冊 / Register</button>
@@ -941,6 +552,7 @@
 <div class="tool-bar">
     <button class="tool-btn active" onclick="switchTab('map',this)">Explore Map</button>
     <button class="tool-btn"        onclick="switchTab('stamps',this)">Stamp Collection</button>
+    <button class="tool-btn"        onclick="switchTab('chat',this)">AI Guide</button>
 </div>
 
 <div class="map-layout" id="mapLayout">
@@ -1023,8 +635,7 @@
 
                 <div class="passport-right">
                     <div class="passport-right-title">Imprinted Achievements</div>
-                    <div id="sdg-badges-wall">
-                        </div>
+                    <div id="sdg-badges-wall"></div>
                 </div>
             </div>
 
@@ -1048,6 +659,27 @@
 
     <div class="stamp-tabs" id="stampTabs"></div>
     <div class="stamp-grid" id="stampGrid"></div>
+</div>
+
+<!-- AI Guide -->
+<div class="chat-page" id="chatPage">
+    <div class="chat-wrap">
+        <div class="chat-head">
+            <div class="chat-head-avatar">AI</div>
+            <div>
+                <h2>Trail Guide · 在地嚮導</h2>
+                <small>詢問網站用法，或讓我幫你安排道地行程</small>
+            </div>
+            <span class="chat-demo-tag">Demo</span>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-chips" id="chatChips"></div>
+        <div class="chat-input-row">
+            <input id="chatInput" type="text" placeholder="輸入問題，例如：台南一日遊怎麼玩？" maxlength="200"
+                   onkeydown="if(event.key==='Enter' && !event.isComposing) sendChat()">
+            <button id="chatSend" onclick="sendChat()">送出</button>
+        </div>
+    </div>
 </div>
 
 <div id="lightbox" onclick="closeLightbox()">
@@ -1151,44 +783,29 @@ const SEED_LOCATIONS = [
 ];
 
 /* ══════════════════════════════════════════════════
-   SDG VINTAGE BADGES DEFINITION (Typography-Based Art)
+   SDG VINTAGE BADGES DEFINITION
 ══════════════════════════════════════════════════ */
 const SDG_BADGES = [
     {
-        id: 'green_traveler',
-        symbol: 'A', // Typographic representation for Activity / Art
-        label: 'Green Traveler',
-        sdgColor: '#3F7E44',
-        sdgNum: 'SDG 11',
-        category: 'Cultural and creative activities',
-        threshold: 3,
+        id: 'green_traveler', symbol: 'A', label: 'Green Traveler',
+        sdgColor: '#3F7E44', sdgNum: 'SDG 11',
+        category: 'Cultural and creative activities', threshold: 3,
         tip: 'GREEN TRAVELER: Supporting local artists & reviving historic spaces directly advances SDG 11 — Sustainable Cities & Communities. Keep exploring!'
     },
     {
-        id: 'sustainable_foodie',
-        symbol: 'R', // Typographic representation for Restaurant
-        label: 'Sustainable Foodie',
-        sdgColor: '#BF8B2E',
-        sdgNum: 'SDG 12',
-        category: 'Tourist restaurant',
-        threshold: 3,
+        id: 'sustainable_foodie', symbol: 'R', label: 'Sustainable Foodie',
+        sdgColor: '#BF8B2E', sdgNum: 'SDG 12',
+        category: 'Tourist restaurant', threshold: 3,
         tip: 'SUSTAINABLE FOODIE: Dining at certified local restaurants reduces food miles and supports SDG 12 — Responsible Consumption & Production. Delicious impact!'
     },
     {
-        id: 'heritage_explorer',
-        symbol: 'S', // Typographic representation for Scenic Spot
-        label: 'Heritage Explorer',
-        sdgColor: '#9E2A1C',
-        sdgNum: 'SDG 8.9',
-        category: 'Tourist attractions',
-        threshold: 3,
+        id: 'heritage_explorer', symbol: 'S', label: 'Heritage Explorer',
+        sdgColor: '#9E2A1C', sdgNum: 'SDG 8.9',
+        category: 'Tourist attractions', threshold: 3,
         tip: 'HERITAGE EXPLORER: Deep exploration of Taiwan\'s natural & cultural assets promotes SDG 8.9 — Sustainable Tourism that creates local jobs and preserves culture.'
     },
 ];
 
-/* ══════════════════════════════════════════════════
-   SDG FACT MESSAGES (randomly shown on unlock)
-══════════════════════════════════════════════════ */
 const SDG_FACTS = {
     'Tourist attractions': [
         "Stamp unlocked! Preserving historical sites like this directly supports UN SDG 11 for Sustainable Cities and Communities — every visit helps keep heritage alive!",
@@ -1223,7 +840,7 @@ function saveStampPhotos() {
         console.warn('Could not persist stamp photos (storage quota exceeded).');
     }
 }
-let authMode = 'login'; // 'login' or 'register'
+let authMode = 'login';
 let currentUserEmail = null;
 let allLocations = [];
 let markers = {};
@@ -1231,7 +848,6 @@ let activeStampCategory = TDX_SOURCES[0].name;
 
 const _badgeAnimatedThisSession = new Set();
 
-// 本地端註冊用戶數據庫模擬
 function getUsersDB() {
     return JSON.parse(localStorage.getItem('tct_users_db') || '{}');
 }
@@ -1249,22 +865,20 @@ function setAuthMode(mode) {
     document.getElementById('name-group').style.display = mode === 'register' ? 'block' : 'none';
     document.getElementById('strength-meter').style.display = mode === 'register' ? 'block' : 'none';
     document.getElementById('submit-auth-btn').textContent = mode === 'login' ? '開始探索 / Begin Journey' : '註冊 / Register';
-    
-    // 清除欄位
+
     document.getElementById('password-input').value = '';
     document.getElementById('strength-text').style.display = 'none';
     document.getElementById('auth-hint').style.display = 'none';
 }
 
-// 偵測使用者如果沒註冊過就登入的自動反應
 function checkEmailExists() {
     if (authMode !== 'login') return;
     const email = document.getElementById('email-input').value.trim();
     if (!email) return;
-    
+
     const db = getUsersDB();
     const hintEl = document.getElementById('auth-hint');
-    
+
     if (email.includes('@') && !db[email]) {
         hintEl.textContent = "💡 偵測到新旅人！此 Email 尚未註冊，系統已為您自動切換到「新帳號註冊」模式。";
         hintEl.style.display = 'block';
@@ -1274,18 +888,17 @@ function checkEmailExists() {
     }
 }
 
-// 密碼強度計算法
 function evaluatePasswordStrength() {
     const password = document.getElementById('password-input').value;
     const bar = document.getElementById('strength-bar');
     const txt = document.getElementById('strength-text');
-    
+
     if (authMode !== 'register') {
         bar.parentElement.style.display = 'none';
         txt.style.display = 'none';
         return;
     }
-    
+
     bar.parentElement.style.display = 'block';
     txt.style.display = 'block';
 
@@ -1320,7 +933,6 @@ function evaluatePasswordStrength() {
     }
 }
 
-// 處理登入與註冊的主控制邏輯
 function handleAuthSubmit() {
     const email = document.getElementById('email-input').value.trim();
     const password = document.getElementById('password-input').value;
@@ -1342,8 +954,7 @@ function handleAuthSubmit() {
             alert('為了安全起見，請密碼至少設定 6 碼以上。');
             return;
         }
-        
-        // 建立新使用者
+
         db[email] = {
             username: username,
             password: password, // 本地演示直接明文比對
@@ -1353,7 +964,6 @@ function handleAuthSubmit() {
         saveUsersDB(db);
         alert('✨ 註冊成功！已為您自動登入。');
     } else {
-        // 登入驗證
         if (!db[email] || db[email].password !== password) {
             alert('信箱或密碼錯誤，請重新再試一次。');
             return;
@@ -1366,21 +976,19 @@ function handleAuthSubmit() {
     stampPhotos = db[email].photos || {};
 
     setTimeout(() => {
-    enterApp(db[email].username);
+        enterApp(db[email].username);
     }, 100);
 }
 
-// logout
 function handleSignOut() {
     if(confirm('確定要結束本次探索旅程並登出嗎？')) {
         currentUserEmail = null;
         localStorage.removeItem('tct_session_user');
-        
-        // 重置畫面欄位與回到登入介面
+
         document.getElementById('email-input').value = '';
         document.getElementById('password-input').value = '';
         setAuthMode('login');
-        
+
         const sp = document.getElementById('start-page');
         sp.style.display = 'flex';
         sp.classList.remove('fade-out');
@@ -1391,13 +999,12 @@ function handleSignOut() {
 function enterApp(name) {
     document.getElementById('header-user').textContent = `Hi, ${name} 🧭`;
     updateAvatarAndName(name);
-    
+
     const sp = document.getElementById('start-page');
     sp.classList.add('fade-out');
     setTimeout(() => sp.style.display = 'none', 500);
     setTimeout(() => document.getElementById('sidebar').classList.remove('collapsed'), 400);
-    
-    // 重新校正地圖大小並渲染
+
     setTimeout(() => map.invalidateSize(), 50);
     renderStampGrid();
 }
@@ -1431,8 +1038,10 @@ function switchTab(tab, btn) {
     if (btn) btn.classList.add('active');
     document.getElementById('mapLayout').classList.toggle('hidden', tab !== 'map');
     document.getElementById('stampPage').classList.toggle('active', tab === 'stamps');
+    document.getElementById('chatPage').classList.toggle('active', tab === 'chat');
     if (tab === 'map') setTimeout(() => map.invalidateSize(), 50);
     if (tab === 'stamps') renderStampGrid();
+    if (tab === 'chat') initChat();
 }
 
 document.getElementById('themeToggle').addEventListener('click', () => {
@@ -1440,14 +1049,19 @@ document.getElementById('themeToggle').addEventListener('click', () => {
 });
 
 /* ══════════════════════════════════════════════════
-   LEAFLET MAP
+   LEAFLET MAP（Leaflet 載入失敗時不會讓整個網頁壞掉）
 ══════════════════════════════════════════════════ */
-const map = L.map('map', { zoomControl: true }).setView([23.7, 121.0], 7);
+const HAS_MAP = typeof L !== 'undefined';
+const map = HAS_MAP
+    ? L.map('map', { zoomControl: true }).setView([23.7, 121.0], 7)
+    : { invalidateSize(){}, setView(){}, addLayer(){}, removeLayer(){} };
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom: 19
-}).addTo(map);
+if (HAS_MAP) {
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    }).addTo(map);
+}
 
 setTimeout(() => map.invalidateSize(), 150);
 
@@ -1570,24 +1184,26 @@ function renderLocations(locs) {
     Object.values(markers).forEach(m => map.removeLayer(m));
     markers = {};
 
-    locs.forEach((loc, i) => {
-        const m = L.marker([loc.lat, loc.lng], { icon: makeIcon(loc.icon, loc.color) })
-            .addTo(map)
-            .bindPopup(`
-                <div class="popup-title">${loc.name}</div>
-                <div class="popup-sub">${loc.category}</div>
-                ${loc.addr ? `<div class="popup-addr">${loc.addr.slice(0,30)}</div>` : ''}
-            `)
-            .on('click', () => selectLocation(i));
-        markers[loc.id] = m;
-    });
+    if (HAS_MAP) {
+        locs.forEach((loc, i) => {
+            const m = L.marker([loc.lat, loc.lng], { icon: makeIcon(loc.icon, loc.color) })
+                .addTo(map)
+                .bindPopup(`
+                    <div class="popup-title">${loc.name}</div>
+                    <div class="popup-sub">${loc.category}</div>
+                    ${loc.addr ? `<div class="popup-addr">${loc.addr.slice(0,30)}</div>` : ''}
+                `)
+                .on('click', () => selectLocation(i));
+            markers[loc.id] = m;
+        });
+    }
 
     renderStampGrid();
     renderPassportDashboard();
 }
 
 /* ══════════════════════════════════════════════════
-   PASSPORT DASHBOARD (Updated to Vintage Boarding Pass)
+   PASSPORT DASHBOARD
 ══════════════════════════════════════════════════ */
 function renderPassportDashboard() {
     const totalLocs   = allLocations.length;
@@ -1727,6 +1343,7 @@ function unlockStamp(locId, dataUrl) {
         stampPhotos[locId] = dataUrl;
         saveStampPhotos();
     }
+    saveStampsToUser();
 
     renderStampGrid();
 
@@ -1856,9 +1473,6 @@ function haversineDistance(lat1, lng1, lat2, lng2) {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-/* ══════════════════════════════════════════════════
-   EXIF GPS conversion
-══════════════════════════════════════════════════ */
 function exifGpsToDecimal(arr, ref) {
     if (!arr || arr.length < 3) return null;
     const dec = arr[0] + arr[1]/60 + arr[2]/3600;
@@ -2002,6 +1616,205 @@ document.addEventListener('keydown', e => {
 });
 
 /* ══════════════════════════════════════════════════
+   AI GUIDE (前端示範版：預設對話 + 關鍵字比對)
+══════════════════════════════════════════════════ */
+const DEFAULT_CHIPS = ['這個網站怎麼使用？', '如何解鎖集章？', '台南一日遊怎麼玩？', '台北文青行程', '推薦夜市美食'];
+
+const CHAT_KB = [
+    {
+        keys: ['怎麼使用', '如何使用', '怎麼用', '使用方式', '教學', 'how to use'],
+        reply: `歡迎來到 Taiwan Cultural Trails！主要有三個功能：
+            <ol>
+                <li><b>Explore Map</b>：在地圖上瀏覽景點、餐廳與文化活動，可用左側欄搜尋與分類篩選。</li>
+                <li><b>Stamp Collection</b>：實際造訪後上傳照片，就能解鎖該地點的集章。</li>
+                <li><b>AI Guide</b>：也就是我，可以幫你規劃行程。</li>
+            </ol>
+            想知道集章怎麼解鎖嗎？`,
+        chips: ['如何解鎖集章？', '徽章怎麼獲得？']
+    },
+    {
+        keys: ['集章', '解鎖', '蓋章', '上傳', '照片', 'stamp'],
+        reply: `解鎖集章的步驟：
+            <ol>
+                <li>到現場拍一張照片（<b>請開啟相機的定位功能</b>）。</li>
+                <li>進入 Stamp Collection，按「Choose Photo」上傳。</li>
+                <li>系統會讀取照片中的 GPS，若在地點 <b>500 公尺內</b>就自動解鎖。</li>
+            </ol>
+            照片沒有 GPS 的話，也可以手動選擇拍攝地點。
+            <span class="chat-note">小提醒：部分通訊軟體傳送的照片會被移除 GPS 資訊。</span>`,
+        chips: ['徽章怎麼獲得？', '照片沒有 GPS 怎麼辦？']
+    },
+    {
+        keys: ['徽章', 'badge', 'sdg', '成就'],
+        reply: `每個類別各蒐集 <b>3 個集章</b>，就能解鎖對應的永續徽章：
+            <ul>
+                <li><b>Green Traveler</b>：文創活動（SDG 11）</li>
+                <li><b>Sustainable Foodie</b>：觀光餐廳（SDG 12）</li>
+                <li><b>Heritage Explorer</b>：觀光景點（SDG 8.9）</li>
+            </ul>
+            徽章會顯示在 Stamp Collection 上方的 Boarding Pass，也可以匯出成圖片。`,
+        chips: ['如何解鎖集章？', '台南一日遊怎麼玩？']
+    },
+    {
+        keys: ['gps', '定位', '沒有位置', '沒有gps'],
+        reply: `如果照片沒有 GPS，系統會跳出選單，讓你<b>手動選擇類別與地點</b>後確認解鎖。
+            <span class="chat-note">下次拍照前，可以到手機的相機設定開啟「位置標記」。</span>`,
+        chips: ['如何解鎖集章？']
+    },
+    {
+        keys: ['台南', 'tainan'],
+        reply: `<b>台南古都一日遊</b>
+            <ol>
+                <li><b>09:00 林百貨</b>：昭和時代百貨，頂樓還有日治時期防空砲台。</li>
+                <li><b>11:00 神農街 / 老城區散步</b>：感受老屋與巷弄文化。</li>
+                <li><b>12:30 午餐</b>：吃碗虱目魚粥或擔仔麵，體驗在地早午餐。</li>
+                <li><b>14:30 安平古堡與安平老街</b>：1624 年荷蘭人興建，旁邊有蜜餞與劍獅工藝。</li>
+                <li><b>18:00 晚餐</b>：安平小吃，如蝦捲、豆花。</li>
+            </ol>
+            這些景點在地圖上都有標記，造訪後別忘了上傳照片集章！`,
+        chips: ['台北文青行程', '推薦夜市美食']
+    },
+    {
+        keys: ['台北', '文青', '文創', 'taipei'],
+        reply: `<b>台北文創半日遊</b>
+            <ol>
+                <li><b>10:00 華山 1914 文創園區</b>：舊酒廠改建的展演空間。</li>
+                <li><b>12:00 永康街或東區午餐</b>：選一間在地小店。</li>
+                <li><b>14:00 松山文創園區</b>：日治時期菸廠，展覽很多元。</li>
+                <li><b>17:30 傍晚到士林夜市</b>：蚵仔煎、大餅包小餅。</li>
+            </ol>
+            兩個文創園區都屬於「文創活動」類別，剛好可以一起累積 Green Traveler 徽章。`,
+        chips: ['推薦夜市美食', '台南一日遊怎麼玩？']
+    },
+    {
+        keys: ['夜市', '美食', '小吃', '餐廳', '吃'],
+        reply: `想吃道地小吃的話：
+            <ul>
+                <li><b>士林夜市</b>：台北最大觀光夜市，蚵仔煎、大餅包小餅必吃。</li>
+                <li><b>深坑老街</b>：以臭豆腐聞名，也保留清代街屋風貌。</li>
+                <li><b>台南安平</b>：蝦捲、蜜餞、豆花，適合邊走邊吃。</li>
+            </ul>
+            在 Explore Map 的左側欄勾選「Tourist restaurant」，就能只看餐廳。`,
+        chips: ['台南一日遊怎麼玩？', '徽章怎麼獲得？']
+    },
+    {
+        keys: ['花蓮', '太魯閣', '宜蘭', '東部', '自然', '溫泉', '冷泉'],
+        reply: `<b>東部自然文化行程（2 天）</b>
+            <ol>
+                <li><b>Day 1 太魯閣國家公園</b>：欣賞大理石峽谷，並認識太魯閣族的織布與祭典文化。</li>
+                <li><b>Day 2 蘇澳冷泉</b>：全球少見的碳酸冷泉，水溫常年約 22°C，適合在山路後放鬆。</li>
+            </ol>
+            <span class="chat-note">山區天氣多變，出發前請先查詢道路與天氣狀況。</span>`,
+        chips: ['台北文青行程', '如何解鎖集章？']
+    },
+    {
+        keys: ['九份', '老街', '鹿港', '深坑', '古蹟', '歷史'],
+        reply: `喜歡老街風情的話，推薦三條路線：
+            <ul>
+                <li><b>九份老街</b>：山城夜景與茶樓，建議傍晚到。</li>
+                <li><b>深坑老街</b>：離台北近，保存完整的閩南式街屋。</li>
+                <li><b>鹿港老街</b>：清代街道格局，天后宮、龍山寺值得一看。</li>
+            </ul>`,
+        chips: ['台南一日遊怎麼玩？', '推薦夜市美食']
+    },
+    {
+        keys: ['你好', '哈囉', 'hi', 'hello', '嗨'],
+        reply: '你好！我是 Trail Guide，可以回答網站用法，也可以幫你規劃在地行程。想從哪裡開始？',
+        chips: DEFAULT_CHIPS
+    },
+    {
+        keys: ['謝謝', '感謝', 'thanks'],
+        reply: '不客氣！旅途愉快，記得多拍幾張照片去集章 🎫',
+        chips: DEFAULT_CHIPS
+    },
+];
+
+const CHAT_FALLBACK = {
+    reply: `這個問題我還在學習中 🙏<br>目前的示範版本可以回答網站使用方式，以及台北、台南、東部和老街美食的行程建議。<span class="chat-note">未來接上真正的 AI 後，就能針對任何問題給出客製化的回答。</span>`,
+    chips: DEFAULT_CHIPS
+};
+
+let chatInited = false;
+let chatBusy = false;
+
+// 之後接真正的 AI，只要把這個函式換成 fetch 到後端即可
+async function getReply(text) {
+    const q = text.toLowerCase();
+    const hit = CHAT_KB.find(item => item.keys.some(k => q.includes(k.toLowerCase())));
+    await new Promise(r => setTimeout(r, 700 + Math.random() * 600)); // 模擬思考時間
+    return hit || CHAT_FALLBACK;
+}
+
+function initChat() {
+    if (chatInited) return;
+    chatInited = true;
+    const name = document.getElementById('passport-name').textContent || '旅人';
+    addChatMsg('bot', `嗨，${name}！我是你的在地嚮導 Trail Guide 🧭<br>你可以問我網站怎麼用，或是想去哪裡玩，我來幫你安排行程。`);
+    setChatChips(DEFAULT_CHIPS);
+}
+
+function addChatMsg(role, content, isHtml = true) {
+    const box = document.getElementById('chatMessages');
+    const row = document.createElement('div');
+    row.className = 'chat-msg ' + role;
+
+    const av = document.createElement('div');
+    av.className = 'chat-msg-avatar';
+    av.textContent = role === 'bot' ? 'AI' : (document.getElementById('passport-avatar').textContent || 'U');
+
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    if (isHtml) bubble.innerHTML = content; else bubble.textContent = content; // 使用者輸入一律用 textContent，避免 XSS
+
+    row.append(av, bubble);
+    box.appendChild(row);
+    box.scrollTop = box.scrollHeight;
+    return row;
+}
+
+function setChatChips(list) {
+    const el = document.getElementById('chatChips');
+    el.innerHTML = '';
+    (list || []).forEach(text => {
+        const b = document.createElement('button');
+        b.className = 'chat-chip';
+        b.textContent = text;
+        b.onclick = () => sendChat(text);
+        el.appendChild(b);
+    });
+}
+
+async function sendChat(presetText) {
+    if (chatBusy) return;
+    const input = document.getElementById('chatInput');
+    const text = (presetText ?? input.value).trim();
+    if (!text) return;
+
+    input.value = '';
+    chatBusy = true;
+    document.getElementById('chatSend').disabled = true;
+    setChatChips([]);
+
+    addChatMsg('user', text, false);
+    const typingRow = addChatMsg('bot', '<span class="typing"><span></span><span></span><span></span></span>');
+
+    try {
+        const res = await getReply(text);
+        typingRow.querySelector('.chat-bubble').innerHTML = res.reply;
+        setChatChips(res.chips);
+    } catch (e) {
+        typingRow.querySelector('.chat-bubble').textContent = '抱歉，目前無法回應，請稍後再試。';
+        setChatChips(DEFAULT_CHIPS);
+    } finally {
+        chatBusy = false;
+        document.getElementById('chatSend').disabled = false;
+        const box = document.getElementById('chatMessages');
+        box.scrollTop = box.scrollHeight;
+        input.focus();
+    }
+}
+
+/* ══════════════════════════════════════════════════
    BOOT
 ══════════════════════════════════════════════════ */
 buildFilterUI();
@@ -2019,6 +1832,6 @@ fetchCultureData().then(locs => {
 });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
