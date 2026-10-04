@@ -1,0 +1,32 @@
+name: Update tourism data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 18 * * 0'   # 每週日 18:00 UTC（台灣時間週一凌晨 2:00）
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fetch TDX data
+        env:
+          TDX_CLIENT_ID: ${{ secrets.TDX_CLIENT_ID }}
+          TDX_CLIENT_SECRET: ${{ secrets.TDX_CLIENT_SECRET }}
+        run: node scripts/fetch-tdx.mjs
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/locations.json
+          git diff --staged --quiet || (git commit -m "chore: update tourism data" && git push)
