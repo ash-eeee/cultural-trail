@@ -1158,8 +1158,7 @@ function renderLocations(locs) {
 
     const list = document.getElementById('locationList');
     list.innerHTML = '';
-    const LIMIT = 200;
-    locs.slice(0, LIMIT).forEach((loc, i) => {
+    locs.forEach((loc, i) => {
         const el = document.createElement('div');
         el.className = 'loc-card';
         el.dataset.category = loc.category;
@@ -1174,12 +1173,6 @@ function renderLocations(locs) {
         el.onclick = () => selectLocation(i);
         list.appendChild(el);
     });
-    if (locs.length > LIMIT) {
-        const more = document.createElement('div');
-        more.className = 'loc-loading';
-        more.textContent = `… ${(locs.length - LIMIT).toLocaleString()} more (click map markers to view)`;
-        list.appendChild(more);
-    }
 
     Object.values(markers).forEach(m => map.removeLayer(m));
     markers = {};
