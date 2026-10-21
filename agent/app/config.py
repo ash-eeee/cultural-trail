@@ -35,7 +35,7 @@ def _path(raw: str) -> Path:
 
 
 OLLAMA_HOST = _ollama_host(os.getenv("OLLAMA_HOST", "http://localhost:11434"))
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
 PORT = int(os.getenv("PORT", "8787"))
 ALLOWED_ORIGINS = _origins(os.getenv("ALLOWED_ORIGINS", "http://localhost:5500,http://127.0.0.1:5500"))
 LOCATIONS_PATH = _path(os.getenv("LOCATIONS_PATH", "../data/locations.json"))

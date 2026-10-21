@@ -34,6 +34,11 @@ _SENTENCE = re.compile(r"[^\n]*?(?:[。！？!?]|\.(?=\s|$)|\n|$)")
 _CODE = re.compile(r"```|^\s*(?:def |class |import |from \S+ import |print\(|console\.log|function\s*\w*\(|"
                    r"for \S+ in \S+:|#include|public static|SELECT .+ FROM)", re.MULTILINE | re.IGNORECASE)
 
+# llama3.2 偶爾在回覆開頭多一行角色名稱「assistant」
+_ROLE_PREFIX = re.compile(r"^assistant(?:\s*[:：]|[ \t]*(?:\n|$))\s*", re.IGNORECASE)
+# llama3.2 偶爾把工具呼叫寫成文字：{"name": "...", "parameters": {...}}
+_TOOL_JSON = re.compile(r'\{\s*"name"\s*:\s*"[^"]*"\s*,\s*"(?:parameters|arguments)"\s*:')
+
 OFF_TOPIC = {
     "zh-TW": "抱歉，我是旅遊導覽員，只能協助臺灣的景點、美食、文創活動與行程規劃。想去哪裡走走呢？",
     "en": "Sorry, I'm a travel guide and can only help with places, food, cultural activities and trip planning in Taiwan. Where would you like to go?",
@@ -65,9 +70,11 @@ LEAK_REFUSAL = {
 
 
 def clean_reply(text: str, lang: str) -> str:
-    text = (text or "").strip()
+    text = _ROLE_PREFIX.sub("", (text or "").strip()).strip()
     if any(m in text for m in LEAK_MARKERS):
         return LEAK_REFUSAL.get(lang, LEAK_REFUSAL["zh-TW"])
+    if _TOOL_JSON.match(text):                          # 模型把工具呼叫寫成文字（不是我們的工具）
+        return OFF_TOPIC.get(lang, OFF_TOPIC["zh-TW"])
     if _CODE.search(text):
         return OFF_TOPIC.get(lang, OFF_TOPIC["zh-TW"])
     if lang == "zh-TW":

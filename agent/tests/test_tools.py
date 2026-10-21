@@ -139,7 +139,7 @@ def test_site_help_has_no_html():
 # ── 參數驗證與安全 ──
 
 def test_unknown_args_are_dropped():
-    # qwen2.5 常多送不存在的參數
+    # 小模型常多送不存在的參數
     assert validate_args("search_locations", {"query": "老街", "object": "景點"}) == {"query": "老街"}
 
 

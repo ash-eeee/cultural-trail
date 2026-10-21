@@ -97,7 +97,7 @@ async def main() -> None:
         print("   回覆：" + out["reply"].replace("\n", "\n         "))
         if out["route"]:
             r = out["route"]
-            print(f"   路線：{[(l['km'], l['suggested']) for l in r['legs']]}　建議 {r['suggested_kgCO2e']} kg／自駕 {r['car_kgCO2e']} kg")
+            print(f"   路線：{[l['km'] for l in r['legs']]} km　共 {r['total_km']} km／自駕 {r['car_kgCO2e']} kg")
         for p in problems:
             print(f"   ⚠ {p}")
     print(f"\n通過 {passed}/{len(cases)}")

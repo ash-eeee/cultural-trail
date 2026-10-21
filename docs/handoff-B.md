@@ -5,7 +5,7 @@
 ## 做了什麼
 
 **1. AI Guide（Agent AI 導覽）** — `agent/`
-- Python + FastAPI + 本機 Ollama（`qwen2.5:3b`），四種語言、串流回覆、可用使用者位置找附近景點。
+- Python + FastAPI + 本機 Ollama（`llama3.2:3b`，Meta），四種語言、串流回覆、可用使用者位置找附近景點。
 - Agent 沒開時，網頁自動改用離線版問答（`index.html` 的 `CHAT_KB`）。
 - 安全處理：回覆過濾 HTML／網址／系統提示詞外洩，前端不用 `innerHTML` 顯示 Agent 回覆。
 
