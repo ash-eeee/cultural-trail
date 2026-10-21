@@ -384,3 +384,23 @@ def test_short_answers_for_ja_de(client, monkeypatch):
     ask(client, "台南には何がありますか？", lang="ja")
     ask(client, "台南有什麼？")
     assert seen == [agent.SHORT_ANSWER_TOKENS, None]
+
+
+# ── llama3.2 的輸出習慣 ──
+
+def test_role_prefix_is_removed():
+    assert guard.clean_reply("assistant\n\n宜蘭有溫泉。", "zh-TW") == "宜蘭有溫泉。"
+    assert guard.clean_reply("Assistant: Hello.", "en") == "Hello."
+    assert guard.clean_reply("assistants are helpful.", "en") == "assistants are helpful."
+
+
+def test_tool_json_text_is_blocked():
+    raw = '{"name":"print","parameters":{"s":"Hello"}}'
+    assert guard.clean_reply(raw, "zh-TW") == guard.OFF_TOPIC["zh-TW"]
+
+
+def test_text_tool_call_for_our_tool_becomes_real_call():
+    calls = agent.text_tool_calls('{"name": "search_locations", "parameters": {"query": "溫泉"}}')
+    assert calls == [{"function": {"name": "search_locations", "arguments": {"query": "溫泉"}}}]
+    assert agent.text_tool_calls('{"name": "print", "parameters": {}}') == []
+    assert agent.text_tool_calls("宜蘭有溫泉。") == []

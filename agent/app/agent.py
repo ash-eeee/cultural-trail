@@ -55,7 +55,7 @@ _SITE_TOPICS = [
     ("usage", re.compile(r"網站|怎麼用|如何使用|使用方式|how (do i|to) use|使い方|benutze", re.IGNORECASE)),
 ]
 
-# 翻譯指令放在 user 訊息、用中文寫並註明目標語言的中文名稱：實測 qwen2.5:3b 這樣才會真的翻（放 system 或用目標語言寫，常常原文照抄）
+# 翻譯指令放在 user 訊息、用中文寫並註明目標語言的中文名稱：實測小模型這樣才會真的翻（放 system 或用目標語言寫，常常原文照抄）
 REWRITE_TARGET = {"en": "英文（English）", "ja": "日文（日本語）", "de": "德文（Deutsch）", "zh-TW": "繁體中文"}
 REWRITE = "請把下面這段文字翻譯成{target}。[[P1]] 這類代號是地名，照抄，不要翻譯或刪除。不要增加或刪減內容。只輸出{target}翻譯。\n\n{text}"
 
@@ -101,12 +101,28 @@ def _collect_ids(result: dict) -> list[str]:
     return ids
 
 
+def text_tool_calls(content: str) -> list[dict]:
+    """llama3.2 偶爾把工具呼叫寫成文字 JSON（{"name": ..., "parameters": {...}}），
+    名稱是我們的工具才當成真的工具呼叫；其他（例如 print）交給 guard 擋掉。"""
+    try:
+        obj = json.loads((content or "").strip())
+    except ValueError:
+        return []
+    if not isinstance(obj, dict) or obj.get("name") not in tools.TOOLS:
+        return []
+    args = obj.get("parameters", obj.get("arguments"))
+    return [{"function": {"name": obj["name"], "arguments": args if isinstance(args, dict) else {}}}]
+
+
 async def _model(messages: list[dict], tool_defs, max_tokens, on_text) -> dict:
     """呼叫模型：有 on_text（串流模式）就邊收邊回報，否則一次取得完整回覆。"""
     if on_text is None:
-        return await ollama_client.chat(messages, tool_defs, max_tokens=max_tokens)
-    msg = await ollama_client.chat_stream(messages, tool_defs, max_tokens=max_tokens, on_content=on_text)
-    if msg.get("tool_calls") and msg.get("content"):
+        msg = await ollama_client.chat(messages, tool_defs, max_tokens=max_tokens)
+    else:
+        msg = await ollama_client.chat_stream(messages, tool_defs, max_tokens=max_tokens, on_content=on_text)
+    if tool_defs and not msg.get("tool_calls") and (calls := text_tool_calls(msg.get("content", ""))):
+        msg = {**msg, "tool_calls": calls}
+    if on_text is not None and msg.get("tool_calls") and msg.get("content"):
         await on_text("")     # 這一輪其實是工具呼叫：把剛剛顯示的文字清掉
     return msg
 

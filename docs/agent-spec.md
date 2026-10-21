@@ -157,23 +157,24 @@ Agent 需要模型能「呼叫工具」。建議（依電腦規格由上往下�
 
 | 模型 | 約需記憶體 | 備註 |
 | --- | --- | --- |
-| `qwen2.5:7b`（或 `qwen2.5:7b-instruct`） | 約 5–6 GB | **首選**：中文佳、tool calling 穩定 |
-| `qwen3:8b` | 約 6–7 GB | 較新，注意 thinking 模式（見下） |
-| `llama3.1:8b` | 約 6 GB | 中文較弱 |
-| `qwen2.5:3b` | 約 2–3 GB | 電腦較弱時的退路，工具呼叫較不穩 |
+| `llama3.1:8b` | 約 6 GB | 16 GB 以上首選：tool calling 穩定，中文普通 |
+| `phi4-mini` | 約 3–4 GB | Microsoft，推理較好，中文普通 |
+| `llama3.2:3b` | 約 2–3 GB | **8 GB Mac 採用**：輕量，中文較弱 |
+
+> 依比賽規定不可使用中國開發的模型（例如 qwen 系列）。`gemma3` 在 Ollama 不支援 tool calling（會回 `does not support tools`），不適用。
 
 ```bash
-ollama pull qwen2.5:7b
-ollama show qwen2.5:7b      # 若顯示 Capabilities 含 tools 才適合
+ollama pull llama3.2:3b
+ollama show llama3.2:3b     # 若顯示 Capabilities 含 tools 才適合
 ```
 
 **依 Mac 記憶體選模型：**
 
 | Mac 記憶體 | 建議 |
 | --- | --- |
-| 16 GB 以上 | `qwen2.5:7b`（首選） |
-| 8 GB | `qwen2.5:3b`；7b 可以跑但會與其他程式搶記憶體、變慢 |
-| Intel Mac | 先用 `qwen2.5:3b` 實測延遲，可能仍偏慢 |
+| 16 GB 以上 | `llama3.1:8b` |
+| 8 GB | `llama3.2:3b`；8b 可以跑但會與其他程式搶記憶體、變慢 |
+| Intel Mac | 先用 `llama3.2:3b` 實測延遲，可能仍偏慢 |
 
 > 本專案要支援繁中、英文、日文、德文。模型越小，非中文語言的品質與工具呼叫穩定度越差。若只能用 3b，請在 Phase 3 實測四種語言再決定。
 
@@ -181,7 +182,7 @@ ollama show qwen2.5:7b      # 若顯示 Capabilities 含 tools 才適合
 
 ```bash
 curl http://localhost:11434/api/chat -d '{
-  "model": "qwen2.5:7b",
+  "model": "llama3.2:3b",
   "stream": false,
   "messages": [{"role": "user", "content": "台南有哪些景點？"}],
   "tools": [{
@@ -211,7 +212,6 @@ curl http://localhost:11434/api/chat -d '{
 
 > Mac 桌面版設定環境變數的方式：在終端機執行 `launchctl setenv OLLAMA_KEEP_ALIVE "30m"`，然後**完全結束並重新開啟** Ollama 程式才會生效。
 
-> `qwen3` 系列有「思考」模式，會讓回應變慢。若使用，請在請求中停用 thinking（`"think": false`，需較新版 Ollama）；若版本不支援，改用 `qwen2.5`。
 
 ### 5.5 Ollama 的呼叫方式（重要）
 
@@ -282,7 +282,7 @@ agent/
 回傳服務與 Ollama 狀態：
 
 ```json
-{ "ok": true, "ollama": true, "model": "qwen2.5:7b", "locations": 1234 }
+{ "ok": true, "ollama": true, "model": "llama3.2:3b", "locations": 1234 }
 ```
 
 #### `POST /chat`
@@ -604,5 +604,5 @@ Phase N 已驗收通過，請進行 Phase N+1。
 
 ```text
 模型沒有呼叫工具。請先檢查工具 description 是否清楚，
-再比較 qwen2.5:7b 與 qwen3:8b 的行為，告訴我建議換哪個。
+再比較 llama3.2:3b 與 phi4-mini 的行為，告訴我建議換哪個。
 ```
